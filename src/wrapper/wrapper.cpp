@@ -82,7 +82,7 @@ namespace
 
 
 
-BOOST_PYTHON_MODULE(_tetgen)
+BOOST_PYTHON_MODULE(_internal)
 {
   def("part_graph", wrap_part_graph);
 }

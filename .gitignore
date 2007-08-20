@@ -5,3 +5,4 @@ build
 siteconf.py
 Makefile
 tags
+*.vtk

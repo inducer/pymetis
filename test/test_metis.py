@@ -42,6 +42,13 @@ def main():
 
     cuts, part_vert = part_graph(17, adjacency)
 
+    import pyvtk
+    vtkelements = pyvtk.VtkData(
+        pyvtk.UnstructuredGrid(mesh.points, tetra=mesh.elements),
+        "Mesh",
+        pyvtk.CellData(pyvtk.Scalars(part_vert, name="partition")))
+    vtkelements.tofile('split.vtk')
+
 
 
 
