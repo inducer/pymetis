@@ -3,7 +3,7 @@ def main():
     from meshpy.tet import MeshInfo, build, generate_surface_of_revolution,\
             EXT_CLOSED_IN_RZ
     big_r = 3
-    little_r = 2.9
+    little_r = 1.5
 
     points = 50
     dphi = 2*pi/points

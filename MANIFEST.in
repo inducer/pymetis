@@ -1,0 +1,9 @@
+include import-metis.sh
+include src/gklib/*.h
+include src/metis/*.h
+include LICENSE
+include metis.patch
+include siteconf.py.in
+include Makefile.in
+include configvars.py
+include configure
