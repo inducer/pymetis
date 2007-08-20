@@ -1,0 +1,7 @@
+*~
+.*.swp
+.*.swo
+build
+siteconf.py
+Makefile
+tags

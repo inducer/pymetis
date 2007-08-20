@@ -1,0 +1,48 @@
+Copyright Notice for METIS
+--------------------------
+
+The METIS package is copyrighted by the Regents of the University of
+Minnesota. It can be freely used for educational and research purposes 
+by non-profit institutions and US government agencies only. Other 
+organizations are allowed to use METIS only for evaluation purposes,
+and any further uses will require prior approval. The software 
+may not be sold or redistributed without prior approval. One may 
+make copies of the software for their use provided that the copies, 
+are not sold or distributed, are used under the same terms and 
+conditions. 
+
+As unestablished research software, this code is provided on an 
+``as is'' basis without warranty of any kind, either expressed or 
+implied. The downloading, or executing any part of this software 
+constitutes an implicit agreement to these terms. These terms and 
+conditions are subject to change at any time without prior notice.
+
+Copyright Notice for the Wrapper
+--------------------------------
+
+The wrapper is licensed to you under the following terms:
+
+Copyright (c) Andreas Kloeckner
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+3. None of the authors' names may be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+EVENT SHALL THE AUTHORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
