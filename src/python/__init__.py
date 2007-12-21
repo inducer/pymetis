@@ -39,6 +39,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
 
         for i in range(len(adjacency)):
             adj = adjacency[i]
+            assert max(adj) < len(adjacency)
             adjncy += adj
             xadj.append(len(adjncy))
     else:

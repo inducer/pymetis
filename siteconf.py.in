@@ -17,4 +17,4 @@ BPL_LIBRARIES = [$str{BOOST_PYTHON_LIBNAME}]
 # Compiler flags
 # --------------------------------------------------------------------
 EXTRA_COMPILE_ARGS = [$str{CXXFLAGS}]
-
+EXTRA_COMPILE_ARGS = list(flatten([eca.split() for eca in [$str{CXXFLAGS}]]))
