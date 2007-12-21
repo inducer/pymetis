@@ -8,7 +8,7 @@ install: tags
 
 clean:
 	rm -Rf build
-	rm tags
+	rm -f tags
 
 tags:
 	ctags -R src || true
