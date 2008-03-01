@@ -20,7 +20,7 @@ using namespace std;
     stl_input_iterator<idxtype> begin(NAME##_py), end; \
     std::copy(begin, end, back_inserter(NAME)); \
   }
-#define ITL(NAME) (const_cast<idxtype *>(NAME.data()))
+#define ITL(NAME) (&NAME.front())
 
 #define COPY_OUTPUT(NAME, LEN) \
   list NAME##_py; \
