@@ -10,3 +10,5 @@ tags
 MANIFEST
 dist
 *.orig
+*.egg-info
+*.pyc
