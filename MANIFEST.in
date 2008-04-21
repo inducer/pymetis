@@ -3,7 +3,8 @@ include src/gklib/*.h
 include src/metis/*.h
 include LICENSE
 include metis.patch
-include siteconf.py.in
-include Makefile.in
-include configvars.py
+
+include ez_setup.py
 include configure
+include Makefile.in
+include aksetup_helper.py
