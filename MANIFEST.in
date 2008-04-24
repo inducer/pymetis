@@ -8,3 +8,4 @@ include ez_setup.py
 include configure
 include Makefile.in
 include aksetup_helper.py
+include README_SETUP.txt

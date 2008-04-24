@@ -1,3 +1,4 @@
+# dealings with ez_setup ------------------------------------------------------
 import ez_setup
 
 ez_setup.use_setuptools()
@@ -9,11 +10,55 @@ def setup(*args, **kwargs):
     import traceback
     try:
         setup(*args, **kwargs)
+    except KeyboardInterrupt:
+        raise
+    except SystemExit:
+        raise
     except:
-        traceback.print_exc()
         print "--------------------------------------------------------------------------"
         print "Sorry, your build failed. Try rerunning configure with different options."
         print "--------------------------------------------------------------------------"
+        raise
+
+
+
+
+class NumpyExtension(Extension):
+    # nicked from 
+    # http://mail.python.org/pipermail/distutils-sig/2007-September/008253.html
+    # solution by Michael Hoffmann
+    def __init__(self, *args, **kwargs):
+        Extension.__init__(self, *args, **kwargs)
+        self._include_dirs = self.include_dirs
+        del self.include_dirs # restore overwritten property
+
+    def get_numpy_incpath(self):
+        from imp import find_module
+        # avoid actually importing numpy, it screws up distutils
+        file, pathname, descr = find_module("numpy")
+        from os.path import join
+        return join(pathname, "core", "include")
+
+    @property
+    def include_dirs(self):
+        return self._include_dirs + [self.get_numpy_incpath()]
+
+
+
+
+class PyUblasExtension(NumpyExtension):
+    def get_pyublas_incpath(self):
+        from imp import find_module
+        file, pathname, descr = find_module("pyublas")
+        from os.path import join
+        return join(pathname, "..", "include")
+
+    @property
+    def include_dirs(self):
+        return self._include_dirs + [
+                self.get_numpy_incpath(),
+                self.get_pyublas_incpath(),
+                ]
 
 
 
@@ -40,9 +85,10 @@ def humanize(sym_str):
 
 
 # siteconf handling -----------------------------------------------------------
-def get_config():
-    from setup import get_config_schema
-    schema = get_config_schema()
+def get_config(schema=None):
+    if schema is None:
+        from setup import get_config_schema
+        schema = get_config_schema()
 
     if not schema.have_config() and not schema.have_global_config():
         print "********************************************************"
@@ -75,7 +121,7 @@ def get_config():
 
 
 
-def hack_distutils():
+def hack_distutils(debug=False):
     # hack distutils.sysconfig to eliminate debug flags
     # stolen from mpi4py
     import sys
@@ -86,15 +132,18 @@ def hack_distutils():
         cflags = cvars.get('OPT')
         if cflags:
             cflags = cflags.split()
-            for bad_prefix in ('-g', '-O', '-Wstrict-prototypes'):
+            for bad_prefix in ('-g', '-O', '-Wstrict-prototypes', '-DNDEBUG'):
                 for i, flag in enumerate(cflags):
                     if flag.startswith(bad_prefix):
                         cflags.pop(i)
                         break
                 if flag in cflags:
                     cflags.remove(flag)
-            cflags.append("-O3")
-            #cflags.append("-g")
+            if debug:
+                cflags.append("-g")
+            else:
+                cflags.append("-O3")
+                cflags.append("-DNDEBUG")
             cvars['OPT'] = str.join(' ', cflags)
             cvars["CFLAGS"] = cvars["BASECFLAGS"] + " " + cvars["OPT"]
 
@@ -112,9 +161,10 @@ def default_or(a, b):
 
 
 class ConfigSchema:
-    def __init__(self, options, conf_file="siteconf.py"):
+    def __init__(self, options, conf_file="siteconf.py", conf_dir="."):
         self.optdict = dict((opt.name, opt) for opt in options)
         self.options = options
+        self.conf_dir = conf_dir
         self.conf_file = conf_file
 
         from os.path import expanduser
@@ -125,6 +175,13 @@ class ConfigSchema:
             self.global_conf_file = expanduser("/etc/aksetup-defaults.py")
         else:
             self.global_conf_file = None
+
+    def get_conf_file(self):
+        import os
+        return os.path.join(self.conf_dir, self.conf_file)
+
+    def set_conf_dir(self, conf_dir):
+        self.conf_dir = conf_dir
 
     def get_default_config(self):
         return dict((opt.name, opt.default) 
@@ -196,14 +253,16 @@ class ConfigSchema:
 
     def have_config(self):
         import os
-        return os.access(self.conf_file, os.R_OK)
+        return os.access(self.get_conf_file(), os.R_OK)
 
     def read_config(self, warn_if_none=True):
         import os
+        cfile = self.get_conf_file()
+
         result = self.get_default_config_with_files()
-        if os.access(self.conf_file, os.R_OK):
+        if os.access(cfile, os.R_OK):
             filevars = {}
-            execfile(self.conf_file, filevars)
+            execfile(cfile, filevars)
 
             for key, value in filevars.iteritems():
                 if key in self.optdict:
@@ -212,7 +271,7 @@ class ConfigSchema:
                     pass
                 else:
                     raise KeyError, "invalid config key in %s: %s" % (
-                            self.conf_file, key)
+                            cfile, key)
 
         return result
 
@@ -231,7 +290,8 @@ class ConfigSchema:
         return result
 
     def write_config(self, config):
-        outf = open(self.conf_file, "w")
+        import os
+        outf = open(self.get_conf_file(), "w")
         for opt in self.options:
             value = config[opt.name]
             if value is not None:
@@ -277,7 +337,7 @@ class Option(object):
         default_str = self.value_to_str(default)
         parser.add_option(
             "--" + self.as_option(), dest=self.name, 
-            default=default,
+            default=default_str,
             metavar=self.metavar(), help=self.get_help(default))
 
     def take_from_configparser(self, options):
@@ -360,7 +420,7 @@ def configure_frontend():
         print "*** I have detected that you have already run configure."
         print "*** I'm taking the configured values as defaults for this"
         print "*** configure run. If you don't want this, delete the file"
-        print "*** %s." % schema.conf_file
+        print "*** %s." % schema.get_conf_file()
         print "************************************************************"
 
     import sys
