@@ -33,7 +33,7 @@ def main():
 
     execfile("src/python/__init__.py", conf)
     setup(name="PyMetis",
-          version="0.91",
+          version="0.91.1",
           description="A Graph Partitioning Package",
           long_description="""
           PyMetis is a Python wrapper for the
