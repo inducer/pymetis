@@ -273,7 +273,7 @@ class ConfigSchema:
         result = os.access(self.user_conf_file, os.R_OK)
 
         if self.global_conf_file is not None:
-            result = result or os.access(self.global_conf_file, os.R_OK))
+            result = result or os.access(self.global_conf_file, os.R_OK)
 
         return result
 
