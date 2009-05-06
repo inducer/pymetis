@@ -29,7 +29,7 @@ def main():
     LIBRARIES = conf["BOOST_PYTHON_LIBNAME"]
     EXTRA_DEFINES = {"HAVE_MREMAP": 0} # mremap() buggy on amd64?
 
-    execfile("src/python/__init__.py", conf)
+    execfile("pymetis/__init__.py", conf)
     setup(name="PyMetis",
           version="0.91.1",
           description="A Graph Partitioning Package",
@@ -69,7 +69,6 @@ def main():
             ],
 
           packages = [ "pymetis" ],
-          package_dir={"pymetis": "src/python"},
           ext_modules = [
             Extension(
               "pymetis._internal", 
