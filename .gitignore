@@ -12,5 +12,6 @@ dist
 *.orig
 *.egg-info
 *.pyc
+*.pyo
 *.pyd
 *.so
