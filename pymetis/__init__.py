@@ -21,7 +21,6 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     For details on how `xadj' and `adjncy' are specified, see the Metis 
     documentation.
     """
-
     if recursive is None:
         if nparts > 8:
             recursive = False
@@ -39,7 +38,8 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
 
         for i in range(len(adjacency)):
             adj = adjacency[i]
-            assert max(adj) < len(adjacency)
+            if adj:
+                assert max(adj) < len(adjacency)
             adjncy += adj
             xadj.append(len(adjncy))
     else:
