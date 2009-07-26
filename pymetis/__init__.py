@@ -46,4 +46,8 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         assert xadj is not None
         assert adjncy is not None
 
+    if nparts == 1:
+        # metis has a bug in this case--it disregards the index base
+        return 0, [0] * (len(xadj)-1)
+
     return part_graph(nparts, xadj, adjncy, vweights, eweights, recursive)
