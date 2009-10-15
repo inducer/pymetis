@@ -16,3 +16,4 @@ dist
 *.pyd
 *.so
 setuptools*egg
+setuptools.pth
