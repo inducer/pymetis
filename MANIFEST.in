@@ -1,6 +1,7 @@
 include import-metis.sh
 include src/gklib/*.h
 include src/metis/*.h
+include test/*.py
 include LICENSE
 include metis.patch
 
