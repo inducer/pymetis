@@ -1,22 +1,27 @@
 def main():
+    import numpy as np
     from math import pi, cos, sin
-    from meshpy.tet import MeshInfo, build, generate_surface_of_revolution,\
-            EXT_CLOSED_IN_RZ
+    from meshpy.tet import MeshInfo, build
+    from meshpy.geometry import \
+            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
+
     big_r = 3
     little_r = 1.5
 
     points = 50
     dphi = 2*pi/points
 
-    rz = [(big_r+little_r*cos(i*dphi), little_r*sin(i*dphi))
-            for i in range(points)]
+    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+            for i in range(points)])
+
+    geo = GeometryBuilder()
+    geo.add_geometry(
+            *generate_surface_of_revolution(rz,
+                closure=EXT_CLOSED_IN_RZ, radial_subdiv=20))
 
     mesh_info = MeshInfo()
-    points, facets = generate_surface_of_revolution(rz,
-            closure=EXT_CLOSED_IN_RZ, radial_subdiv=20)
+    geo.set(mesh_info)
 
-    mesh_info.set_points(points)
-    mesh_info.set_facets(facets, len(facets) *[1])
     mesh = build(mesh_info)
 
     def tet_face_vertices(vertices):
