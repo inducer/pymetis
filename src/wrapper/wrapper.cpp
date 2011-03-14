@@ -30,16 +30,64 @@ using namespace std;
   }
 
 
+namespace {
+  enum {
+  	DEFAULT = 0
+  };
+
+  /**
+   * This function verifies that the partitioning was computed correctly.
+   */
+  int 
+  wrap_verify_nd(const object &perm_py, const object &iperm_py)
+  {
+	int i, j, k, rcode=0;
+	int nvtxs = len(perm_py);
+
+	vector<idxtype> perm, iperm;
+    COPY_IDXTYPE_LIST(perm);
+    COPY_IDXTYPE_LIST(iperm);
+
+	for (i=0; i<nvtxs; i++)
+		if (i != perm[iperm[i]])
+		  rcode = 1;
+
+	for (i=0; i<nvtxs; i++)
+	  if (i != iperm[perm[i]])
+		rcode = 2;
+
+	return rcode;
+  }
 
 
-namespace
-{
-  object wrap_part_graph(
-      int nparts,
-      const object &xadj_py,
-      const object &adjncy_py,
-      const object &vwgt_py,
-      const object &adjwgt_py,
+  object
+  wrap_edge_nd(const object &xadj_py, const object &adjncy_py, int numflag)
+  {
+	int i;
+	int options[10];
+	int nvtxs = len(xadj_py) - 1;
+
+	vector<idxtype> xadj, adjncy;
+    COPY_IDXTYPE_LIST(xadj);
+    COPY_IDXTYPE_LIST(adjncy);
+
+	boost::scoped_array<idxtype> perm(new idxtype[nvtxs]);
+	boost::scoped_array<idxtype> iperm(new idxtype[nvtxs]);
+
+	options[0] = DEFAULT;
+
+	METIS_EdgeND(&nvtxs, ITL(xadj), ITL(adjncy), &numflag, options, perm.get(), 
+				 iperm.get());
+
+	COPY_OUTPUT(perm, nvtxs);
+	COPY_OUTPUT(iperm, nvtxs);
+
+    return make_tuple(perm_py, iperm_py);
+  }
+
+  object 
+  wrap_part_graph(int nparts, const object &xadj_py, const object &adjncy_py, 
+				  const object &vwgt_py, const object &adjwgt_py, 
       bool recursive)
   {
     int n = len(xadj_py) - 1;
@@ -79,10 +127,10 @@ namespace
   }
 }
 
-
-
-
 BOOST_PYTHON_MODULE(_internal)
 {
+  def("verify_nd", wrap_verify_nd);
   def("part_graph", wrap_part_graph);
+  def("edge_nd", wrap_edge_nd);
 }
+

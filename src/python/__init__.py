@@ -1,6 +1,28 @@
 version = "0.90"
 
+def verify_nd(perm, iperm):
+    from pymetis._internal import verify_nd
+    return verify_nd(perm, iperm)
 
+def egde_md(adjacency=None, xadj=None, adjncy=None, numflag=0):
+    if adjacency is not None:
+        assert xadj is None
+        assert adjncy is None
+
+        xadj = [0]
+        adjncy = []
+
+        for i in range(len(adjacency)):
+            adj = adjacency[i]
+            assert max(adj) < len(adjacency)
+            adjncy += adj
+            xadj.append(len(adjncy))
+    else:
+        assert xadj is not None
+        assert adjncy is not None
+
+    from pymetis._internal import edge_nd
+    return edge_nd(xadj, adjncy, numflag)
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None, 
