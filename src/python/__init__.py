@@ -4,7 +4,7 @@ def verify_nd(perm, iperm):
     from pymetis._internal import verify_nd
     return verify_nd(perm, iperm)
 
-def egde_md(adjacency=None, xadj=None, adjncy=None, numflag=0):
+def _prepare_graph(adjacency, xadj, adjncy):
     if adjacency is not None:
         assert xadj is None
         assert adjncy is None
@@ -21,8 +21,23 @@ def egde_md(adjacency=None, xadj=None, adjncy=None, numflag=0):
         assert xadj is not None
         assert adjncy is not None
 
+    return xadj, adjncy
+
+
+def nested_dissection(adjacency=None, xadj=None, adjncy=None):
+    """This function computes fill reducing orderings of sparse matrices using
+    the multilevel nested dissection algorithm.
+
+    The input graph is given as either a Pythonic way as the `adjacency' parameter
+    or in the direct C-like way that Metis likes as `xadj' and `adjncy'. It
+    is an error to specify both graph inputs.
+    """
+    xadj, adncy = _prepare_graph(adjacency, xadj, adjncy)
+
     from pymetis._internal import edge_nd
     return edge_nd(xadj, adjncy, numflag)
+
+
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None, 
@@ -50,22 +65,6 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         else:
             recursive = True
 
-    from pymetis._internal import part_graph
-
-    if adjacency is not None:
-        assert xadj is None
-        assert adjncy is None
-
-        xadj = [0]
-        adjncy = []
-
-        for i in range(len(adjacency)):
-            adj = adjacency[i]
-            assert max(adj) < len(adjacency)
-            adjncy += adj
-            xadj.append(len(adjncy))
-    else:
-        assert xadj is not None
-        assert adjncy is not None
+    xadj, adncy = _prepare_graph(adjacency, xadj, adjncy)
 
     return part_graph(nparts, xadj, adjncy, vweights, eweights, recursive)
