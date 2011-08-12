@@ -17,3 +17,4 @@ dist
 *.so
 setuptools*egg
 setuptools.pth
+PKG-INFO
