@@ -17,7 +17,11 @@ can be used to define other memory allocation routines.
 
 #ifdef GKMSPACE
 /* This is the mspace for all the gk_malloc() calls. This is a thread local allocation */
+#ifndef __APPLE__
 static __thread mspace gk_mspace = 0;
+#else
+static mspace gk_mspace = 0;
+#endif
 
 /* This function is mostly for debugging */
 void gk_printmspaceaddr() { printf("mspace: %p\n", (void *)gk_mspace); }

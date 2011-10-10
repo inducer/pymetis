@@ -81,7 +81,9 @@ extern void*     sbrk(ptrdiff_t);
 
 /* START of GK additions */
 #include <stddef.h>
+#ifndef __APPLE__
 extern void *sbrk(ptrdiff_t increment);
+#endif
 /* END of GK additions */
 
 

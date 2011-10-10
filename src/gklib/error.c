@@ -15,7 +15,22 @@ This file contains functions dealing with error reporting and termination
 
 #include <GKlib.h>
 
-
+#ifdef __APPLE__
+/* This is the jmp_buf for the graceful exit in case of severy error */
+jmp_buf gk_return_to_entry;
+/* These are the holders of the old singal handlers for the trapped signals */
+typedef void (*sighandler_t)(int);  /* this should be in signals.h, but is not t
+                                       here */
+static sighandler_t old_SIGFPE_handler;
+static sighandler_t old_SIGILL_handler;
+static sighandler_t old_SIGSEGV_handler;
+#ifndef WIN32
+static sighandler_t old_SIGBUS_handler;
+#endif
+static sighandler_t old_SIGABRT_handler;
+static sighandler_t old_SIGMEM_handler;  /* Custom signal */
+static sighandler_t old_SIGERR_handler;  /* Custom signal */
+#else
 /* This is the jmp_buf for the graceful exit in case of severy error */
 __thread jmp_buf gk_return_to_entry;
 
@@ -30,6 +45,8 @@ static __thread sighandler_t old_SIGBUS_handler;
 static __thread sighandler_t old_SIGABRT_handler;
 static __thread sighandler_t old_SIGMEM_handler;  /* Custom signal */
 static __thread sighandler_t old_SIGERR_handler;  /* Custom signal */
+#endif
+
 
 
 /*************************************************************************
@@ -125,7 +142,11 @@ void gk_NonLocalExit_Handler(int signum)
 /**************************************************************************/
 char *gk_strerror(int errnum)
 {
+#ifdef __APPLE__
+  static char buf[1024];
+#else
   static __thread char buf[1024];
+#endif
 
   strerror_r(errnum, buf, 1024);
 

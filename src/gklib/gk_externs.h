@@ -15,7 +15,11 @@
 * Extern variable definition. Hopefully, the __thread makes them thread-safe.
 **************************************************************************/
 #ifndef _GK_ERROR_C_
+#ifdef __APPLE__ 
+extern jmp_buf gk_return_to_entry; /* declared in error.c */
+#else
 extern __thread jmp_buf gk_return_to_entry; /* declared in error.c */
+#endif
 #endif
 
 #endif
