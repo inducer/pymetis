@@ -165,12 +165,12 @@ def get_config(schema=None, warn_about_no_config=True):
 
         count_down_delay(delay=10)
 
-    return schema.read_config()
+    return expand_options(schema.read_config())
 
 
 
 
-def hack_distutils(debug=False, fast_link=True):
+def hack_distutils(debug=False, fast_link=True, what_opt=3):
     # hack distutils.sysconfig to eliminate debug flags
     # stolen from mpi4py
 
@@ -194,8 +194,12 @@ def hack_distutils(debug=False, fast_link=True):
             if debug:
                 cflags.append("-g")
             else:
-                cflags.append("-O3")
-                cflags.append("-DNDEBUG")
+                if what_opt is None:
+                    pass
+                else:
+                    cflags.append("-O%s" % what_opt)
+                    cflags.append("-DNDEBUG")
+
             cvars['OPT'] = str.join(' ', cflags)
             cvars["CFLAGS"] = cvars["BASECFLAGS"] + " " + cvars["OPT"]
 
@@ -237,15 +241,23 @@ def expand_value(v, options):
     if isinstance(v, str):
         return expand_str(v, options)
     elif isinstance(v, list):
-        return [expand_value(i, options) for i in v]
+        result = []
+        for i in v:
+            try:
+                exp_i = expand_value(i, options)
+            except:
+                pass
+            else:
+                result.append(exp_i)
+
+        return result
     else:
         return v
 
 
 def expand_options(options):
-    for k in options.keys():
-        options[k] = expand_value(options[k], options)
-    return options
+    return dict(
+            (k, expand_value(v, options)) for k, v in options.iteritems())
 
 
 
@@ -276,13 +288,18 @@ class ConfigSchema:
         self.conf_dir = conf_dir
 
     def get_default_config(self):
-        return dict((opt.name, opt.default)
-                for opt in self.options)
+        return dict((opt.name, opt.default) for opt in self.options)
 
     def read_config_from_pyfile(self, filename):
         result = {}
         filevars = {}
-        exec(compile(open(filename, "r").read(), filename, "exec"), filevars)
+        infile = open(filename, "r")
+        try:
+            contents = infile.read()
+        finally:
+            infile.close()
+
+        exec(compile(contents, filename, "exec"), filevars)
 
         for key, value in filevars.items():
             if key in self.optdict:
@@ -369,8 +386,6 @@ class ConfigSchema:
                     raise KeyError("invalid config key in %s: %s" % (
                             cfile, key))
 
-        expand_options(result)
-
         return result
 
     def add_to_configparser(self, parser, def_config=None):
@@ -385,11 +400,9 @@ class ConfigSchema:
         result = {}
         for opt in self.options:
             result[opt.name] = opt.take_from_configparser(options)
-        expand_options(result)
         return result
 
     def write_config(self, config):
-        import os
         outf = open(self.get_conf_file(), "w")
         for opt in self.options:
             value = config[opt.name]
@@ -509,11 +522,11 @@ class Libraries(StringListOption):
 class BoostLibraries(Libraries):
     def __init__(self, lib_base_name):
         Libraries.__init__(self, "BOOST_%s" % lib_base_name.upper(),
-                ["boost_%s-${BOOST_COMPILER}-mt" % lib_base_name],
+                ["boost_%s" % lib_base_name],
                 help="Library names for Boost C++ %s library (without lib or .so)"
                     % humanize(lib_base_name))
 
-def set_up_shipped_boost_if_requested(conf):
+def set_up_shipped_boost_if_requested(project_name, conf):
     """Set up the package to use a shipped version of Boost.
 
     Return a tuple of a list of extra C files to build and extra
@@ -558,7 +571,6 @@ def set_up_shipped_boost_if_requested(conf):
         source_files = [f for f in source_files
                 if not f.startswith("bpl-subset/bpl_subset/libs/thread/src")]
 
-        import sys
         if sys.platform == "win32":
             source_files += glob(
                     "bpl-subset/bpl_subset/libs/thread/src/win32/*.cpp")
@@ -566,10 +578,25 @@ def set_up_shipped_boost_if_requested(conf):
             source_files += glob(
                     "bpl-subset/bpl_subset/libs/thread/src/pthread/*.cpp")
 
+        from os.path import isdir
+        main_boost_inc = "bpl-subset/bpl_subset/boost"
+        bpl_project_boost_inc = "bpl-subset/bpl_subset/%sboost" % project_name
+
+        if not isdir(bpl_project_boost_inc):
+            try:
+                from os import symlink
+            except ImportError:
+                from shutil import copytree
+                print("Copying files, hang on... (do not interrupt)")
+                copytree(main_boost_inc, bpl_project_boost_inc)
+            else:
+                symlink("boost", bpl_project_boost_inc)
+
         return (source_files,
                 {
                     "BOOST_MULTI_INDEX_DISABLE_SERIALIZATION": 1,
                     "BOOST_PYTHON_SOURCE": 1,
+                    "boost": '%sboost' % project_name
                     }
                 )
     else:
@@ -699,7 +726,7 @@ def check_git_submodules():
         stdout_data, _ = popen.communicate()
         if popen.returncode != 0:
             git_error = "git returned error code %d" % popen.returncode
-    except OSError as e:
+    except OSError, e:
         git_error = e
 
     if git_error is not None:
