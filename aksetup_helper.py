@@ -568,12 +568,17 @@ def set_up_shipped_boost_if_requested(project_name, conf):
                 + glob("bpl-subset/bpl_subset/libs/*/*/*.cpp")
                 + glob("bpl-subset/bpl_subset/libs/*/*.cpp"))
 
+        # make sure next line succeeds even on Windows
+        source_files = [f.replace("\\","/") for f in source_files]
+
         source_files = [f for f in source_files
                 if not f.startswith("bpl-subset/bpl_subset/libs/thread/src")]
 
         if sys.platform == "win32":
             source_files += glob(
                     "bpl-subset/bpl_subset/libs/thread/src/win32/*.cpp")
+            source_files += glob(
+                    "bpl-subset/bpl_subset/libs/thread/src/*.cpp")
         else:
             source_files += glob(
                     "bpl-subset/bpl_subset/libs/thread/src/pthread/*.cpp")
@@ -594,6 +599,10 @@ def set_up_shipped_boost_if_requested(project_name, conf):
 
         return (source_files,
                 {
+                    # do not pick up libboost link dependency on windows
+                    "BOOST_ALL_NO_LIB": 1,
+                    "BOOST_THREAD_BUILD_DLL": 1,
+
                     "BOOST_MULTI_INDEX_DISABLE_SERIALIZATION": 1,
                     "BOOST_PYTHON_SOURCE": 1,
                     "boost": '%sboost' % project_name
@@ -737,7 +746,7 @@ def check_git_submodules():
         print("not invoke git to check whether my submodules are up to date.")
         print("")
         print("The error was:")
-        print(e)
+        print(git_error)
         print("Hit Ctrl-C now if you'd like to think about the situation.")
         print("-------------------------------------------------------------------------")
         count_down_delay(delay=5)
@@ -797,7 +806,9 @@ def check_git_submodules():
             print("Hit Ctrl-C now if you'd like to think about the situation.")
             print("-------------------------------------------------------------------------")
 
-            count_down_delay(delay=10)
+            from os.path import exists
+            if not exists(".dirty-git-ok"):
+                count_down_delay(delay=10)
 
 
 
