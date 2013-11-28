@@ -547,7 +547,7 @@ def set_up_shipped_boost_if_requested(project_name, conf):
             source_files += glob(
                     "bpl-subset/bpl_subset/libs/thread/src/win32/*.cpp")
             source_files += glob(
-                    "bpl-subset/bpl_subset/libs/thread/src/*.cpp")
+                    "bpl-subset/bpl_subset/libs/thread/src/tss_null.cpp")
         else:
             source_files += glob(
                     "bpl-subset/bpl_subset/libs/thread/src/pthread/*.cpp")
@@ -559,12 +559,11 @@ def set_up_shipped_boost_if_requested(project_name, conf):
         if not isdir(bpl_project_boost_inc):
             try:
                 from os import symlink
-            except ImportError:
+                symlink("boost", bpl_project_boost_inc)
+            except (ImportError, OSError):
                 from shutil import copytree
                 print("Copying files, hang on... (do not interrupt)")
                 copytree(main_boost_inc, bpl_project_boost_inc)
-            else:
-                symlink("boost", bpl_project_boost_inc)
 
         return (source_files,
                 {
