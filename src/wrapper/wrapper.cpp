@@ -5,6 +5,7 @@
 #include <metis.h>
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 
 
 
@@ -17,15 +18,14 @@ using namespace std;
 
 #define COPY_IDXTYPE_LIST(NAME) \
   { \
-    stl_input_iterator<idxtype> begin(NAME##_py), end; \
+    stl_input_iterator<idx_t> begin(NAME##_py), end; \
     std::copy(begin, end, back_inserter(NAME)); \
   }
-#define ITL(NAME) (&NAME.front())
 
 #define COPY_OUTPUT(NAME, LEN) \
   list NAME##_py; \
   { \
-    BOOST_FOREACH(idxtype i, std::make_pair(NAME.get(), NAME.get()+(LEN))) \
+    BOOST_FOREACH(idx_t i, std::make_pair(NAME.get(), NAME.get()+(LEN))) \
         NAME##_py.append(i); \
   }
 
@@ -36,6 +36,18 @@ namespace
         DEFAULT = 0
   };
 
+  inline idx_t * maybe_data(vector<idx_t> & vect)
+  {
+    if (vect.empty())
+    {
+      return NULL;
+    }
+    else
+    {
+      return vect.data();
+    }
+  }
+
   /**
    * This function verifies that the partitioning was computed correctly.
    */
@@ -45,7 +57,7 @@ namespace
     int i, j, k, rcode=0;
     int nvtxs = len(perm_py);
 
-    vector<idxtype> perm, iperm;
+    vector<idx_t> perm, iperm;
     COPY_IDXTYPE_LIST(perm);
     COPY_IDXTYPE_LIST(iperm);
 
@@ -62,25 +74,31 @@ namespace
 
 
   object
-  wrap_edge_nd(const object &xadj_py, const object &adjncy_py)
+  wrap_node_nd(const object &xadj_py, const object &adjncy_py)
   {
     int i;
-    int options[10];
     int nvtxs = len(xadj_py) - 1;
 
-    int numflag = 0;
-
-    vector<idxtype> xadj, adjncy;
+    vector<idx_t> xadj, adjncy;
     COPY_IDXTYPE_LIST(xadj);
     COPY_IDXTYPE_LIST(adjncy);
+    idx_t * vwgt = NULL;
 
-    boost::scoped_array<idxtype> perm(new idxtype[nvtxs]);
-    boost::scoped_array<idxtype> iperm(new idxtype[nvtxs]);
+    boost::scoped_array<idx_t> perm(new idx_t[nvtxs]);
+    boost::scoped_array<idx_t> iperm(new idx_t[nvtxs]);
 
-    options[0] = DEFAULT;
+    int options[METIS_NOPTIONS];
+    METIS_SetDefaultOptions(options);
+    options[METIS_OPTION_NUMBERING] = 0;  // C-style numbering
 
-    METIS_EdgeND(&nvtxs, ITL(xadj), ITL(adjncy), &numflag, options, perm.get(),
-        iperm.get());
+    int info = METIS_NodeND(
+      &nvtxs, xadj.data(), adjncy.data(), vwgt, options,
+      perm.get(), iperm.get());
+
+    if (info != METIS_OK)
+    {
+      throw new runtime_error("METIS_NodeND failed");
+    }
 
     COPY_OUTPUT(perm, nvtxs);
     COPY_OUTPUT(iperm, nvtxs);
@@ -90,45 +108,68 @@ namespace
 
   object
   wrap_part_graph(
-      int nparts, 
-      const object &xadj_py, 
+      int nparts,
+      const object &xadj_py,
       const object &adjncy_py,
-      const object &vwgt_py, 
+      const object &vwgt_py,
       const object &adjwgt_py,
       bool recursive)
   {
-    int n = len(xadj_py) - 1;
-    vector<idxtype> xadj, adjncy, vwgt, adjwgt;
+    idx_t nvtxs = len(xadj_py) - 1;
+    vector<idx_t> xadj, adjncy, vwgt, adjwgt;
     COPY_IDXTYPE_LIST(xadj);
     COPY_IDXTYPE_LIST(adjncy);
 
-    int wgtflag = 0;
+    // pymetis does not currently support partition weights and constraints.
+    idx_t ncon = 0;
+    real_t * tpwgts = NULL;
+    real_t * pubvec = NULL;
+
+    // pymetis defaults to the minimizing-edge-cut objective
+    idx_t * pvsize = NULL;
+
     if (vwgt_py != object())
     {
       COPY_IDXTYPE_LIST(vwgt);
-      wgtflag |= 2;
     }
     if (adjwgt_py != object())
     {
       COPY_IDXTYPE_LIST(adjwgt);
-      wgtflag |= 1;
     }
-    int numflag = 0;
 
-    int options[5];
-    options[0] = 0;
+    idx_t options[METIS_NOPTIONS];
+    METIS_SetDefaultOptions(options);
+    options[METIS_OPTION_NUMBERING] = 0;  // C-style numbering
 
-    int edgecut;
-    boost::scoped_array<idxtype> part(new idxtype[n]);
+    idx_t edgecut;
+    boost::scoped_array<idx_t> part(new idx_t[nvtxs]);
 
     if (recursive)
-      METIS_PartGraphRecursive(&n, ITL(xadj), ITL(adjncy), ITL(vwgt), ITL(adjwgt),
-          &wgtflag, &numflag, &nparts, options, &edgecut, part.get());
-    else
-      METIS_PartGraphKway(&n, ITL(xadj), ITL(adjncy), ITL(vwgt), ITL(adjwgt),
-          &wgtflag, &numflag, &nparts, options, &edgecut, part.get());
+    {
+      int info = METIS_PartGraphRecursive(
+        &nvtxs, &ncon, xadj.data(), adjncy.data(),
+        maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
+        pubvec, options, &edgecut, part.get());
 
-    COPY_OUTPUT(part, n);
+      if (info != METIS_OK)
+      {
+        throw new runtime_error("METIS_PartGraphRecursive failed");
+      }
+    }
+    else
+    {
+      int info = METIS_PartGraphKway(
+        &nvtxs, &ncon, xadj.data(), adjncy.data(),
+        maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
+        pubvec, options, &edgecut, part.get());
+
+      if (info != METIS_OK)
+      {
+        throw new runtime_error("METIS_PartGraphKway failed");
+      }
+    }
+
+    COPY_OUTPUT(part, nvtxs);
 
     return make_tuple(edgecut, part_py);
   }
@@ -137,6 +178,7 @@ namespace
 BOOST_PYTHON_MODULE(_internal)
 {
   def("verify_nd", wrap_verify_nd);
-  def("edge_nd", wrap_edge_nd);
+  def("node_nd", wrap_node_nd);
+  def("edge_nd", wrap_node_nd);  // DEPRECATED
   def("part_graph", wrap_part_graph);
 }

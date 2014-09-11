@@ -76,7 +76,7 @@ def main():
               + glob.glob("src/metis/*.c") 
               + ["src/wrapper/wrapper.cpp"],
               define_macros=list(EXTRA_DEFINES.iteritems()),
-              include_dirs=["src/gklib", "src/metis"] + INCLUDE_DIRS,
+              include_dirs=["src/gklib", "src/metis/include"] + INCLUDE_DIRS,
               library_dirs=LIBRARY_DIRS,
               libraries=LIBRARIES,
               extra_compile_args=conf["CXXFLAGS"],
