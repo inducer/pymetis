@@ -29,7 +29,6 @@ using namespace std;
         NAME##_py.append(i); \
   }
 
-
 namespace 
 {
   enum {
@@ -45,6 +44,22 @@ namespace
     else
     {
       return vect.data();
+    }
+  }
+
+  inline void assert_ok(int info, const char * message)
+  {
+    switch (info) {
+      case METIS_OK:
+        return;
+      case METIS_ERROR_INPUT:
+        throw new invalid_argument(message);
+      case METIS_ERROR_MEMORY:
+        throw new bad_alloc();
+      case METIS_ERROR:
+        throw new logic_error(message);
+      default:
+        throw new runtime_error(message);
     }
   }
 
@@ -95,10 +110,7 @@ namespace
       &nvtxs, xadj.data(), adjncy.data(), vwgt, options,
       perm.get(), iperm.get());
 
-    if (info != METIS_OK)
-    {
-      throw new runtime_error("METIS_NodeND failed");
-    }
+    assert_ok(info, "METIS_NodeND failed");
 
     COPY_OUTPUT(perm, nvtxs);
     COPY_OUTPUT(iperm, nvtxs);
@@ -121,7 +133,7 @@ namespace
     COPY_IDXTYPE_LIST(adjncy);
 
     // pymetis does not currently support partition weights and constraints.
-    idx_t ncon = 0;
+    idx_t ncon = 1;
     real_t * tpwgts = NULL;
     real_t * pubvec = NULL;
 
@@ -151,10 +163,7 @@ namespace
         maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
         pubvec, options, &edgecut, part.get());
 
-      if (info != METIS_OK)
-      {
-        throw new runtime_error("METIS_PartGraphRecursive failed");
-      }
+      assert_ok(info, "METIS_PartGraphRecursive failed");
     }
     else
     {
@@ -163,10 +172,7 @@ namespace
         maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
         pubvec, options, &edgecut, part.get());
 
-      if (info != METIS_OK)
-      {
-        throw new runtime_error("METIS_PartGraphKway failed");
-      }
+      assert_ok(info, "METIS_PartGraphKway failed");
     }
 
     COPY_OUTPUT(part, nvtxs);

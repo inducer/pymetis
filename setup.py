@@ -71,12 +71,16 @@ def main():
           packages = [ "pymetis" ],
           ext_modules = [
             Extension(
-              "pymetis._internal", 
-              glob.glob("src/gklib/*.c") 
-              + glob.glob("src/metis/*.c") 
-              + ["src/wrapper/wrapper.cpp"],
+              "pymetis._internal",
+              glob.glob("src/metis/GKlib/*.c") +
+              glob.glob("src/metis/*.c") +
+              glob.glob("src/metis/libmetis/*.c") +
+              ["src/wrapper/wrapper.cpp"],
               define_macros=list(EXTRA_DEFINES.iteritems()),
-              include_dirs=["src/gklib", "src/metis/include"] + INCLUDE_DIRS,
+              include_dirs=["src/metis/GKlib"] +
+              ["src/metis/include"] +
+              ["src/metis/libmetis"] +
+              INCLUDE_DIRS,
               library_dirs=LIBRARY_DIRS,
               libraries=LIBRARIES,
               extra_compile_args=conf["CXXFLAGS"],
