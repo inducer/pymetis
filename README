@@ -1,7 +1,7 @@
 Welcome to PyMetis, a Python wrapper for Metis.
 -----------------------------------------------
 
-This code wraps (and includes a copy of) Metis 5.0pre2.
+This code wraps (and includes a copy of) Metis 5.1.0.
 
 Metis is the work of the George Karypis, Vipin Kumar and others at UMN. 
 It may be downloaded from 

@@ -37,7 +37,7 @@ def main():
           PyMetis is a Python wrapper for the
           `Metis <http://glaros.dtc.umn.edu/gkhome/views/metis>`_ graph
           partititioning software by George Karypis, Vipin Kumar and others. It
-          includes version 5.0pre2 of Metis and wraps it using the 
+          includes version 5.1.0 of Metis and wraps it using the 
           `Boost Python <http://www.boost.org/libs/python/doc/>`_ wrapper generator
           library. So far, it only wraps the most basic graph partitioning
           functionality (which is enough for my current use), but extending it
