@@ -511,7 +511,7 @@ def set_up_shipped_boost_if_requested(project_name, conf, source_path=None,
     if source_path is None:
         source_path = "bpl-subset/bpl_subset"
 
-    if conf["USE_SHIPPED_BOOST"]:
+    if conf.get("USE_SHIPPED_BOOST"):
         if not exists("%s/boost/version.hpp" % source_path):
             print(DASH_SEPARATOR)
             print("The shipped Boost library was not found, but "
@@ -533,7 +533,7 @@ def set_up_shipped_boost_if_requested(project_name, conf, source_path=None,
 
             count_down_delay(delay=10)
 
-    if conf["USE_SHIPPED_BOOST"]:
+    if conf.get("USE_SHIPPED_BOOST"):
         conf["BOOST_INC_DIR"] = [source_path]
         conf["BOOST_LIB_DIR"] = []
         conf["BOOST_PYTHON_LIBNAME"] = []
