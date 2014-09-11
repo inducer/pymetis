@@ -55,15 +55,5 @@ def main():
     vtkelements.tofile('split.vtk')
 
 
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
     main()
-
