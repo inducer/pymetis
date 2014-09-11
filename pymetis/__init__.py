@@ -1,10 +1,10 @@
-version = "0.90"
+version_tuple = (2014, 1)
+version = ".".join(str(n) for n in version_tuple)
+
 
 def verify_nd(perm, iperm):
     from pymetis._internal import verify_nd
     return verify_nd(perm, iperm)
-
-
 
 
 def _prepare_graph(adjacency, xadj, adjncy):
@@ -42,9 +42,7 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None):
     return edge_nd(xadj, adjncy)
 
 
-
-
-def part_graph(nparts, adjacency=None, xadj=None, adjncy=None, 
+def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         vweights=None, eweights=None, recursive=None):
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
@@ -59,7 +57,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     - adjacency[i] needs to return an iterable of vertices adjacent to vertex i.
       Both directions of an undirected graph edge are required to be stored.
 
-    For details on how `xadj' and `adjncy' are specified, see the Metis 
+    For details on how `xadj' and `adjncy' are specified, see the Metis
     documentation.
     """
     xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)

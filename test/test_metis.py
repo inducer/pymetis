@@ -25,10 +25,10 @@ def main():
     mesh = build(mesh_info)
 
     def tet_face_vertices(vertices):
-        return [(vertices[0],vertices[1],vertices[2]), 
-                (vertices[0],vertices[1],vertices[3]),
-                (vertices[0],vertices[2],vertices[3]),
-                (vertices[1],vertices[2],vertices[3]),
+        return [(vertices[0], vertices[1], vertices[2]),
+                (vertices[0], vertices[1], vertices[3]),
+                (vertices[0], vertices[2], vertices[3]),
+                (vertices[1], vertices[2], vertices[3]),
                 ]
 
     face_map = {}
@@ -37,7 +37,7 @@ def main():
             face_map.setdefault(frozenset(face_vertices), []).append((el_id, fid))
 
     adjacency = {}
-    for face_vertices, els_faces in face_map.iteritems():
+    for face_vertices, els_faces in face_map.items():
         if len(els_faces) == 2:
             (e1, f1), (e2, f2) = els_faces
             adjacency.setdefault(e1, []).append(e2)

@@ -15,7 +15,9 @@ def get_config_schema():
 
 def main():
     import glob
-    from aksetup_helper import hack_distutils, get_config, setup, Extension
+    from aksetup_helper import (
+            hack_distutils, get_config, setup, Extension,
+            set_up_shipped_boost_if_requested)
 
     hack_distutils()
     conf = get_config(get_config_schema())
@@ -23,11 +25,22 @@ def main():
     INCLUDE_DIRS = conf["BOOST_INC_DIR"]
     LIBRARY_DIRS = conf["BOOST_LIB_DIR"]
     LIBRARIES = conf["BOOST_PYTHON_LIBNAME"]
-    EXTRA_DEFINES = {"HAVE_MREMAP": 0}  # mremap() buggy on amd64?
 
-    execfile("pymetis/__init__.py", conf)
+    EXTRA_OBJECTS, EXTRA_DEFINES = \
+            set_up_shipped_boost_if_requested("pyopencl", conf)
+
+    EXTRA_DEFINES["HAVE_MREMAP"] = 0  # mremap() buggy on amd64?
+
+    version_file = open("pymetis/__init__.py")
+    ver_dic = {}
+    try:
+        version_file_contents = version_file.read()
+    finally:
+        version_file.close()
+    exec(compile(version_file_contents, "pymetis/__init__.py", 'exec'), ver_dic)
+
     setup(name="PyMetis",
-          version="2011.1.1",
+          version=ver_dic["version"],
           description="A Graph Partitioning Package",
           long_description=open("README.rst", "rt").read(),
           author="Andreas Kloeckner",
@@ -45,6 +58,12 @@ def main():
               'Programming Language :: C',
               'Programming Language :: C++',
               'Programming Language :: Python',
+              'Programming Language :: Python :: 2',
+              'Programming Language :: Python :: 2.6',
+              'Programming Language :: Python :: 2.7',
+              'Programming Language :: Python :: 3',
+              'Programming Language :: Python :: 3.3',
+              'Programming Language :: Python :: 3.4',
               'Topic :: Multimedia :: Graphics :: 3D Modeling',
               'Topic :: Scientific/Engineering',
               'Topic :: Scientific/Engineering :: Mathematics',
@@ -60,7 +79,7 @@ def main():
                   glob.glob("src/metis/*.c") +
                   glob.glob("src/metis/libmetis/*.c") +
                   ["src/wrapper/wrapper.cpp"],
-                  define_macros=list(EXTRA_DEFINES.iteritems()),
+                  define_macros=list(EXTRA_DEFINES.items()),
                   include_dirs=["src/metis/GKlib"] +
                   ["src/metis/include"] +
                   ["src/metis/libmetis"] +
