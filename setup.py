@@ -29,7 +29,7 @@ def main():
     LIBRARIES = conf["BOOST_PYTHON_LIBNAME"]
 
     EXTRA_OBJECTS, EXTRA_DEFINES = \
-            set_up_shipped_boost_if_requested("pyopencl", conf)
+            set_up_shipped_boost_if_requested("pymetis", conf)
 
     EXTRA_DEFINES["HAVE_MREMAP"] = 0  # mremap() buggy on amd64?
 
