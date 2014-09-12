@@ -2,10 +2,12 @@
 
 
 def get_config_schema():
-    from aksetup_helper import (ConfigSchema,
+    from aksetup_helper import (ConfigSchema, Switch,
             BoostLibraries, StringListOption, make_boost_base_options)
 
     return ConfigSchema(make_boost_base_options() + [
+        Switch("USE_SHIPPED_BOOST", True, "Use included Boost library"),
+
         BoostLibraries("python"),
 
         StringListOption("CXXFLAGS", [],
