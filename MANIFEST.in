@@ -1,9 +1,8 @@
 include import-metis.sh
-include src/gklib/*.h
-include src/metis/include/*.h
+recursive-include src/metis *.h *.c
 include test/*.py
 include LICENSE
-include metis.patch
+include README.rst
 
 include configure.py
 include Makefile.in

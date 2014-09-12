@@ -1,4 +1,3 @@
-#include <boost/foreach.hpp>
 #include <boost/python.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/python/stl_iterator.hpp>
@@ -25,11 +24,11 @@ using namespace std;
 #define COPY_OUTPUT(NAME, LEN) \
   list NAME##_py; \
   { \
-    BOOST_FOREACH(idx_t i, std::make_pair(NAME.get(), NAME.get()+(LEN))) \
-        NAME##_py.append(i); \
+    for (idx_t i = 0; i<LEN; ++i) \
+      NAME##_py.append(NAME.get()[i]); \
   }
 
-namespace 
+namespace
 {
   enum {
         DEFAULT = 0

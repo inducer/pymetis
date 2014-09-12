@@ -22,14 +22,15 @@ def main():
             set_up_shipped_boost_if_requested)
 
     hack_distutils()
-    conf = get_config(get_config_schema())
+    conf = get_config(get_config_schema(),
+            warn_about_no_config=False)
+
+    EXTRA_OBJECTS, EXTRA_DEFINES = \
+            set_up_shipped_boost_if_requested("pymetis", conf)
 
     INCLUDE_DIRS = conf["BOOST_INC_DIR"]
     LIBRARY_DIRS = conf["BOOST_LIB_DIR"]
     LIBRARIES = conf["BOOST_PYTHON_LIBNAME"]
-
-    EXTRA_OBJECTS, EXTRA_DEFINES = \
-            set_up_shipped_boost_if_requested("pymetis", conf)
 
     EXTRA_DEFINES["HAVE_MREMAP"] = 0  # mremap() buggy on amd64?
 
@@ -80,7 +81,7 @@ def main():
                   glob.glob("src/metis/GKlib/*.c") +
                   glob.glob("src/metis/*.c") +
                   glob.glob("src/metis/libmetis/*.c") +
-                  ["src/wrapper/wrapper.cpp"],
+                  ["src/wrapper/wrapper.cpp"] + EXTRA_OBJECTS,
                   define_macros=list(EXTRA_DEFINES.items()),
                   include_dirs=["src/metis/GKlib"] +
                   ["src/metis/include"] +

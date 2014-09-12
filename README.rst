@@ -9,3 +9,9 @@ partition your meshes is really easy--essentially all you need to pass into
 PyMetis is an adjacency list for the graph and the number of parts you would
 like.
 
+Installation
+============
+
+The following line should do the job::
+
+    pip install pymetis
