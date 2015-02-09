@@ -42,7 +42,7 @@ namespace
     }
     else
     {
-      return vect.data();
+      return &vect.front();
     }
   }
 
@@ -106,7 +106,7 @@ namespace
     options[METIS_OPTION_NUMBERING] = 0;  // C-style numbering
 
     int info = METIS_NodeND(
-      &nvtxs, xadj.data(), adjncy.data(), vwgt, options,
+      &nvtxs, &xadj.front(), &adjncy.front(), vwgt, options,
       perm.get(), iperm.get());
 
     assert_ok(info, "METIS_NodeND failed");
@@ -158,7 +158,7 @@ namespace
     if (recursive)
     {
       int info = METIS_PartGraphRecursive(
-        &nvtxs, &ncon, xadj.data(), adjncy.data(),
+        &nvtxs, &ncon, &xadj.front(), &adjncy.front(),
         maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
         pubvec, options, &edgecut, part.get());
 
@@ -167,7 +167,7 @@ namespace
     else
     {
       int info = METIS_PartGraphKway(
-        &nvtxs, &ncon, xadj.data(), adjncy.data(),
+        &nvtxs, &ncon, &xadj.front(), &adjncy.front(),
         maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
         pubvec, options, &edgecut, part.get());
 
