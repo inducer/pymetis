@@ -47,8 +47,11 @@ class NumpyExtension(Extension):
         from os.path import join
         return join(pathname, "core", "include")
 
+    def get_additional_include_dirs(self):
+        return [self.get_numpy_incpath()]
+
     def get_include_dirs(self):
-        return self._include_dirs + [self.get_numpy_incpath()]
+        return self._include_dirs + self.get_additional_include_dirs()
 
     def set_include_dirs(self, value):
         self._include_dirs = value
@@ -64,12 +67,9 @@ class PyUblasExtension(NumpyExtension):
         from pkg_resources import Requirement, resource_filename
         return resource_filename(Requirement.parse(name), "%s/include" % name)
 
-    @property
-    def include_dirs(self):
-        return self._include_dirs + [
-                self.get_numpy_incpath(),
-                self.get_module_include_path("pyublas"),
-                ]
+    def get_additional_include_dirs(self):
+        return (NumpyExtension.get_additional_include_dirs(self)
+                + [self.get_module_include_path("pyublas")])
 
 
 class HedgeExtension(PyUblasExtension):
@@ -492,7 +492,7 @@ class BoostLibraries(Libraries):
         Libraries.__init__(self, "BOOST_%s" % lib_base_name.upper(),
                 [default_lib_name],
                 help="Library names for Boost C++ %s library (without lib or .so)"
-                    % humanize(lib_base_name))
+                % humanize(lib_base_name))
 
 
 def set_up_shipped_boost_if_requested(project_name, conf, source_path=None,
