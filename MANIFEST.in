@@ -2,6 +2,7 @@ include import-metis.sh
 recursive-include src/metis *.h *.c
 include test/*.py
 include LICENSE
+include src/metis/*.txt
 include README.rst
 
 include configure.py
