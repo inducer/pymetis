@@ -75,6 +75,7 @@ def main():
               ],
 
           packages=["pymetis"],
+          install_requires=["six"],
           ext_modules=[
               Extension(
                   "pymetis._internal",

@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, absolute_import
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
 
@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+from six.moves import map, range
+
 version_tuple = (2016, 1)
 version = ".".join(str(n) for n in version_tuple)
 
@@ -43,7 +45,7 @@ def _prepare_graph(adjacency, xadj, adjncy):
             adj = adjacency[i]
             if adj is not None:
                 assert max(adj) < len(adjacency)
-            adjncy += map(int, adj)
+            adjncy += list(map(int, adj))
             xadj.append(len(adjncy))
     else:
         assert xadj is not None
