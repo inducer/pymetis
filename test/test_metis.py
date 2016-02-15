@@ -98,6 +98,17 @@ def test_cliques():
     pymetis.part_graph(num_clusters, adjacency=adjacency_list)
 
 
+def test_unconnected():
+    adjacency_list = [
+        np.array([2]),
+        np.array([]),
+        np.array([0])
+    ]
+
+    num_clusters = 2
+    pymetis.part_graph(num_clusters, adjacency=adjacency_list)
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:

@@ -43,7 +43,7 @@ def _prepare_graph(adjacency, xadj, adjncy):
 
         for i in range(len(adjacency)):
             adj = adjacency[i]
-            if adj is not None:
+            if adj is not None and len(adj):
                 assert max(adj) < len(adjacency)
             adjncy += list(map(int, adj))
             xadj.append(len(adjncy))
