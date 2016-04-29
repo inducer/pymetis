@@ -109,6 +109,19 @@ def test_unconnected():
     pymetis.part_graph(num_clusters, adjacency=adjacency_list)
 
 
+def test_nested_dissection():
+    scipy = pytest.importorskip("scipy")
+    import scipy.sparse
+
+    F = scipy.sparse.rand(100, 100, density=0.005)
+    M = F.transpose() * F
+    adjacency_list = [M.getrow(i).indices for i in range(M.shape[0])]
+    node_nd = pymetis.nested_dissection(adjacency=adjacency_list)
+    perm, iperm = np.array(node_nd[0]), np.array(node_nd[1])
+
+    assert np.all(perm[iperm] == np.array(range(perm.size)))
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:
