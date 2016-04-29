@@ -62,7 +62,7 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None):
     or in the direct C-like way that Metis likes as `xadj' and `adjncy'. It
     is an error to specify both graph inputs.
     """
-    xadj, adncy = _prepare_graph(adjacency, xadj, adjncy)
+    xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)
 
     from pymetis._internal import edge_nd
     return edge_nd(xadj, adjncy)
