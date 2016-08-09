@@ -114,7 +114,7 @@ namespace
     COPY_OUTPUT(perm, nvtxs);
     COPY_OUTPUT(iperm, nvtxs);
 
-    return make_tuple(perm_py, iperm_py);
+    return boost::python::make_tuple(perm_py, iperm_py);
   }
 
   object
@@ -176,7 +176,7 @@ namespace
 
     COPY_OUTPUT(part, nvtxs);
 
-    return make_tuple(edgecut, part_py);
+    return boost::python::make_tuple(edgecut, part_py);
   }
 }
 
