@@ -18,3 +18,5 @@ dist
 setuptools*egg
 setuptools.pth
 PKG-INFO
+
+.cache
