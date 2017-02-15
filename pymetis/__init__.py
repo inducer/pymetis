@@ -24,8 +24,7 @@ THE SOFTWARE.
 
 from six.moves import map, range
 
-version_tuple = (2016, 2)
-version = ".".join(str(n) for n in version_tuple)
+from pymetis.version import version, version_tuple
 
 
 def verify_nd(perm, iperm):

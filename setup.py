@@ -28,9 +28,9 @@ def main():
     EXTRA_OBJECTS, EXTRA_DEFINES = \
             set_up_shipped_boost_if_requested("pymetis", conf)
 
-    INCLUDE_DIRS = conf["BOOST_INC_DIR"]
-    LIBRARY_DIRS = conf["BOOST_LIB_DIR"]
-    LIBRARIES = conf["BOOST_PYTHON_LIBNAME"]
+    INCLUDE_DIRS = conf["BOOST_INC_DIR"]  # noqa
+    LIBRARY_DIRS = conf["BOOST_LIB_DIR"]  # noqa
+    LIBRARIES = conf["BOOST_PYTHON_LIBNAME"]  # noqa
 
     EXTRA_DEFINES["HAVE_MREMAP"] = 0  # mremap() buggy on amd64?
 
@@ -40,7 +40,7 @@ def main():
         version_file_contents = version_file.read()
     finally:
         version_file.close()
-    exec(compile(version_file_contents, "pymetis/__init__.py", 'exec'), ver_dic)
+    exec(compile(version_file_contents, "pymetis/version.py", 'exec'), ver_dic)
 
     setup(name="PyMetis",
           version=ver_dic["version"],
