@@ -34,13 +34,14 @@ def main():
 
     EXTRA_DEFINES["HAVE_MREMAP"] = 0  # mremap() buggy on amd64?
 
-    version_file = open("pymetis/__init__.py")
+    ver_filename = "pymetis/version.py"
+    version_file = open(ver_filename)
     ver_dic = {}
     try:
         version_file_contents = version_file.read()
     finally:
         version_file.close()
-    exec(compile(version_file_contents, "pymetis/version.py", 'exec'), ver_dic)
+    exec(compile(version_file_contents, ver_filename, 'exec'), ver_dic)
 
     setup(name="PyMetis",
           version=ver_dic["version"],

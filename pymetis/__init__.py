@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 from six.moves import map, range
 
-from pymetis.version import version, version_tuple
+from pymetis.version import version, version_tuple  # noqa
 
 
 def verify_nd(perm, iperm):
