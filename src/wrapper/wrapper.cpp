@@ -1,7 +1,6 @@
-#include <boost/python.hpp>
-#include <boost/scoped_array.hpp>
-#include <boost/python/stl_iterator.hpp>
+#include <pybind11/pybind11.h>
 #include <metis.h>
+#include <memory>
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
@@ -9,7 +8,7 @@
 
 
 
-using namespace boost::python;
+namespace py = pybind11;
 using namespace std;
 
 
@@ -17,12 +16,12 @@ using namespace std;
 
 #define COPY_IDXTYPE_LIST(NAME) \
   { \
-    stl_input_iterator<idx_t> begin(NAME##_py), end; \
-    std::copy(begin, end, back_inserter(NAME)); \
+    for (auto it: NAME##_py) \
+      NAME.push_back(py::cast<idx_t>(*it)); \
   }
 
 #define COPY_OUTPUT(NAME, LEN) \
-  list NAME##_py; \
+  py::list NAME##_py; \
   { \
     for (idx_t i = 0; i<LEN; ++i) \
       NAME##_py.append(NAME.get()[i]); \
@@ -66,10 +65,11 @@ namespace
    * This function verifies that the partitioning was computed correctly.
    */
   int
-  wrap_verify_nd(const object &perm_py, const object &iperm_py)
+  wrap_verify_nd(const py::object &perm_py, const py::object &iperm_py)
   {
-    int i, j, k, rcode=0;
-    int nvtxs = len(perm_py);
+    int rcode=0;
+    idx_t i;
+    idx_t nvtxs = py::len(perm_py);
 
     vector<idx_t> perm, iperm;
     COPY_IDXTYPE_LIST(perm);
@@ -87,19 +87,18 @@ namespace
   }
 
 
-  object
-  wrap_node_nd(const object &xadj_py, const object &adjncy_py)
+  py::object
+  wrap_node_nd(const py::object &xadj_py, const py::object &adjncy_py)
   {
-    int i;
-    int nvtxs = len(xadj_py) - 1;
+    idx_t nvtxs = py::len(xadj_py) - 1;
 
     vector<idx_t> xadj, adjncy;
     COPY_IDXTYPE_LIST(xadj);
     COPY_IDXTYPE_LIST(adjncy);
     idx_t * vwgt = NULL;
 
-    boost::scoped_array<idx_t> perm(new idx_t[nvtxs]);
-    boost::scoped_array<idx_t> iperm(new idx_t[nvtxs]);
+    std::unique_ptr<idx_t []> perm(new idx_t[nvtxs]);
+    std::unique_ptr<idx_t []> iperm(new idx_t[nvtxs]);
 
     int options[METIS_NOPTIONS];
     METIS_SetDefaultOptions(options);
@@ -114,19 +113,19 @@ namespace
     COPY_OUTPUT(perm, nvtxs);
     COPY_OUTPUT(iperm, nvtxs);
 
-    return boost::python::make_tuple(perm_py, iperm_py);
+    return py::make_tuple(perm_py, iperm_py);
   }
 
-  object
+  py::object
   wrap_part_graph(
       int nparts,
-      const object &xadj_py,
-      const object &adjncy_py,
-      const object &vwgt_py,
-      const object &adjwgt_py,
+      const py::object &xadj_py,
+      const py::object &adjncy_py,
+      const py::object &vwgt_py,
+      const py::object &adjwgt_py,
       bool recursive)
   {
-    idx_t nvtxs = len(xadj_py) - 1;
+    idx_t nvtxs = py::len(xadj_py) - 1;
     vector<idx_t> xadj, adjncy, vwgt, adjwgt;
     COPY_IDXTYPE_LIST(xadj);
     COPY_IDXTYPE_LIST(adjncy);
@@ -139,11 +138,11 @@ namespace
     // pymetis defaults to the minimizing-edge-cut objective
     idx_t * pvsize = NULL;
 
-    if (vwgt_py != object())
+    if (!vwgt_py.is_none())
     {
       COPY_IDXTYPE_LIST(vwgt);
     }
-    if (adjwgt_py != object())
+    if (!adjwgt_py.is_none())
     {
       COPY_IDXTYPE_LIST(adjwgt);
     }
@@ -153,7 +152,7 @@ namespace
     options[METIS_OPTION_NUMBERING] = 0;  // C-style numbering
 
     idx_t edgecut;
-    boost::scoped_array<idx_t> part(new idx_t[nvtxs]);
+    std::unique_ptr<idx_t []> part(new idx_t[nvtxs]);
 
     if (recursive)
     {
@@ -176,14 +175,14 @@ namespace
 
     COPY_OUTPUT(part, nvtxs);
 
-    return boost::python::make_tuple(edgecut, part_py);
+    return py::make_tuple(edgecut, part_py);
   }
 }
 
-BOOST_PYTHON_MODULE(_internal)
+PYBIND11_MODULE(_internal, m)
 {
-  def("verify_nd", wrap_verify_nd);
-  def("node_nd", wrap_node_nd);
-  def("edge_nd", wrap_node_nd);  // DEPRECATED
-  def("part_graph", wrap_part_graph);
+  m.def("verify_nd", wrap_verify_nd);
+  m.def("node_nd", wrap_node_nd);
+  m.def("edge_nd", wrap_node_nd);  // DEPRECATED
+  m.def("part_graph", wrap_part_graph);
 }
