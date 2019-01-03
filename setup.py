@@ -94,7 +94,7 @@ def main():
                   extra_compile_args=conf["CXXFLAGS"],
                   ),
               ],
-            cmdclass={'build_ext': BuildExt},
+            cmdclass={'build_ext': PybindBuildExtCommand},
             zip_safe=False)
 
 
