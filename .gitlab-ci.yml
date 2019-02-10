@@ -13,33 +13,17 @@ Python 2.7:
     reports:
       junit: test/pytest.xml
 
-Python 3.6:
+Python 3:
   script:
-  - py_version=3.6
+  - py_version=3
   - EXTRA_INSTALL="numpy pybind11"
   - curl -L -O -k https://gitlab.tiker.net/inducer/ci-support/raw/master/build-and-test-py-project.sh
   - ". ./build-and-test-py-project.sh"
   tags:
-  - python3.6
+  - python3
   - linux
   except:
   - tags
   artifacts:
     reports:
       junit: test/pytest.xml
-
-Python 3.7:
-  script:
-  - py_version=3.7
-  - EXTRA_INSTALL="numpy pybind11"
-  - curl -L -O -k https://gitlab.tiker.net/inducer/ci-support/raw/master/build-and-test-py-project.sh
-  - ". ./build-and-test-py-project.sh"
-  tags:
-  - python3.7
-  - linux
-  except:
-  - tags
-  artifacts:
-    reports:
-      junit: test/pytest.xml
-
