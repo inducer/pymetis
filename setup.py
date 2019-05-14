@@ -17,6 +17,7 @@ def main():
             check_pybind11,
             hack_distutils, get_config, setup, Extension,
             get_pybind_include, PybindBuildExtCommand)
+    from setuptools.command.build_clib import build_clib
 
     check_pybind11()
 
@@ -71,22 +72,35 @@ def main():
 
           packages=find_packages(),
 
-            setup_requires=[
-                "pybind11",
-                ],
+          setup_requires=[
+              "pybind11",
+               ],
+
           install_requires=["six"],
+
+          libraries=[
+              (
+                  "metis",
+                  {
+                      "sources": (
+                           glob.glob("src/metis/GKlib/*.c")
+                           + glob.glob("src/metis/*.c")
+                           + glob.glob("src/metis/libmetis/*.c")
+                           ),
+                      "include_dirs": [
+                          "src/metis/GKlib",
+                          "src/metis/include",
+                          "src/metis/libmetis"
+                          ],
+                  }
+              )],
 
           ext_modules=[
               Extension(
                   "pymetis._internal",
-                  ["src/wrapper/wrapper.cpp"]
-                  + glob.glob("src/metis/GKlib/*.c")
-                  + glob.glob("src/metis/*.c")
-                  + glob.glob("src/metis/libmetis/*.c"),
+                  ["src/wrapper/wrapper.cpp"],
                   define_macros=list(extra_defines.items()),
-                  include_dirs=["src/metis/GKlib"]
-                  + ["src/metis/include"]
-                  + ["src/metis/libmetis"]
+                  include_dirs=["src/metis/include"]
                   + [
                         get_pybind_include(),
                         get_pybind_include(user=True)
@@ -94,8 +108,13 @@ def main():
                   extra_compile_args=conf["CXXFLAGS"],
                   ),
               ],
-            cmdclass={'build_ext': PybindBuildExtCommand},
-            zip_safe=False)
+
+           cmdclass={
+               'build_clib': build_clib,
+               'build_ext': PybindBuildExtCommand
+               },
+
+           zip_safe=False)
 
 
 if __name__ == '__main__':
