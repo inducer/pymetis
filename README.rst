@@ -1,3 +1,16 @@
+PyMetis: A Python Wrapper for METIS
+===================================
+
+.. image:: https://gitlab.tiker.net/inducer/pymetis/badges/master/pipeline.svg
+    :alt: Gitlab Build Status
+    :target: https://gitlab.tiker.net/inducer/pymetis/commits/master
+.. image:: https://dev.azure.com/ak-spam/inducer/_apis/build/status/inducer.pymetis?branchName=master
+    :alt: Azure Build Status
+    :target: https://dev.azure.com/ak-spam/inducer/_build/latest?definitionId=9&branchName=master
+.. image:: https://badge.fury.io/py/pymetis.png
+    :alt: Python Package Index Release Page
+    :target: https://pypi.org/project/pymetis/
+
 PyMetis is a Python wrapper for the `Metis
 <http://glaros.dtc.umn.edu/gkhome/views/metis>`_ graph partititioning software
 by George Karypis, Vipin Kumar and others. It includes version 5.1.0 of Metis
