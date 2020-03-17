@@ -4,9 +4,9 @@ PyMetis: A Python Wrapper for METIS
 .. image:: https://gitlab.tiker.net/inducer/pymetis/badges/master/pipeline.svg
     :alt: Gitlab Build Status
     :target: https://gitlab.tiker.net/inducer/pymetis/commits/master
-.. image:: https://dev.azure.com/ak-spam/inducer/_apis/build/status/inducer.pymetis?branchName=master
-    :alt: Azure Build Status
-    :target: https://dev.azure.com/ak-spam/inducer/_build/latest?definitionId=9&branchName=master
+.. image:: https://github.com/inducer/pymetis/workflows/CI/badge.svg?branch=master
+    :alt: Github Build Status
+    :target: https://github.com/inducer/pymetis/actions?query=branch%3Amaster+workflow%3ACI
 .. image:: https://badge.fury.io/py/pymetis.png
     :alt: Python Package Index Release Page
     :target: https://pypi.org/project/pymetis/
