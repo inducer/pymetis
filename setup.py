@@ -78,33 +78,24 @@ def main():
 
           install_requires=["six"],
 
-          libraries=[
-              (
-                  "metis",
-                  {
-                      "sources": (
-                           glob.glob("src/metis/GKlib/*.c")
-                           + glob.glob("src/metis/*.c")
-                           + glob.glob("src/metis/libmetis/*.c")
-                           ),
-                      "include_dirs": [
-                          "src/metis/GKlib",
-                          "src/metis/include",
-                          "src/metis/libmetis"
-                          ],
-                  }
-              )],
-
           ext_modules=[
               Extension(
                   "pymetis._internal",
-                  ["src/wrapper/wrapper.cpp"],
+                  (
+                      ["src/wrapper/wrapper.cpp"]
+                      + glob.glob("src/metis/GKlib/*.c")
+                      + glob.glob("src/metis/*.c")
+                      + glob.glob("src/metis/libmetis/*.c")
+                      ),
                   define_macros=list(extra_defines.items()),
-                  include_dirs=["src/metis/include"]
-                  + [
-                        get_pybind_include(),
-                        get_pybind_include(user=True)
-                        ],
+                  include_dirs=[
+                      "src/metis/include",
+                      "src/metis/GKlib",
+                      "src/metis/include",
+                      "src/metis/libmetis",
+                      get_pybind_include(),
+                      get_pybind_include(user=True)
+                      ],
                   extra_compile_args=conf["CXXFLAGS"],
                   ),
               ],
