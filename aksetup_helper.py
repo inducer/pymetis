@@ -941,9 +941,11 @@ class PybindBuildExtCommand(NumpyBuildExtCommand):
     def build_extensions(self):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct, [])
+        cxx_opts = []
+
         if ct in ['unix', 'mingw32']:
             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
-            opts.append(cpp_flag(self.compiler))
+            cxx_opts.append(cpp_flag(self.compiler))
             if has_flag(self.compiler, '-fvisibility=hidden'):
                 opts.append('-fvisibility=hidden')
         elif ct == 'msvc':
@@ -951,7 +953,22 @@ class PybindBuildExtCommand(NumpyBuildExtCommand):
         for ext in self.extensions:
             ext.extra_compile_args = ext.extra_compile_args + opts
 
-        NumpyBuildExtCommand.build_extensions(self)
+        prev__compile = self.compiler._compile
+
+        # -std=... used on C files causes an error on Apple LLVM
+        # https://gitlab.tiker.net/inducer/pymetis/-/jobs/102421
+        def _compile(obj, src, ext, cc_args, extra_postargs, pp_opts):
+            if ext == ".cpp":
+                cc_args = cc_args + cxx_opts
+
+            return prev__compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
+
+        self.compiler._compile = _compile
+
+        try:
+            NumpyBuildExtCommand.build_extensions(self)
+        finally:
+            self.compiler._compile = prev__compile
 
 # }}}
 
