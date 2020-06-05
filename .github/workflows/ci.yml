@@ -12,7 +12,7 @@ on:
 jobs:
     pytest-macos:
         name: Pytest on macOS
-        runs-on: macOS
+        runs-on: macos-latest
         steps:
         -   uses: actions/checkout@v2
         -
