@@ -71,6 +71,7 @@ def main():
               "pybind11",
                ],
 
+          python_requires="~=3.6",
           install_requires=["six"],
 
           ext_modules=[
