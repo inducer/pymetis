@@ -52,7 +52,7 @@ def main():
               'Intended Audience :: Other Audience',
               'Intended Audience :: Science/Research',
               'License :: OSI Approved :: MIT License',
-              'License :: Free for non-commercial use',
+              'License :: OSI Approved :: Apache Software License',
               'Natural Language :: English',
               'Programming Language :: C',
               'Programming Language :: C++',

@@ -162,10 +162,12 @@ def hack_distutils(debug=False, fast_link=True, what_opt=3):
         from distutils import sysconfig
 
         cvars = sysconfig.get_config_vars()
-        cflags = cvars.get('OPT')
+
+        bad_prefixes = ['-g', '-O', '-Wstrict-prototypes', '-DNDEBUG']
+
+        cflags = cvars.get("OPT")
         if cflags:
-            cflags = remove_prefixes(cflags.split(),
-                    ['-g', '-O', '-Wstrict-prototypes', '-DNDEBUG'])
+            cflags = remove_prefixes(cflags.split(), bad_prefixes)
             if debug:
                 cflags.append("-g")
             else:
@@ -175,11 +177,17 @@ def hack_distutils(debug=False, fast_link=True, what_opt=3):
                     cflags.append("-O%s" % what_opt)
                     cflags.append("-DNDEBUG")
 
-            cvars['OPT'] = str.join(' ', cflags)
-            if "BASECFLAGS" in cvars:
-                cvars["CFLAGS"] = cvars["BASECFLAGS"] + " " + cvars["OPT"]
-            else:
-                assert "CFLAGS" in cvars
+            cvars["OPT"] = str.join(' ', cflags)
+
+        cflags = cvars.get("CONFIGURE_CFLAGS")
+        if cflags:
+            cflags = remove_prefixes(cflags.split(), bad_prefixes)
+            cvars["CONFIGURE_CFLAGS"] = str.join(' ', cflags)
+
+        if "BASECFLAGS" in cvars:
+            cvars["CFLAGS"] = cvars["BASECFLAGS"] + " " + cvars.get("OPT", "")
+        else:
+            assert "CFLAGS" in cvars
 
         if fast_link:
             for varname in ["LDSHARED", "BLDSHARED"]:
@@ -935,9 +943,6 @@ class PybindBuildExtCommand(NumpyBuildExtCommand):
         'unix': [],
     }
 
-    if sys.platform == 'darwin':
-        c_opts['unix'] += ['-stdlib=libc++', '-mmacosx-version-min=10.7']
-
     def build_extensions(self):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct, [])
@@ -948,6 +953,11 @@ class PybindBuildExtCommand(NumpyBuildExtCommand):
             cxx_opts.append(cpp_flag(self.compiler))
             if has_flag(self.compiler, '-fvisibility=hidden'):
                 opts.append('-fvisibility=hidden')
+            if sys.platform == 'darwin':
+                if has_flag(self.compiler, '-stdlib=libc++'):
+                    opts.append('-stdlib=libc++')
+                if has_flag(self.compiler, '-mmacosx-version-min=10.7'):
+                    opts.append('-mmacosx-version-min=10.7')
         elif ct == 'msvc':
             opts.append('/DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
         for ext in self.extensions:
