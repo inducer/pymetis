@@ -30,6 +30,8 @@ import pytest
 
 
 def test_tet_mesh(visualize=False):
+    pytest.importorskip("meshpy")
+
     from math import pi, cos, sin
     from meshpy.tet import MeshInfo, build
     from meshpy.geometry import \
@@ -113,9 +115,9 @@ def test_nested_dissection():
     scipy = pytest.importorskip("scipy")
     import scipy.sparse
 
-    F = scipy.sparse.rand(100, 100, density=0.005)
-    M = F.transpose() * F
-    adjacency_list = [M.getrow(i).indices for i in range(M.shape[0])]
+    fmat = scipy.sparse.rand(100, 100, density=0.005)
+    mmat = fmat.transpose() * fmat
+    adjacency_list = [mmat.getrow(i).indices for i in range(mmat.shape[0])]
     node_nd = pymetis.nested_dissection(adjacency=adjacency_list)
     perm, iperm = np.array(node_nd[0]), np.array(node_nd[1])
 

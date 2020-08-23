@@ -2,11 +2,17 @@
 
 
 def get_config_schema():
-    from aksetup_helper import ConfigSchema, StringListOption
+    from aksetup_helper import (ConfigSchema, StringListOption, Switch,
+            IncludeDir, LibraryDir, Libraries)
 
     return ConfigSchema([
+        Switch("USE_SHIPPED_METIS", True, "Use included copy of metis"),
         StringListOption("CXXFLAGS", [],
             help="Any extra C++ compiler options to include"),
+
+        IncludeDir("METIS", []),
+        LibraryDir("METIS", []),
+        Libraries("METIS", ["metis"]),
         ])
 
 
@@ -27,7 +33,26 @@ def main():
 
     extra_defines = {}
 
-    extra_defines["HAVE_MREMAP"] = 0  # mremap() buggy on amd64?
+    if conf["USE_SHIPPED_METIS"]:
+        extra_defines["HAVE_MREMAP"] = 0  # mremap() buggy on amd64?
+        metis_source_files = (
+                      glob.glob("src/metis/GKlib/*.c")
+                      + glob.glob("src/metis/*.c")
+                      + glob.glob("src/metis/libmetis/*.c")
+                      )
+        metis_include_dirs = [
+                      "src/metis/include",
+                      "src/metis/GKlib",
+                      "src/metis/include",
+                      "src/metis/libmetis",
+                      ]
+        metis_library_dirs = []
+        metis_libraries = []
+    else:
+        metis_source_files = []
+        metis_include_dirs = conf["METIS_INC_DIR"]
+        metis_library_dirs = conf["METIS_LIB_DIR"]
+        metis_libraries = conf["METIS_LIBNAME"]
 
     ver_filename = "pymetis/version.py"
     version_file = open(ver_filename)
@@ -77,21 +102,14 @@ def main():
           ext_modules=[
               Extension(
                   "pymetis._internal",
-                  (
-                      ["src/wrapper/wrapper.cpp"]
-                      + glob.glob("src/metis/GKlib/*.c")
-                      + glob.glob("src/metis/*.c")
-                      + glob.glob("src/metis/libmetis/*.c")
-                      ),
+                  ["src/wrapper/wrapper.cpp"] + metis_source_files,
                   define_macros=list(extra_defines.items()),
-                  include_dirs=[
-                      "src/metis/include",
-                      "src/metis/GKlib",
-                      "src/metis/include",
-                      "src/metis/libmetis",
+                  include_dirs=metis_include_dirs + [
                       get_pybind_include(),
                       get_pybind_include(user=True)
                       ],
+                  library_dirs=metis_library_dirs,
+                  libraries=metis_libraries,
                   extra_compile_args=conf["CXXFLAGS"],
                   ),
               ],
