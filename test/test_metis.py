@@ -30,6 +30,8 @@ import pytest
 
 
 def test_tet_mesh(visualize=False):
+    pytest.importorskip("meshpy")
+
     from math import pi, cos, sin
     from meshpy.tet import MeshInfo, build
     from meshpy.geometry import \
