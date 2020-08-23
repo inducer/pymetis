@@ -1,3 +1,12 @@
+Flake8:
+  script:
+  - curl -L -O -k https://gitlab.tiker.net/inducer/ci-support/raw/master/prepare-and-run-flake8.sh
+  - . ./prepare-and-run-flake8.sh "$CI_PROJECT_NAME" test
+  tags:
+  - python3
+  except:
+  - tags
+
 Python 3:
   script:
   - py_version=3
@@ -12,3 +21,4 @@ Python 3:
   artifacts:
     reports:
       junit: test/pytest.xml
+
