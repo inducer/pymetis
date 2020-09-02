@@ -42,14 +42,15 @@ can be defined and partitioned into two graphs with
 
 .. code:: python
 
+    import numpy as np
     import pymetis
-    adjacency_list = [array([4, 2, 1]),
-                      array([0, 2, 3]),
-                      array([4, 3, 1, 0]),
-                      array([1, 2, 5, 6]),
-                      array([0, 2, 5]),
-                      array([4, 3, 6]),
-                      array([5, 3])]
+    adjacency_list = [np.array([4, 2, 1]),
+                      np.array([0, 2, 3]),
+                      np.array([4, 3, 1, 0]),
+                      np.array([1, 2, 5, 6]),
+                      np.array([0, 2, 5]),
+                      np.array([4, 3, 6]),
+                      np.array([5, 3])]
     pymetis.part_graph(2, adjacency=adjacency_list)
     n_cuts, membership = pymetis.part_graph(2, adjacency=adjacency_list)
     # n_cuts = 3
