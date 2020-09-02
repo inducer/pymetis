@@ -14,7 +14,7 @@ PyMetis: A Python Wrapper for METIS
 PyMetis is a Python wrapper for the `Metis
 <http://glaros.dtc.umn.edu/gkhome/views/metis>`_ graph partititioning software
 by George Karypis, Vipin Kumar and others. It includes version 5.1.0 of Metis
-and wraps it using the `Boost Python <http://www.boost.org/libs/python/doc/>`_
+and wraps it using the `Pybind11 <https://pybind11.readthedocs.io/en/stable/>`_
 wrapper generator library. So far, it only wraps the most basic graph
 partitioning functionality (which is enough for my current use), but extending
 it in case you need more should be quite straightforward. Using PyMetis to
