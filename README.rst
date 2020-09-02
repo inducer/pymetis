@@ -40,6 +40,8 @@ use zero-based indexing,
 
 can be defined and partitioned into two graphs with
 
+.. code:: python
+
     import pymetis
     adjacency_list = [array([4, 2, 1]),
                       array([0, 2, 3]),
