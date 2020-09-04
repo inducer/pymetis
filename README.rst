@@ -51,7 +51,6 @@ can be defined and partitioned into two graphs with
                       np.array([0, 2, 5]),
                       np.array([4, 3, 6]),
                       np.array([5, 3])]
-    pymetis.part_graph(2, adjacency=adjacency_list)
     n_cuts, membership = pymetis.part_graph(2, adjacency=adjacency_list)
     # n_cuts = 3
     # membership = [1, 1, 1, 0, 1, 0, 0]
