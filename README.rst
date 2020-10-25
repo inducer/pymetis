@@ -6,7 +6,7 @@ PyMetis: A Python Wrapper for METIS
     :target: https://gitlab.tiker.net/inducer/pymetis/commits/master
 .. image:: https://github.com/inducer/pymetis/workflows/CI/badge.svg?branch=master
     :alt: Github Build Status
-    :target: https://github.com/inducer/pymetis/actions?query=branch%3Amaster+workflow%3ACI+event%3Apush
+    :target: https://github.com/inducer/pymetis/actions?query=branch%3Amaster+workflow%3ACI
 .. image:: https://badge.fury.io/py/PyMetis.png
     :alt: Python Package Index Release Page
     :target: https://pypi.org/project/pymetis/
