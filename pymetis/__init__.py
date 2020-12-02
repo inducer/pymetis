@@ -68,7 +68,7 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None):
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
-        vweights=None, eweights=None, recursive=None):
+        vweights=None, eweights=None, recursive=None, contiguous=None):
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
     The input graph is given in either a Pythonic way as the `adjacency' parameter
@@ -110,10 +110,14 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         else:
             recursive = True
 
+    if contiguous is None:
+        contiguous = False
+
     from pymetis._internal import part_graph
 
     if nparts == 1:
         # metis has a bug in this case--it disregards the index base
         return 0, [0] * (len(xadj)-1)
 
-    return part_graph(nparts, xadj, adjncy, vweights, eweights, recursive)
+    return part_graph(nparts, xadj, adjncy, vweights,
+                      eweights, recursive, contiguous)
