@@ -119,4 +119,5 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         # metis has a bug in this case--it disregards the index base
         return 0, [0] * (len(xadj)-1)
 
-    return part_graph(nparts, xadj, adjncy, vweights, eweights, recursive, contiguous)
+    return part_graph(nparts, xadj, adjncy, vweights,
+                      eweights, recursive, contiguous)
