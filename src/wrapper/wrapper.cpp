@@ -45,7 +45,7 @@ namespace
     }
   }
 
-  inline void assert_ok(int info, const char * message)
+  inline void assert_ok(idx_t info, const char * message)
   {
     switch (info) {
       case METIS_OK:
@@ -100,7 +100,7 @@ namespace
     std::unique_ptr<idx_t []> perm(new idx_t[nvtxs]);
     std::unique_ptr<idx_t []> iperm(new idx_t[nvtxs]);
 
-    int options[METIS_NOPTIONS];
+    idx_t options[METIS_NOPTIONS];
     METIS_SetDefaultOptions(options);
     options[METIS_OPTION_NUMBERING] = 0;  // C-style numbering
 
@@ -118,7 +118,7 @@ namespace
 
   py::object
   wrap_part_graph(
-      int nparts,
+      idx_t nparts,
       const py::object &xadj_py,
       const py::object &adjncy_py,
       const py::object &vwgt_py,
