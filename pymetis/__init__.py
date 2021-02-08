@@ -68,7 +68,7 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None):
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
-        vweights=None, eweights=None, recursive=None, contiguous=None):
+        vweights=None, eweights=None, **kwargs):
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
     The input graph is given in either a Pythonic way as the `adjacency' parameter
@@ -101,17 +101,19 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         unweighted), then the adjwgt can be set to ``None``.
 
     (quoted with slight adaptations from the Metis docs)
+
+    kwargs:
+        *recursive  (bool): Use recursive mode
+        *contiguous (bool): Generate contiguous partitions
+        *ufactor    (int): Specify METIS ufactor
+        *seed       (int): Specify METIS seed
     """
     xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)
 
-    if recursive is None:
-        if nparts > 8:
-            recursive = False
-        else:
-            recursive = True
-
-    if contiguous is None:
-        contiguous = False
+    recursive = kwargs.get('recursive', nparts <= 8)
+    contiguous = kwargs.get('contiguous', False)
+    ufactor    = kwargs.get('ufactor', -1) # -1 reverts to METIS default
+    seed       = kwargs.get('seed', -1)    # -1 reverts to METIS default
 
     from pymetis._internal import part_graph
 
@@ -120,4 +122,4 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         return 0, [0] * (len(xadj)-1)
 
     return part_graph(nparts, xadj, adjncy, vweights,
-                      eweights, recursive, contiguous)
+                      eweights, recursive, contiguous, seed, ufactor)

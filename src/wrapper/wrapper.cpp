@@ -124,7 +124,10 @@ namespace
       const py::object &vwgt_py,
       const py::object &adjwgt_py,
       bool recursive,
-      bool contiguous)
+      bool contiguous,
+      int  seed,
+      int  ufactor
+      )
   {
     idx_t nvtxs = py::len(xadj_py) - 1;
     vector<idx_t> xadj, adjncy, vwgt, adjwgt;
@@ -153,7 +156,11 @@ namespace
     options[METIS_OPTION_NUMBERING] = 0;  // C-style numbering
 
     if (contiguous)
-        options[METIS_OPTION_CONTIG] = 1;
+        options[METIS_OPTION_CONTIG] = contiguous;
+    if (ufactor > 0)
+        options[METIS_OPTION_UFACTOR] = ufactor;
+    if (seed > 0)
+        options[METIS_OPTION_SEED] = seed;
 
     idx_t edgecut;
     std::unique_ptr<idx_t []> part(new idx_t[nvtxs]);
