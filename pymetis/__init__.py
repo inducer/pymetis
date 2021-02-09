@@ -112,8 +112,8 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
 
     recursive = kwargs.get('recursive', nparts <= 8)
     contiguous = kwargs.get('contiguous', False)
-    ufactor    = kwargs.get('ufactor', -1) # -1 reverts to METIS default
-    seed       = kwargs.get('seed', -1)    # -1 reverts to METIS default
+    ufactor = kwargs.get('ufactor', -1)  # -1 reverts to METIS default
+    seed = kwargs.get('seed', -1)        # -1 reverts to METIS default
 
     from pymetis._internal import part_graph
 
