@@ -25,6 +25,30 @@ THE SOFTWARE.
 from six.moves import map, range
 
 from pymetis.version import version, version_tuple  # noqa
+from pymetis._internal import Options
+
+
+# {{{ Options handling
+
+def _options_get_index(name):
+    if not name.islower():
+        raise AttributeError(name)
+    from pymetis._internal import options_indices
+    return getattr(options_indices, name.upper)
+
+
+def _options_getattr(self, name):
+    self._get(_options_get_index(name))
+
+
+def _options_setattr(self, name, value):
+    self._set(_options_get_index(name), value)
+
+
+Options.__getattr__ = _options_getattr
+Options.__setattr__ = _options_setattr
+
+# }}}
 
 
 def verify_nd(perm, iperm):
