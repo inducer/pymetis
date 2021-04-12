@@ -86,7 +86,7 @@ def test_tet_mesh(visualize=False):
             pyvtk.UnstructuredGrid(mesh.points, tetra=mesh.elements),
             "Mesh",
             pyvtk.CellData(pyvtk.Scalars(part_vert, name="partition")))
-        vtkelements.tofile('split.vtk')
+        vtkelements.tofile("split.vtk")
 
 
 def test_cliques():
