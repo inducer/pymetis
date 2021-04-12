@@ -22,3 +22,10 @@ Python 3:
     reports:
       junit: test/pytest.xml
 
+Documentation:
+  script:
+  - EXTRA_INSTALL="numpy pybind11"
+  - curl -L -O -k https://gitlab.tiker.net/inducer/ci-support/raw/main/build-docs.sh
+  - ". ./build-docs.sh"
+  tags:
+  - python3

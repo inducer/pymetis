@@ -3,7 +3,7 @@
 .*.swo
 build
 siteconf.py
-Makefile
+/Makefile
 tags
 *.vtk
 *.png
