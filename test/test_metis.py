@@ -124,6 +124,15 @@ def test_nested_dissection():
     assert np.all(perm[iperm] == np.array(range(perm.size)))
 
 
+def test_options():
+    opt = pymetis.Options()
+    assert opt.numbering == -1  # apparently the default
+    opt.numbering = 123
+    assert opt.numbering == 123
+    opt.numbering = 246
+    assert opt.numbering == 246
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:
