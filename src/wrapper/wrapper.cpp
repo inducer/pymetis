@@ -231,7 +231,8 @@ PYBIND11_MODULE(_internal, m)
       ;
   }
   {
-#define ADD_OPT(NAME) cls.attr(#NAME) = METIS_OPTION_##NAME
+#define ADD_OPT(NAME) cls.def_property_readonly_static(#NAME,\
+      [](py::object self) { return (int) METIS_OPTION_##NAME; })
     py::class_<options_indices> cls(m, "options_indices");
     ADD_OPT(NUMBERING);
 #undef ADD_OPT

@@ -34,11 +34,11 @@ def _options_get_index(name):
     if not name.islower():
         raise AttributeError(name)
     from pymetis._internal import options_indices
-    return getattr(options_indices, name.upper)
+    return getattr(options_indices, name.upper())
 
 
 def _options_getattr(self, name):
-    self._get(_options_get_index(name))
+    return self._get(_options_get_index(name))
 
 
 def _options_setattr(self, name, value):
