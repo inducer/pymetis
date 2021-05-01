@@ -36,7 +36,7 @@ This graph, adapted from Figure 2 of the Metis
 `manual <http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf>`_ to
 use zero-based indexing,
 
-.. image:: images/tiny_01.png
+.. image:: doc/_static/tiny_01.png
 
 can be defined and partitioned into two graphs with
 
@@ -58,5 +58,5 @@ can be defined and partitioned into two graphs with
     nodes_part_0 = np.argwhere(np.array(membership) == 0).ravel() # [3, 5, 6]
     nodes_part_1 = np.argwhere(np.array(membership) == 1).ravel() # [0, 1, 2, 4]
 
-.. image:: images/tiny_01_partitioned.png
+.. image:: doc/_static/tiny_01_partitioned.png
 
