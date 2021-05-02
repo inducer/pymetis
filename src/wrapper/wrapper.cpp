@@ -156,8 +156,8 @@ namespace
       const py::object &adjncy_py,
       const py::object &vwgt_py,
       const py::object &adjwgt_py,
-      bool recursive,
-      bool contiguous)
+      metis_options &options,
+      bool recursive)
   {
     idx_t nvtxs = py::len(xadj_py) - 1;
     vector<idx_t> xadj, adjncy, vwgt, adjwgt;
@@ -181,13 +181,6 @@ namespace
       COPY_IDXTYPE_LIST(adjwgt);
     }
 
-    idx_t options[METIS_NOPTIONS];
-    METIS_SetDefaultOptions(options);
-    options[METIS_OPTION_NUMBERING] = 0;  // C-style numbering
-
-    if (contiguous)
-        options[METIS_OPTION_CONTIG] = 1;
-
     idx_t edgecut;
     std::unique_ptr<idx_t []> part(new idx_t[nvtxs]);
 
@@ -196,7 +189,7 @@ namespace
       int info = METIS_PartGraphRecursive(
         &nvtxs, &ncon, &xadj.front(), &adjncy.front(),
         maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
-        pubvec, options, &edgecut, part.get());
+        pubvec, options.m_options, &edgecut, part.get());
 
       assert_ok(info, "METIS_PartGraphRecursive failed");
     }
@@ -205,7 +198,7 @@ namespace
       int info = METIS_PartGraphKway(
         &nvtxs, &ncon, &xadj.front(), &adjncy.front(),
         maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
-        pubvec, options, &edgecut, part.get());
+        pubvec, options.m_options, &edgecut, part.get());
 
       assert_ok(info, "METIS_PartGraphKway failed");
     }
