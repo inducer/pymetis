@@ -66,6 +66,7 @@ Configuration
 METIS has a number of configuration options that can be specified using the `pymetis.Options` class
 
 .. code:: python
+
     import pymetis
     options = pymetis.Options()
     options.contig = 1     # Require contiguous partitions
