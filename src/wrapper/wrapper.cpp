@@ -87,6 +87,39 @@ namespace
   }
 
 
+  class metis_options
+  {
+    public:
+      idx_t m_options[METIS_NOPTIONS];
+
+      metis_options()
+      {
+        METIS_SetDefaultOptions(m_options);
+      }
+
+      idx_t get(int i) const
+      {
+        if (i < 0 || i >= METIS_NOPTIONS)
+          throw new invalid_argument("options index is out of range");
+
+        return m_options[i];
+      }
+
+      void set(int i, idx_t value)
+      {
+        if (i < 0 || i >= METIS_NOPTIONS)
+          throw new invalid_argument("options index is out of range");
+
+        m_options[i] = value;
+      }
+
+      void set_defaults()
+      {
+        METIS_SetDefaultOptions(m_options);
+      }
+  };
+
+
   py::object
   wrap_node_nd(const py::object &xadj_py, const py::object &adjncy_py)
   {
@@ -181,10 +214,30 @@ namespace
 
     return py::make_tuple(edgecut, part_py);
   }
+
+  class options_indices { };
 }
 
 PYBIND11_MODULE(_internal, m)
 {
+  {
+    typedef metis_options cls;
+    py::class_<cls>(m, "Options")
+      .def(py::init<>())
+      .def("_len", []() { return METIS_NOPTIONS; })
+      .def("_get", &cls::get)
+      .def("_set", &cls::set)
+      .def("set_defaults", &cls::set_defaults)
+      ;
+  }
+  {
+#define ADD_OPT(NAME) cls.def_property_readonly_static(#NAME,\
+      [](py::object self) { return (int) METIS_OPTION_##NAME; })
+    py::class_<options_indices> cls(m, "options_indices");
+    ADD_OPT(NUMBERING);
+#undef ADD_OPT
+  }
+
   m.def("verify_nd", wrap_verify_nd);
   m.def("node_nd", wrap_node_nd);
   m.def("edge_nd", wrap_node_nd);  // DEPRECATED

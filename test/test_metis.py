@@ -86,7 +86,7 @@ def test_tet_mesh(visualize=False):
             pyvtk.UnstructuredGrid(mesh.points, tetra=mesh.elements),
             "Mesh",
             pyvtk.CellData(pyvtk.Scalars(part_vert, name="partition")))
-        vtkelements.tofile('split.vtk')
+        vtkelements.tofile("split.vtk")
 
 
 def test_cliques():
@@ -122,6 +122,15 @@ def test_nested_dissection():
     perm, iperm = np.array(node_nd[0]), np.array(node_nd[1])
 
     assert np.all(perm[iperm] == np.array(range(perm.size)))
+
+
+def test_options():
+    opt = pymetis.Options()
+    assert opt.numbering == -1  # apparently the default
+    opt.numbering = 123
+    assert opt.numbering == 123
+    opt.numbering = 246
+    assert opt.numbering == 246
 
 
 if __name__ == "__main__":

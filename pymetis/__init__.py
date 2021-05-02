@@ -1,4 +1,8 @@
-from __future__ import division, absolute_import
+"""
+.. autofunction:: nested_dissection
+.. autofunction:: part_graph
+.. autofunction:: verify_nd
+"""
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
 
@@ -25,6 +29,30 @@ THE SOFTWARE.
 from six.moves import map, range
 
 from pymetis.version import version, version_tuple  # noqa
+from pymetis._internal import Options
+
+
+# {{{ Options handling
+
+def _options_get_index(name):
+    if not name.islower():
+        raise AttributeError(name)
+    from pymetis._internal import options_indices
+    return getattr(options_indices, name.upper())
+
+
+def _options_getattr(self, name):
+    return self._get(_options_get_index(name))
+
+
+def _options_setattr(self, name, value):
+    self._set(_options_get_index(name), value)
+
+
+Options.__getattr__ = _options_getattr
+Options.__setattr__ = _options_setattr
+
+# }}}
 
 
 def verify_nd(perm, iperm):
@@ -57,8 +85,8 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None):
     """This function computes fill reducing orderings of sparse matrices using
     the multilevel nested dissection algorithm.
 
-    The input graph is given as either a Pythonic way as the `adjacency' parameter
-    or in the direct C-like way that Metis likes as `xadj' and `adjncy'. It
+    The input graph is given as either a Pythonic way as the *adjacency* parameter
+    or in the direct C-like way that Metis likes as *xadj* and *adjncy*. It
     is an error to specify both graph inputs.
     """
     xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)
@@ -71,15 +99,15 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         vweights=None, eweights=None, recursive=None, contiguous=None):
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
-    The input graph is given in either a Pythonic way as the `adjacency' parameter
-    or in the direct C-like way that Metis likes as `xadj' and `adjncy'. It
+    The input graph is given in either a Pythonic way as the *adjacency* parameter
+    or in the direct C-like way that Metis likes as *xadj* and *adjncy*. It
     is an error to specify both graph inputs.
 
-    The Pythonic graph specifier `adjacency' is required to have the following
+    The Pythonic graph specifier *adjacency* is required to have the following
     properties:
 
     - len(adjacency) needs to return the number of vertices
-    - adjacency[i] needs to be an iterable of vertices adjacent to vertex i.
+    - ``adjacency[i]`` needs to be an iterable of vertices adjacent to vertex i.
       Both directions of an undirected graph edge are required to be stored.
 
     If you would like to use *eweights* (edge weights), you need to use the
