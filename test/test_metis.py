@@ -127,10 +127,36 @@ def test_nested_dissection():
 def test_options():
     opt = pymetis.Options()
     assert opt.numbering == -1  # apparently the default
-    opt.numbering = 123
-    assert opt.numbering == 123
-    opt.numbering = 246
-    assert opt.numbering == 246
+    opt.numbering = 0
+    assert opt.numbering == 0
+    opt.contig = 1
+    assert opt.contig == 1
+    opt.seed = 123456
+    assert opt.seed == 123456
+    opt.ncuts = 5
+    assert opt.ncuts == 5
+    opt.nseps = 5
+    assert opt.nseps == 5
+    opt.niter = 100
+    assert opt.niter == 100
+    opt.no2hop = 1
+    assert opt.no2hop == 1
+    opt.compress = 1
+    assert opt.compress == 1
+    opt.pfactor = 100
+    assert opt.pfactor == 100
+    opt.ufactor = 100
+    assert opt.ufactor == 100
+
+    # Test a small example case with the options set
+    adjacency_list = [
+        np.array([1, 2]),
+        np.array([0, 2]),
+        np.array([0, 1])
+    ]
+
+    num_clusters = 2
+    n_cuts, parts = pymetis.part_graph(num_clusters, adjacency=adjacency_list, options=opt)
 
 
 if __name__ == "__main__":

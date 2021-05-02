@@ -46,6 +46,8 @@ def _options_getattr(self, name):
 
 
 def _options_setattr(self, name, value):
+    if not isinstance(value, int):
+        raise TypeError("METIS options accept only integer values.")
     self._set(_options_get_index(name), value)
 
 
@@ -96,7 +98,7 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None):
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
-        vweights=None, eweights=None, recursive=None, contiguous=None):
+        vweights=None, eweights=None, recursive=None, options=None):
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
     The input graph is given in either a Pythonic way as the *adjacency* parameter
@@ -128,6 +130,9 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         all the edges of the graph have the same weight (i.e., the graph is
         unweighted), then the adjwgt can be set to ``None``.
 
+    METIS runtime options can be specified by supplying an Options object in
+    the input.
+
     (quoted with slight adaptations from the Metis docs)
     """
     xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)
@@ -138,14 +143,13 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         else:
             recursive = True
 
-    if contiguous is None:
-        contiguous = False
-
-    from pymetis._internal import part_graph
+    if options is None:
+        options = Options()
 
     if nparts == 1:
         # metis has a bug in this case--it disregards the index base
         return 0, [0] * (len(xadj)-1)
 
+    from pymetis._internal import part_graph
     return part_graph(nparts, xadj, adjncy, vweights,
-                      eweights, recursive, contiguous)
+                      eweights, options, recursive)
