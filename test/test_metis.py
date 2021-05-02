@@ -156,7 +156,11 @@ def test_options():
     ]
 
     num_clusters = 2
-    n_cuts, parts = pymetis.part_graph(num_clusters, adjacency=adjacency_list, options=opt)
+    n_cuts, parts = pymetis.part_graph(
+        num_clusters,
+        adjacency=adjacency_list,
+        options=opt
+    )
 
 
 if __name__ == "__main__":
