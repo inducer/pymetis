@@ -6,8 +6,6 @@
 #include <stdexcept>
 
 
-
-
 namespace py = pybind11;
 using namespace std;
 
@@ -227,7 +225,20 @@ PYBIND11_MODULE(_internal, m)
 #define ADD_OPT(NAME) cls.def_property_readonly_static(#NAME,\
       [](py::object self) { return (int) METIS_OPTION_##NAME; })
     py::class_<options_indices> cls(m, "options_indices");
+
+    ADD_OPT(NCUTS);
+    ADD_OPT(NSEPS);
     ADD_OPT(NUMBERING);
+    ADD_OPT(NITER);
+    ADD_OPT(SEED);
+    ADD_OPT(MINCONN);
+    ADD_OPT(NO2HOP);
+    ADD_OPT(CONTIG);
+    ADD_OPT(COMPRESS);
+    ADD_OPT(CCORDER);
+    ADD_OPT(PFACTOR);
+    ADD_OPT(UFACTOR);
+
 #undef ADD_OPT
   }
 
