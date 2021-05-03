@@ -119,7 +119,8 @@ namespace
 
 
   py::object
-  wrap_node_nd(const py::object &xadj_py, const py::object &adjncy_py)
+  wrap_node_nd(const py::object &xadj_py, const py::object &adjncy_py,
+      metis_options &options)
   {
     idx_t nvtxs = py::len(xadj_py) - 1;
 
@@ -131,12 +132,8 @@ namespace
     std::unique_ptr<idx_t []> perm(new idx_t[nvtxs]);
     std::unique_ptr<idx_t []> iperm(new idx_t[nvtxs]);
 
-    idx_t options[METIS_NOPTIONS];
-    METIS_SetDefaultOptions(options);
-    options[METIS_OPTION_NUMBERING] = 0;  // C-style numbering
-
     int info = METIS_NodeND(
-      &nvtxs, &xadj.front(), &adjncy.front(), vwgt, options,
+      &nvtxs, &xadj.front(), &adjncy.front(), vwgt, options.m_options,
       perm.get(), iperm.get());
 
     assert_ok(info, "METIS_NodeND failed");

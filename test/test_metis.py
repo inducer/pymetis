@@ -108,7 +108,8 @@ def test_unconnected():
     ]
 
     num_clusters = 2
-    pymetis.part_graph(num_clusters, adjacency=adjacency_list)
+    pymetis.part_graph(num_clusters, adjacency=adjacency_list,
+            options=pymetis.Options(contig=False))
 
 
 def test_nested_dissection():
@@ -147,6 +148,11 @@ def test_options():
     assert opt.pfactor == 100
     opt.ufactor = 100
     assert opt.ufactor == 100
+
+    with pytest.raises(AttributeError):
+        opt.yoink = 100
+    with pytest.raises(AttributeError):
+        opt.yoink
 
     # Test a small example case with the options set
     adjacency_list = [
