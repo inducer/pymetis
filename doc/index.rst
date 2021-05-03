@@ -39,7 +39,6 @@ Contents
     :maxdepth: 2
 
     functionality
-    options
     misc
     🚀 Github <https://github.com/inducer/pymetis>
     💾 Download Releases <https://pypi.org/project/pymetis>

@@ -2,6 +2,8 @@
 .. autofunction:: nested_dissection
 .. autofunction:: part_graph
 .. autofunction:: verify_nd
+
+.. autoclass:: Options
 """
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
@@ -29,7 +31,7 @@ THE SOFTWARE.
 from six.moves import map, range
 
 from pymetis.version import version, version_tuple  # noqa
-from pymetis._internal import Options
+from pymetis._internal import Options as OptionsBase
 
 
 # {{{ Options handling
@@ -41,18 +43,37 @@ def _options_get_index(name):
     return getattr(options_indices, name.upper())
 
 
-def _options_getattr(self, name):
-    return self._get(_options_get_index(name))
+class Options(OptionsBase):
+    """See the `METIS manual
+    <http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf>`__
+    for context.
 
+    .. attribute:: ncuts
+    .. attribute:: nseps
+    .. attribute:: numbering
+    .. attribute:: niter
+    .. attribute:: minconn
+    .. attribute:: no2hop
+    .. attribute:: seed
+    .. attribute:: contig
+    .. attribute:: compress
+    .. attribute:: ccorder
+    .. attribute:: pfactor
+    .. attribute:: ufactor
+    """
 
-def _options_setattr(self, name, value):
-    if not isinstance(value, int):
-        raise TypeError("METIS options accept only integer values.")
-    self._set(_options_get_index(name), value)
+    def __init__(self, **kwargs):
+        super().__init__()
+        for name, val in kwargs.items():
+            setattr(self, name, val)
 
+    def __getattr__(self, name):
+        return self._get(_options_get_index(name))
 
-Options.__getattr__ = _options_getattr
-Options.__setattr__ = _options_setattr
+    def __setattr__(self, name, value):
+        if not isinstance(value, int):
+            raise TypeError("METIS options accept only integer values.")
+        self._set(_options_get_index(name), value)
 
 # }}}
 
@@ -83,7 +104,7 @@ def _prepare_graph(adjacency, xadj, adjncy):
     return xadj, adjncy
 
 
-def nested_dissection(adjacency=None, xadj=None, adjncy=None):
+def nested_dissection(adjacency=None, xadj=None, adjncy=None, options=None):
     """This function computes fill reducing orderings of sparse matrices using
     the multilevel nested dissection algorithm.
 
@@ -93,8 +114,14 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None):
     """
     xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)
 
+    if options is None:
+        options = Options()
+
+    if options.numbering not in [-1, 0]:
+        raise ValueError("METIS numbering option must be set to 0 or the default")
+
     from pymetis._internal import edge_nd
-    return edge_nd(xadj, adjncy)
+    return edge_nd(xadj, adjncy, options)
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
@@ -130,7 +157,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         all the edges of the graph have the same weight (i.e., the graph is
         unweighted), then the adjwgt can be set to ``None``.
 
-    METIS runtime options can be specified by supplying an Options object in
+    METIS runtime options can be specified by supplying an :class:`Options` object in
     the input.
 
     (quoted with slight adaptations from the Metis docs)
@@ -151,9 +178,17 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         if options.contig != -1:
             raise RuntimeError(
                 "Contiguous setting should be specified either through "
-                "`options` OR through the `contiguous` flag."
-            )
+                "`options` OR through the `contiguous` flag.")
+
+        from warnings import warn
+        warn("Passing the 'contiguous' flag is deprecated. Pass the equivalent "
+                "flag in Options instead. This will go stop working in 2022.",
+                DeprecationWarning, stacklevel=2)
+
         options.contig = True
+
+    if options.numbering not in [-1, 0]:
+        raise ValueError("METIS numbering option must be set to 0 or the default")
 
     if nparts == 1:
         # metis has a bug in this case--it disregards the index base
@@ -162,3 +197,5 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     from pymetis._internal import part_graph
     return part_graph(nparts, xadj, adjncy, vweights,
                       eweights, options, recursive)
+
+# vim: foldmethod=marker
