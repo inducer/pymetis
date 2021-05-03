@@ -22,15 +22,24 @@ partition your meshes is really easy--essentially all you need to pass into
 PyMetis is an adjacency list for the graph and the number of parts you would
 like.
 
+Links
+-----
+
+* `Documentation <https://documen.tician.de/pymetis>`__ (read how things work)
+* `Conda Forge <https://anaconda.org/conda-forge/pymetis>`_ (download binary packages for Linux, macOS, Windows)
+* `Python package index <https://pypi.python.org/pypi/pymetis>`_ (download releases)
+* `C. Gohlke's Windows binaries <https://www.lfd.uci.edu/~gohlke/pythonlibs/#pymetis>`_ (download Windows binaries)
+* `Github <https://github.com/inducer/pymetis>`_ (get latest source code, file bugs)
+
 Installation
-============
+------------
 
 The following line should do the job::
 
     pip install pymetis
 
 Quick Start
-===========
+-----------
 
 This graph, adapted from Figure 2 of the Metis
 `manual <http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf>`_ to
