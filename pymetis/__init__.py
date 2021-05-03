@@ -150,7 +150,8 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         # Check that the contiguous flag isn't set twice
         if options.contig != -1:
             raise RuntimeError(
-                "Contiguous setting should be specified either through `options` OR through the `contiguous` flag."
+                "Contiguous setting should be specified either through "
+                "`options` OR through the `contiguous` flag."
             )
         options.contig = True
 
