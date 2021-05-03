@@ -98,7 +98,7 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None):
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
-        vweights=None, eweights=None, recursive=None, options=None):
+        vweights=None, eweights=None, recursive=None, contiguous=None, options=None):
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
     The input graph is given in either a Pythonic way as the *adjacency* parameter
@@ -145,6 +145,14 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
 
     if options is None:
         options = Options()
+
+    if contiguous is True:
+        # Check that the contiguous flag isn't set twice
+        if options.contig != -1:
+            raise RuntimeError(
+                "Contiguous setting should be specified either through `options` OR through the `contiguous` flag."
+            )
+        options.contig = True
 
     if nparts == 1:
         # metis has a bug in this case--it disregards the index base
