@@ -10,6 +10,9 @@ PyMetis: A Python Wrapper for METIS
 .. image:: https://badge.fury.io/py/PyMetis.png
     :alt: Python Package Index Release Page
     :target: https://pypi.org/project/pymetis/
+.. image:: https://zenodo.org/badge/2199177.svg
+    :alt: Zenodo DOI for latest release
+    :target: https://zenodo.org/badge/latestdoi/2199177
 
 PyMetis is a Python wrapper for the `Metis
 <http://glaros.dtc.umn.edu/gkhome/views/metis>`_ graph partititioning software

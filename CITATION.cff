@@ -1,0 +1,24 @@
+cff-version: 1.1.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Kloeckner"
+  given-names: "Andreas"
+  orcid: "https://orcid.org/0000-0003-1228-519X"
+- family-names: Wala
+  given-names: Matt
+- family-names: Hartland
+  given-names: Nathan
+- family-names: Danial
+  given-names: Albert
+- family-names: Obermeyer
+  given-names: Fritz
+- family-names: Wu
+  given-names: Cathy
+- family-names: Gohlke
+  given-names: Christoph
+
+title: PyMetis
+version: "2022.1"
+date-released: 2022-07-23
+url: "https://github.com/inducer/pymetis"
+doi: 10.5281/zenodo.6892213
