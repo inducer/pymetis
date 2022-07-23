@@ -1,3 +1,9 @@
+include doc/*.rst
+include doc/Makefile
+include doc/make.bat
+include doc/conf.py
+include doc/_static/*.png
+
 include import-metis.sh
 recursive-include src/metis *.h *.c
 include test/*.py
