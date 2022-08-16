@@ -203,7 +203,45 @@ namespace
     return py::make_tuple(edgecut, part_py);
   }
 
+  py::object
+  wrap_part_mesh(
+      idx_t ne,
+      idx_t nn,
+      const py::object &eptr_py,
+      const py::object &eind_py,
+      idx_t nparts,
+      metis_options &options)
+  {
+    vector<idx_t> eptr, eind;
+    COPY_IDXTYPE_LIST(eptr);
+    COPY_IDXTYPE_LIST(eind);
+
+    // pymetis does not currently weights and size of nodes or target partition weights
+    idx_t  *vwgt = NULL; 
+    idx_t  *vsize = NULL;
+    real_t *tpwgts = NULL;
+
+
+    // Outputs
+    idx_t objval;
+    std::unique_ptr<idx_t []> epart(new idx_t[ne]);
+    std::unique_ptr<idx_t []> npart(new idx_t[nn]);
+
+
+    int info = METIS_PartMeshNodal(
+      &ne, &nn,  &eptr.front(), &eind.front(), vwgt, vsize, &nparts, 
+      tpwgts, options.m_options, &objval, epart.get(), npart.get());
+    
+    assert_ok(info, "METIS_PartMeshNodal failed");
+
+    COPY_OUTPUT(epart, ne);
+    COPY_OUTPUT(npart, nn);
+
+    return py::make_tuple(objval, epart_py, npart_py);
+  }
+
   class options_indices { };
+
 }
 
 PYBIND11_MODULE(_internal, m)
@@ -243,4 +281,5 @@ PYBIND11_MODULE(_internal, m)
   m.def("node_nd", wrap_node_nd);
   m.def("edge_nd", wrap_node_nd);  // DEPRECATED
   m.def("part_graph", wrap_part_graph);
+  m.def("part_mesh", wrap_part_mesh);
 }

@@ -1,6 +1,7 @@
 """
 .. autofunction:: nested_dissection
 .. autofunction:: part_graph
+.. autofunction:: part_mesh
 .. autofunction:: verify_nd
 
 .. autoclass:: Options
@@ -103,6 +104,33 @@ def _prepare_graph(adjacency, xadj, adjncy):
 
     return xadj, adjncy
 
+def _prepare_mesh(tri, eptr, eind):
+    if tri is not None:
+        assert eptr is None
+        assert eind is None
+
+        eptr = [0]
+        eind = []
+
+        for i in range(len(tri)):
+            adj = tri[i]
+            if adj is not None and len(adj):
+                assert max(adj) < len(tri)
+            eind += list(map(int, adj))
+            eptr.append(len(eind))
+    else:
+        assert eptr is not None
+        assert eind is not None
+
+    # calculate nn
+    nn = 0
+    for nd in eind:
+        nn = max(nn, nd)
+
+    nn = nn+1
+
+    return eptr, eind, nn
+
 
 def nested_dissection(adjacency=None, xadj=None, adjncy=None, options=None):
     """This function computes fill reducing orderings of sparse matrices using
@@ -198,4 +226,21 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     return part_graph(nparts, xadj, adjncy, vweights,
                       eweights, options, recursive)
 
+def part_mesh(nparts, tri=None, eptr=None, eind=None, options=None):
+
+    eptr, eind, nn = _prepare_mesh(tri, eptr, eind)
+
+    if options is None:
+        options = Options()
+
+    if nparts == 1:
+        # metis has a bug in this case--it disregards the index base
+        return 0, [0] * (ne-1), [0] * (nn-1)
+
+    ne = len(eptr)-1
+
+    from pymetis._internal import part_mesh
+    return part_mesh(ne, nn, eptr, eind, nparts, options)
+    
+    
 # vim: foldmethod=marker
