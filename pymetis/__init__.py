@@ -203,6 +203,23 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
 # vim: foldmethod=marker
 
 def part_mesh(nParts, connectivity, options=None):
+    """
+    This function is used to partition a mesh into `nParts` parts based on a
+    partitioning of the mesh's nodal graph.
+
+    The input connectivity is given by a list of lists containing the vertex
+    indices, eg [ [0, 1, 5, 4], [1, 2, 6, 5], ... ]
+
+    - len(connectivity) should be the number of elements in mesh
+    
+    METIS expects a connectivity which is flattened with a corresponding offset
+    vector that points to the beinning and end of each element declaration. This
+    method will deduce these vectors based on the connectivity.
+
+    METIS runtime options can be specified by supplying an :class:`Options`
+    object in the input.
+    """
+
     # Generate flattened connectivity with offsets array, suitable for Metis
     from itertools import accumulate
     conn = [it for cell in connectivity for it in cell]
