@@ -28,6 +28,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+from lib2to3.pgen2.token import OP
+from optparse import Option
 from six.moves import map, range
 
 from pymetis.version import version, version_tuple  # noqa
@@ -199,3 +201,26 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
                       eweights, options, recursive)
 
 # vim: foldmethod=marker
+
+def part_mesh(nParts, connectivity, options=None):
+    # Generate flattened connectivity with offsets array, suitable for Metis
+    from itertools import accumulate
+    conn = [it for cell in connectivity for it in cell]
+    conn_offset = [0] + list(accumulate([len(cell) for cell in connectivity]))
+
+    nElements = len(connectivity)
+    nVertex = len(set(conn))
+
+    # Handle option validation
+    if options is None:
+        options = Options()
+
+    if options.numbering not in [-1, 0]:
+        raise ValueError("METIS numbering option must be set to 0 or the default")
+
+    # Trivial partitioning
+    if nParts < 2:
+        return 0, [0] * nElements, [0] * nVertex
+
+    from pymetis._internal import part_mesh
+    return part_mesh(nParts, conn_offset, conn, nElements, nVertex, options)
