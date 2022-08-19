@@ -28,8 +28,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-from lib2to3.pgen2.token import OP
-from optparse import Option
 from six.moves import map, range
 
 from pymetis.version import version, version_tuple  # noqa
