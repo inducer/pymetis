@@ -226,9 +226,23 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     return part_graph(nparts, xadj, adjncy, vweights,
                       eweights, options, recursive)
 
-def part_mesh(nparts, tri=None, eptr=None, eind=None, options=None):
+def part_mesh(nparts, elements=None, eptr=None, eind=None, options=None):
+    """Return a partition (objval, epart, npart) into nparts for an input mesh.
 
-    eptr, eind, nn = _prepare_mesh(tri, eptr, eind)
+    The input mesh is given in either a Pythonic way as the *elements* parameter
+    or in the direct C-like way that Metis likes as *eptr* and *eind*. It
+    is an error to specify both graph inputs.
+
+    The Pythonic mesh specifier *elements* is required to have the following
+    properties:
+
+    - len(elements) needs to return the number of elements in the mesh
+    - ``elements[i]`` needs to be an iterable of vertice ids defining the ith element.
+
+    Check the METIS manual for appropriate options.  Otherwise standard defaults are used. 
+    """
+
+    eptr, eind, nn = _prepare_mesh(elements, eptr, eind)
 
     if options is None:
         options = Options()
