@@ -200,16 +200,16 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
 
 # vim: foldmethod=marker
 
-def part_mesh(nParts, connectivity, options=None):
-    """
-    This function is used to partition a mesh into `nParts` parts based on a
+
+def part_mesh(n_parts, connectivity, options=None):
+    """This function is used to partition a mesh into `n_parts` parts based on a
     partitioning of the mesh's nodal graph.
 
     The input connectivity is given by a list of lists containing the vertex
     indices, eg [ [0, 1, 5, 4], [1, 2, 6, 5], ... ]
 
     - len(connectivity) should be the number of elements in mesh
-    
+
     METIS expects a connectivity which is flattened with a corresponding offset
     vector that points to the beinning and end of each element declaration. This
     method will deduce these vectors based on the connectivity.
@@ -223,8 +223,8 @@ def part_mesh(nParts, connectivity, options=None):
     conn = [it for cell in connectivity for it in cell]
     conn_offset = [0] + list(accumulate([len(cell) for cell in connectivity]))
 
-    nElements = len(connectivity)
-    nVertex = len(set(conn))
+    n_elements = len(connectivity)
+    n_vertex = len(set(conn))
 
     # Handle option validation
     if options is None:
@@ -234,8 +234,8 @@ def part_mesh(nParts, connectivity, options=None):
         raise ValueError("METIS numbering option must be set to 0 or the default")
 
     # Trivial partitioning
-    if nParts < 2:
-        return 0, [0] * nElements, [0] * nVertex
+    if n_parts < 2:
+        return 0, [0] * n_elements, [0] * n_vertex
 
     from pymetis._internal import part_mesh
-    return part_mesh(nParts, conn_offset, conn, nElements, nVertex, options)
+    return part_mesh(n_parts, conn_offset, conn, n_elements, n_vertex, options)
