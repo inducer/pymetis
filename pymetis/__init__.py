@@ -104,18 +104,19 @@ def _prepare_graph(adjacency, xadj, adjncy):
 
     return xadj, adjncy
 
-def _prepare_mesh(tri, eptr, eind):
-    if tri is not None:
+
+def _prepare_mesh(elements, eptr, eind):
+    if elements is not None:
         assert eptr is None
         assert eind is None
 
         eptr = [0]
         eind = []
 
-        for i in range(len(tri)):
-            adj = tri[i]
+        for i in range(len(elements)):
+            adj = elements[i]
             if adj is not None and len(adj):
-                assert max(adj) < len(tri)
+                assert max(adj) < len(elements)
             eind += list(map(int, adj))
             eptr.append(len(eind))
     else:
@@ -226,6 +227,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     return part_graph(nparts, xadj, adjncy, vweights,
                       eweights, options, recursive)
 
+
 def part_mesh(nparts, elements=None, eptr=None, eind=None, options=None):
     """Return a partition (objval, epart, npart) into nparts for an input mesh.
 
@@ -237,12 +239,16 @@ def part_mesh(nparts, elements=None, eptr=None, eind=None, options=None):
     properties:
 
     - len(elements) needs to return the number of elements in the mesh
-    - ``elements[i]`` needs to be an iterable of vertice ids defining the ith element.
+    - ``elements[i]`` needs to be an iterable of vertex ids defining 
+      the ith element.
 
-    Check the METIS manual for appropriate options.  Otherwise standard defaults are used. 
+    Check the METIS manual for appropriate options.
+    Otherwise standard defaults are used.
     """
 
     eptr, eind, nn = _prepare_mesh(elements, eptr, eind)
+
+    ne = len(eptr)-1
 
     if options is None:
         options = Options()
@@ -251,10 +257,8 @@ def part_mesh(nparts, elements=None, eptr=None, eind=None, options=None):
         # metis has a bug in this case--it disregards the index base
         return 0, [0] * (ne-1), [0] * (nn-1)
 
-    ne = len(eptr)-1
-
     from pymetis._internal import part_mesh
     return part_mesh(ne, nn, eptr, eind, nparts, options)
-    
-    
+
+
 # vim: foldmethod=marker

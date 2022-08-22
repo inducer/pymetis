@@ -129,6 +129,7 @@ def test_tet_mesh(visualize=False):
             pyvtk.CellData(pyvtk.Scalars(epart, name="partition")))
         vtkelements.tofile("split_mesh.vtk")
 
+
 def test_cliques():
     adjacency_list = [
         np.array([1, 2]),
