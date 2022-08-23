@@ -239,7 +239,7 @@ def part_mesh(nparts, elements=None, eptr=None, eind=None, options=None):
     properties:
 
     - len(elements) needs to return the number of elements in the mesh
-    - ``elements[i]`` needs to be an iterable of vertex ids defining 
+    - ``elements[i]`` needs to be an iterable of vertex ids defining
       the ith element.
 
     Check the METIS manual for appropriate options.
