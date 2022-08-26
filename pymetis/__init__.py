@@ -1,9 +1,11 @@
 """
 .. autofunction:: nested_dissection
 .. autofunction:: part_graph
+.. autofunction:: part_mesh
 .. autofunction:: verify_nd
 
 .. autoclass:: Options
+.. autoclass:: MeshPartition
 """
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
@@ -32,6 +34,24 @@ from six.moves import map, range
 
 from pymetis.version import version, version_tuple  # noqa
 from pymetis._internal import Options as OptionsBase
+
+# Create Named Tuple for Mesh Partition
+from collections import namedtuple
+MeshPartition = namedtuple("MeshPartition",
+    ["edge_cuts", "element_part", "vertex_part"])
+MeshPartition.__doc__ = """A named tuple for describing the partitioning of a
+mesh.
+
+.. attribute:: edge_cuts
+
+   Number of edges which needed cutting to form partitions
+.. attribute:: element_part
+
+   List with element partition indices
+.. attribute:: vertex_part
+
+   List with vertex partition indices
+"""
 
 
 # {{{ Options handling
@@ -197,5 +217,60 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     from pymetis._internal import part_graph
     return part_graph(nparts, xadj, adjncy, vweights,
                       eweights, options, recursive)
+
+
+def part_mesh(n_parts, connectivity, options=None):
+    """This function is used to partition a mesh into *n_parts* parts based on a
+    graph partitioning where each vertex is a node in the graph. A mesh is a
+    collection of non-overlapping elements which are identified by their vertices.
+    An element can have a different number of vertices based on its topology,
+    ie 3 -> triangular, 6 -> prism, 8 -> hexahedron.
+
+    The mesh *connectivity* is specified as a list of elements where each element
+    is specified by a list of its vertex indices,
+    eg ``[ [0, 1, 5, 4], [1, 2, 6, 5], ... ]``. The spatial points, which make up the
+    element vertices, are needed for defining the mesh, but are not needed for
+    partitioning.
+
+    - ``len(connectivity)`` should be the number of elements in mesh
+
+    METIS expects a connectivity which is flattened with a corresponding offset
+    vector that points to the beginning and end of each element declaration. This
+    connectivity format allows a mesh to be comprised of multiple element types, eg
+    triangles and quads. The ``part_mesh`` method will deduce these vectors based on
+    the *connectivity* supplied.
+
+    METIS runtime options can be specified by supplying an :class:`Options`
+    object in the input.
+
+    Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where
+    ``edge_cuts`` is the number of cuts to the connectivity graph, ``element_part``
+    is an array of length n_elements, with entries identifying the element's
+    partition index, and ``vertex_part`` is an array of length n_vertices with
+    entries identifying the vertex's partition index.
+    """
+
+    # Generate flattened connectivity with offsets array, suitable for Metis
+    from itertools import accumulate
+    conn = [it for cell in connectivity for it in cell]
+    conn_offset = [0] + list(accumulate([len(cell) for cell in connectivity]))
+
+    n_elements = len(connectivity)
+    n_vertex = len(set(conn))
+
+    # Handle option validation
+    if options is None:
+        options = Options()
+
+    if options.numbering not in [-1, 0]:
+        raise ValueError("METIS numbering option must be set to 0 or the default")
+
+    # Trivial partitioning
+    if n_parts < 2:
+        return MeshPartition(0, [0] * n_elements, [0] * n_vertex)
+
+    from pymetis._internal import part_mesh
+    return MeshPartition(*part_mesh(n_parts, conn_offset, conn,
+        n_elements, n_vertex, options))
 
 # vim: foldmethod=marker

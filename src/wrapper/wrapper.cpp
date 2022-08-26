@@ -203,6 +203,34 @@ namespace
     return py::make_tuple(edgecut, part_py);
   }
 
+  py::object
+  wrap_part_mesh(idx_t &nParts,
+    const py::object &connectivityOffsets_py,
+    const py::object & connectivity_py,
+    idx_t &nElements,
+    idx_t &nVertex,
+    metis_options &options)
+  {
+    idx_t edgeCuts;
+    std::unique_ptr<idx_t []> elemPart(new idx_t[nElements]);
+    std::unique_ptr<idx_t []> vertPart(new idx_t[nVertex]);
+
+    std::vector<idx_t> connectivityOffsets, connectivity;
+    COPY_IDXTYPE_LIST(connectivityOffsets);
+    COPY_IDXTYPE_LIST(connectivity);
+
+    int info = METIS_PartMeshNodal(&nElements, &nVertex,
+      connectivityOffsets.data(), connectivity.data(),
+      nullptr, nullptr, &nParts, nullptr, options.m_options,
+      &edgeCuts, elemPart.get(), vertPart.get());
+    assert_ok(info, "METIS_PartMeshNodal failed");
+
+    COPY_OUTPUT(elemPart, nElements);
+    COPY_OUTPUT(vertPart, nVertex);
+
+    return py::make_tuple(edgeCuts, elemPart_py, vertPart_py);
+  }
+
   class options_indices { };
 }
 
@@ -243,4 +271,5 @@ PYBIND11_MODULE(_internal, m)
   m.def("node_nd", wrap_node_nd);
   m.def("edge_nd", wrap_node_nd);  // DEPRECATED
   m.def("part_graph", wrap_part_graph);
+  m.def("part_mesh", wrap_part_mesh);
 }

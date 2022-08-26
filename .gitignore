@@ -2,6 +2,7 @@
 .*.swp
 .*.swo
 build
+.eggs
 siteconf.py
 /Makefile
 tags
