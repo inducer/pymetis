@@ -5,6 +5,7 @@
 .. autofunction:: verify_nd
 
 .. autoclass:: Options
+.. autoclass:: MeshPartition
 """
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
@@ -33,6 +34,24 @@ from six.moves import map, range
 
 from pymetis.version import version, version_tuple  # noqa
 from pymetis._internal import Options as OptionsBase
+
+# Create Named Tuple for Mesh Partition
+from collections import namedtuple
+MeshPartition = namedtuple("MeshPartition",
+    ["edge_cuts", "element_part", "vertex_part"])
+MeshPartition.__doc__ = """A named tuple for describing the partitioning of a
+mesh.
+
+.. attribute:: edge_cuts
+
+   Number of edges which needed cutting to form partitions
+.. attribute:: element_part
+
+   List with element partition indices
+.. attribute:: vertex_part
+
+   List with vertex partition indices
+"""
 
 
 # {{{ Options handling
@@ -224,11 +243,11 @@ def part_mesh(n_parts, connectivity, options=None):
     METIS runtime options can be specified by supplying an :class:`Options`
     object in the input.
 
-    Returns a tuple of ``(nCuts, partitionElements, partitionVertices)``, where
-    ``nCuts`` is the number of cuts to the connectivity graph, ``partitionElements``
-    is an array of length nElements, with entries identifying the element's partition
-    index, and ``partitionVertices`` is an array of length nVertices with entries
-    identifying the vertex's partition index.
+    Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where
+    ``edge_cuts`` is the number of cuts to the connectivity graph, ``element_part``
+    is an array of length n_elements, with entries identifying the element's
+    partition index, and ``vertex_part`` is an array of length n_vertices with
+    entries identifying the vertex's partition index.
     """
 
     # Generate flattened connectivity with offsets array, suitable for Metis
@@ -248,9 +267,10 @@ def part_mesh(n_parts, connectivity, options=None):
 
     # Trivial partitioning
     if n_parts < 2:
-        return 0, [0] * n_elements, [0] * n_vertex
+        return MeshPartition(0, [0] * n_elements, [0] * n_vertex)
 
     from pymetis._internal import part_mesh
-    return part_mesh(n_parts, conn_offset, conn, n_elements, n_vertex, options)
+    return MeshPartition(*part_mesh(n_parts, conn_offset, conn,
+        n_elements, n_vertex, options))
 
 # vim: foldmethod=marker

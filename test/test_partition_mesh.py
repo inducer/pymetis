@@ -101,6 +101,24 @@ def test_3d_hex_mesh_part(vis=False):
         [float(n_vert)/float(n_part)] * n_part, rel=0.1)
 
 
+def test_part_mesh_named_tuple():
+    n_cells_x = 7
+    n_cells_y = 5
+    _, connectivity = generate_mesh_2d(n_cells_x, n_cells_y)
+
+    partition = pymetis.part_mesh(1, connectivity)
+    assert isinstance(partition, pymetis.MeshPartition)
+    assert partition.edge_cuts == 0
+    assert partition.element_part == [0] * (n_cells_x*n_cells_y)
+    assert partition.vertex_part == [0] * ((n_cells_x+1)*(n_cells_y+1))
+
+    partition = pymetis.part_mesh(2, connectivity)
+    assert isinstance(partition, pymetis.MeshPartition)
+    assert hasattr(partition, "edge_cuts")
+    assert hasattr(partition, "element_part")
+    assert hasattr(partition, "vertex_part")
+
+
 def test_part_mesh_opts():
     # Check that invalid numbering throws error
     opts = pymetis.Options(numbering=1)
