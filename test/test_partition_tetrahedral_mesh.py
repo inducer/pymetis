@@ -87,7 +87,7 @@ def test_tet_graph(visualize=False):
         vtkelements.tofile("split_graph.vtk")
 
 
-def test_tet_mesh(visualize=False):
+def test_tet_mesh_nodal(visualize=False):
     pytest.importorskip("meshpy")
 
     from math import pi, cos, sin
@@ -127,6 +127,128 @@ def test_tet_mesh(visualize=False):
             pyvtk.CellData(pyvtk.Scalars(epart, name="partition")))
         vtkelements.tofile("split_mesh.vtk")
 
+def test_tet_mesh_dual(visualize=False):
+    pytest.importorskip("meshpy")
+
+    from math import pi, cos, sin
+    from meshpy.tet import MeshInfo, build
+    from meshpy.geometry import \
+            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
+
+    pytest.importorskip("meshpy")
+
+    big_r = 3
+    little_r = 1.5
+
+    points = 50
+    dphi = 2*pi/points
+
+    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+            for i in range(points)])
+
+    geo = GeometryBuilder()
+    geo.add_geometry(
+            *generate_surface_of_revolution(rz,
+                closure=EXT_CLOSED_IN_RZ, radial_subdiv=20))
+
+    mesh_info = MeshInfo()
+    geo.set(mesh_info)
+
+    mesh = build(mesh_info)
+
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, None, pymetis.metis.GType.DUAL)
+
+    if visualize:
+        import pyvtk
+
+        vtkelements = pyvtk.VtkData(
+            pyvtk.UnstructuredGrid(mesh.points, tetra=mesh.elements),
+            "Mesh",
+            pyvtk.CellData(pyvtk.Scalars(epart, name="partition")))
+        vtkelements.tofile("split_mesh.vtk")
+
+def test_tet_mesh_nodal_with_weights(visualize=False):
+    pytest.importorskip("meshpy")
+
+    from math import pi, cos, sin
+    from meshpy.tet import MeshInfo, build
+    from meshpy.geometry import \
+            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
+
+    pytest.importorskip("meshpy")
+
+    big_r = 3
+    little_r = 1.5
+
+    points = 50
+    dphi = 2*pi/points
+
+    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+            for i in range(points)])
+
+    geo = GeometryBuilder()
+    geo.add_geometry(
+            *generate_surface_of_revolution(rz,
+                closure=EXT_CLOSED_IN_RZ, radial_subdiv=20))
+
+    mesh_info = MeshInfo()
+    geo.set(mesh_info)
+
+    mesh = build(mesh_info)
+
+    tpwgts = [20 + 2 * it for it in range(17)]
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, tpwgts)
+
+    if visualize:
+        import pyvtk
+
+        vtkelements = pyvtk.VtkData(
+            pyvtk.UnstructuredGrid(mesh.points, tetra=mesh.elements),
+            "Mesh",
+            pyvtk.CellData(pyvtk.Scalars(epart, name="partition")))
+        vtkelements.tofile("split_mesh.vtk")
+
+
+def test_tet_mesh_dual_with_weights(visualize=False):
+    pytest.importorskip("meshpy")
+
+    from math import pi, cos, sin
+    from meshpy.tet import MeshInfo, build
+    from meshpy.geometry import \
+            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
+
+    pytest.importorskip("meshpy")
+
+    big_r = 3
+    little_r = 1.5
+
+    points = 50
+    dphi = 2*pi/points
+
+    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+            for i in range(points)])
+
+    geo = GeometryBuilder()
+    geo.add_geometry(
+            *generate_surface_of_revolution(rz,
+                closure=EXT_CLOSED_IN_RZ, radial_subdiv=20))
+
+    mesh_info = MeshInfo()
+    geo.set(mesh_info)
+
+    mesh = build(mesh_info)
+
+    tpwgts = [20 + 2 * it for it in range(17)]
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, tpwgts, pymetis.metis.GType.DUAL)
+
+    if visualize:
+        import pyvtk
+
+        vtkelements = pyvtk.VtkData(
+            pyvtk.UnstructuredGrid(mesh.points, tetra=mesh.elements),
+            "Mesh",
+            pyvtk.CellData(pyvtk.Scalars(epart, name="partition")))
+        vtkelements.tofile("split_mesh.vtk")
 
 def test_cliques():
     adjacency_list = [

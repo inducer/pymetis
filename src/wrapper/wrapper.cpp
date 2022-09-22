@@ -17,6 +17,11 @@ using namespace std;
     for (auto it: NAME##_py) \
       NAME.push_back(py::cast<idx_t>(*it)); \
   }
+#define COPY_REALTYPE_LIST(NAME) \
+  { \
+    for (auto it: NAME##_py) \
+      NAME.push_back(py::cast<real_t>(*it)); \
+  }
 
 #define COPY_OUTPUT(NAME, LEN) \
   py::list NAME##_py; \
@@ -206,25 +211,45 @@ namespace
   py::object
   wrap_part_mesh(idx_t &nParts,
     const py::object &connectivityOffsets_py,
-    const py::object & connectivity_py,
+    const py::object &connectivity_py,
+    const py::object &tpwgts_py,
+    idx_t &gtype,
     idx_t &nElements,
     idx_t &nVertex,
     metis_options &options)
   {
-    idx_t edgeCuts;
+    idx_t edgeCuts = 0;
     std::unique_ptr<idx_t []> elemPart(new idx_t[nElements]);
     std::unique_ptr<idx_t []> vertPart(new idx_t[nVertex]);
 
     std::vector<idx_t> connectivityOffsets, connectivity;
+    std::vector<real_t> tpwgts;
     COPY_IDXTYPE_LIST(connectivityOffsets);
     COPY_IDXTYPE_LIST(connectivity);
+    COPY_REALTYPE_LIST(tpwgts);
+    real_t* pTpwgts = nullptr;
+    if(tpwgts.size() != 0)
+        pTpwgts = tpwgts.data();
 
-    int info = METIS_PartMeshNodal(&nElements, &nVertex,
-      connectivityOffsets.data(), connectivity.data(),
-      nullptr, nullptr, &nParts, nullptr, options.m_options,
-      &edgeCuts, elemPart.get(), vertPart.get());
-    assert_ok(info, "METIS_PartMeshNodal failed");
 
+    if(gtype == METIS_GTYPE_NODAL) 
+    {
+        int info = METIS_PartMeshNodal(&nElements, &nVertex,
+          connectivityOffsets.data(), connectivity.data(),
+          nullptr, nullptr, &nParts, pTpwgts, options.m_options,
+          &edgeCuts, elemPart.get(), vertPart.get());
+        assert_ok(info, "METIS_PartMeshNodal failed");
+    }
+    else
+    {
+        idx_t ncommon = 1;
+        idx_t objval = 1;
+        int info = METIS_PartMeshDual(&nElements, &nVertex,
+          connectivityOffsets.data(), connectivity.data(),
+          nullptr, nullptr, &ncommon, &nParts, pTpwgts, options.m_options,
+          &objval, elemPart.get(), vertPart.get());
+        assert_ok(info, "METIS_PartMeshNodal failed");
+    }
     COPY_OUTPUT(elemPart, nElements);
     COPY_OUTPUT(vertPart, nVertex);
 
@@ -251,18 +276,32 @@ PYBIND11_MODULE(_internal, m)
       [](py::object self) { return (int) METIS_OPTION_##NAME; })
     py::class_<options_indices> cls(m, "options_indices");
 
-    ADD_OPT(NCUTS);
-    ADD_OPT(NSEPS);
-    ADD_OPT(NUMBERING);
+    ADD_OPT(PTYPE);
+    ADD_OPT(OBJTYPE);
+    ADD_OPT(CTYPE);
+    ADD_OPT(IPTYPE);
+    ADD_OPT(RTYPE);
+    ADD_OPT(DBGLVL);
     ADD_OPT(NITER);
+    ADD_OPT(NCUTS);
     ADD_OPT(SEED);
-    ADD_OPT(MINCONN);
     ADD_OPT(NO2HOP);
+    ADD_OPT(MINCONN);
     ADD_OPT(CONTIG);
     ADD_OPT(COMPRESS);
     ADD_OPT(CCORDER);
     ADD_OPT(PFACTOR);
+    ADD_OPT(NSEPS);
     ADD_OPT(UFACTOR);
+    ADD_OPT(NUMBERING);
+
+    ADD_OPT(HELP);
+    ADD_OPT(TPWGTS);
+    ADD_OPT(NCOMMON);
+    ADD_OPT(NOOUTPUT);
+    ADD_OPT(BALANCE);
+    ADD_OPT(GTYPE);
+    ADD_OPT(UBVEC);
 
 #undef ADD_OPT
   }

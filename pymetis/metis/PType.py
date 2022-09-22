@@ -1,0 +1,2 @@
+RECURSIVE = 0
+KWAY = 1

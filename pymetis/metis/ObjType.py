@@ -1,0 +1,3 @@
+CUT = 0
+VOL = 1
+NODE = 2

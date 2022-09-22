@@ -52,7 +52,7 @@ mesh.
 
    List with vertex partition indices
 """
-
+from . import metis
 
 # {{{ Options handling
 
@@ -219,7 +219,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
                       eweights, options, recursive)
 
 
-def part_mesh(n_parts, connectivity, options=None):
+def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
     """This function is used to partition a mesh into *n_parts* parts based on a
     graph partitioning where each vertex is a node in the graph. A mesh is a
     collection of non-overlapping elements which are identified by their vertices.
@@ -243,6 +243,12 @@ def part_mesh(n_parts, connectivity, options=None):
     METIS runtime options can be specified by supplying an :class:`Options`
     object in the input.
 
+    ``tpwgts`` is a list of size ``n_parts`` that specifies the desired weight 
+    for each partition.
+
+    ``gtype``, as either metis.GType.NODAL (0) or metis.GType.DUAL (1), 
+    specifies the partition is base on a nodal or dual graph of the mesh
+
     Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where
     ``edge_cuts`` is the number of cuts to the connectivity graph, ``element_part``
     is an array of length n_elements, with entries identifying the element's
@@ -257,20 +263,47 @@ def part_mesh(n_parts, connectivity, options=None):
 
     n_elements = len(connectivity)
     n_vertex = len(set(conn))
-
+    
+   
     # Handle option validation
     if options is None:
         options = Options()
+        #set default values
+        options.ptype = metis.PType.KWAY
+        options.objtype = metis.ObjType.CUT
+        options.ctype = metis.CType.SHEM
+        options.dbglvl = 0
+        options.minconn = 0
+        options.contig = 0
+        options.niter = 10
+        options.ncuts = 1
 
     if options.numbering not in [-1, 0]:
         raise ValueError("METIS numbering option must be set to 0 or the default")
 
+    if tpwgts is None:
+        tpwgts = []
+    if len(tpwgts) > 0:
+        if len(tpwgts) != n_parts:
+            raise RuntimeError("The length of tpwgts mismatches `n_part`")
+
+        import numpy as np
+        if any(np.array(tpwgts) < 0.0):
+            raise ValueError("The values of tpwgts should be non-negative")
+
+        # rescale tpwgts to ensure sum(tpwgts) == 1
+        total_weights = sum(tpwgts)
+        tpwgts = [w / total_weights for w in tpwgts] 
+
+    if gtype is None:
+        gtype = metis.GType.DUAL
+ 
     # Trivial partitioning
     if n_parts < 2:
         return MeshPartition(0, [0] * n_elements, [0] * n_vertex)
 
     from pymetis._internal import part_mesh
     return MeshPartition(*part_mesh(n_parts, conn_offset, conn,
-        n_elements, n_vertex, options))
+        tpwgts, gtype, n_elements, n_vertex, options))
 
 # vim: foldmethod=marker

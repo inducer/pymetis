@@ -1,0 +1,3 @@
+PMETIS = 0
+KMETIS = 1
+OMETIS = 2
