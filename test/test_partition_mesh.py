@@ -9,7 +9,7 @@ def test_2d_quad_mesh_nodal(vis=False):
     points, connectivity = generate_mesh_2d(n_cells_x, n_cells_y)
 
     n_part = 4
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, None, pymetis.metis.GType.NODAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -98,7 +98,7 @@ def test_2d_quad_mesh_nodal_with_weights(vis=False):
 
     n_part = 4
     tpwgts = [0.1, 0.2, 0.3, 0.4]
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, tpwgts)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, tpwgts, pymetis.metis.GType.NODAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -197,7 +197,7 @@ def test_3d_hex_mesh_part_nodal(vis=False):
     points, connectivity = generate_mesh_3d(n_cells_x, n_cells_y, n_cells_z)
 
     n_part = 5
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, None, pymetis.metis.GType.NODAL)
 
     if vis:
         import pyvtk
@@ -280,7 +280,7 @@ def test_3d_hex_mesh_part_nodal_with_weights(vis=False):
 
     n_part = 5
     tpwgts = [(i + 1.0) / 15.0 for i in range(n_part)]
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, tpwgts)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, tpwgts, pymetis.metis.GType.NODAL)
 
     if vis:
         import pyvtk
@@ -365,7 +365,7 @@ def test_part_mesh_named_tuple():
     assert partition.element_part == [0] * (n_cells_x*n_cells_y)
     assert partition.vertex_part == [0] * ((n_cells_x+1)*(n_cells_y+1))
 
-    partition = pymetis.part_mesh(2, connectivity)
+    partition = pymetis.part_mesh(2, connectivity, None, None, pymetis.metis.GType.NODAL)
     assert isinstance(partition, pymetis.MeshPartition)
     assert hasattr(partition, "edge_cuts")
     assert hasattr(partition, "element_part")

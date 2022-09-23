@@ -116,7 +116,7 @@ def test_tet_mesh_nodal(visualize=False):
 
     mesh = build(mesh_info)
 
-    objval, epart, npart = pymetis.part_mesh(17, mesh.elements)
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, None, pymetis.metis.GType.NODAL)
 
     if visualize:
         import pyvtk
@@ -197,7 +197,7 @@ def test_tet_mesh_nodal_with_weights(visualize=False):
     mesh = build(mesh_info)
 
     tpwgts = [20 + 2 * it for it in range(17)]
-    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, tpwgts)
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, tpwgts, pymetis.metis.GType.NODAL)
 
     if visualize:
         import pyvtk
