@@ -35,6 +35,8 @@ from six.moves import map, range
 from pymetis.version import version, version_tuple  # noqa
 from pymetis._internal import Options as OptionsBase
 
+import pymetis.metis
+
 # Create Named Tuple for Mesh Partition
 from collections import namedtuple
 MeshPartition = namedtuple("MeshPartition",
@@ -52,7 +54,7 @@ mesh.
 
    List with vertex partition indices
 """
-from . import metis
+
 
 # {{{ Options handling
 
