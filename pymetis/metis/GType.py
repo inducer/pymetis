@@ -1,2 +1,0 @@
-DUAL = 0
-NODAL = 1

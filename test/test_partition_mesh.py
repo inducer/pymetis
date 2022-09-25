@@ -9,7 +9,8 @@ def test_2d_quad_mesh_nodal(vis=False):
     points, connectivity = generate_mesh_2d(n_cells_x, n_cells_y)
 
     n_part = 4
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, None, pymetis.metis.GType.NODAL)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+        None, None, pymetis.metis.GType.NODAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -46,6 +47,7 @@ def test_2d_quad_mesh_nodal(vis=False):
     vert_count = [vert_part.count(it) for it in range(n_part)]
     assert vert_count == pytest.approx(
         [float(n_vert)/float(n_part)] * n_part, rel=0.1)
+
 
 def test_2d_quad_mesh_dual(vis=False):
     n_cells_x = 70
@@ -53,7 +55,8 @@ def test_2d_quad_mesh_dual(vis=False):
     points, connectivity = generate_mesh_2d(n_cells_x, n_cells_y)
 
     n_part = 4
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, None, pymetis.metis.GType.DUAL)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+        None, None, pymetis.metis.GType.DUAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -90,6 +93,7 @@ def test_2d_quad_mesh_dual(vis=False):
     vert_count = [vert_part.count(it) for it in range(n_part)]
     assert vert_count == pytest.approx(
         [float(n_vert)/float(n_part)] * n_part, rel=0.1)
+
 
 def test_2d_quad_mesh_nodal_with_weights(vis=False):
     n_cells_x = 70
@@ -98,7 +102,8 @@ def test_2d_quad_mesh_nodal_with_weights(vis=False):
 
     n_part = 4
     tpwgts = [0.1, 0.2, 0.3, 0.4]
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, tpwgts, pymetis.metis.GType.NODAL)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+        None, tpwgts, pymetis.metis.GType.NODAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -122,13 +127,15 @@ def test_2d_quad_mesh_nodal_with_weights(vis=False):
     assert len(elem_part) == n_cells_x*n_cells_y
     assert len(vert_part) == (n_cells_x+1)*(n_cells_y+1)
 
-    # Test that element/vertex ratio among the partitions agrees with the weights (`tpwgts`)
+    # Test that element/vertex ratio among the partitions
+    # agrees with the weights (`tpwgts`)
     n_elem = n_cells_x*n_cells_y
     elem_count = [elem_part.count(it) for it in range(n_part)]
     assert elem_count == pytest.approx(
         [float(n_elem) * tpwgts[it] for it in range(n_part)], rel=0.1)
 
-    # Test that element/vertex ratio among the partitions agrees with the weights (`tpwgts`)
+    # Test that element/vertex ratio among the partitions
+    # agrees with the weights (`tpwgts`)
     n_vert = (n_cells_x+1)*(n_cells_y+1)
     vert_count = [vert_part.count(it) for it in range(n_part)]
     assert vert_count == pytest.approx(
@@ -142,7 +149,8 @@ def test_2d_quad_mesh_dual_with_weights(vis=False):
 
     n_part = 4
     tpwgts = [0.1, 0.2, 0.3, 0.4]
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, tpwgts, pymetis.metis.GType.DUAL)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+        None, tpwgts, pymetis.metis.GType.DUAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -166,13 +174,15 @@ def test_2d_quad_mesh_dual_with_weights(vis=False):
     assert len(elem_part) == n_cells_x*n_cells_y
     assert len(vert_part) == (n_cells_x+1)*(n_cells_y+1)
 
-    # Test that element/vertex ratio among the partitions agrees with the weights (`tpwgts`)
+    # Test that element/vertex ratio among the partitions
+    # agrees with the weights (`tpwgts`)
     n_elem = n_cells_x*n_cells_y
     elem_count = [elem_part.count(it) for it in range(n_part)]
     assert elem_count == pytest.approx(
         [float(n_elem) * tpwgts[it] for it in range(n_part)], rel=0.1)
 
-    # Test that element/vertex ratio among the partitions agrees with the weights (`tpwgts`)
+    # Test that element/vertex ratio among the partitions
+    # agrees with the weights (`tpwgts`)
     n_vert = (n_cells_x+1)*(n_cells_y+1)
     vert_count = [vert_part.count(it) for it in range(n_part)]
     assert vert_count == pytest.approx(
@@ -197,7 +207,8 @@ def test_3d_hex_mesh_part_nodal(vis=False):
     points, connectivity = generate_mesh_3d(n_cells_x, n_cells_y, n_cells_z)
 
     n_part = 5
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, None, pymetis.metis.GType.NODAL)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+        None, None, pymetis.metis.GType.NODAL)
 
     if vis:
         import pyvtk
@@ -230,6 +241,7 @@ def test_3d_hex_mesh_part_nodal(vis=False):
     vert_count = [vert_part.count(it) for it in range(n_part)]
     assert vert_count == pytest.approx(
         [float(n_vert)/float(n_part)] * n_part, rel=0.1)
+
 
 def test_3d_hex_mesh_part_dual(vis=False):
     n_cells_x = 70
@@ -238,7 +250,8 @@ def test_3d_hex_mesh_part_dual(vis=False):
     points, connectivity = generate_mesh_3d(n_cells_x, n_cells_y, n_cells_z)
 
     n_part = 5
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, None, pymetis.metis.GType.DUAL)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+        None, None, pymetis.metis.GType.DUAL)
 
     if vis:
         import pyvtk
@@ -271,6 +284,7 @@ def test_3d_hex_mesh_part_dual(vis=False):
     vert_count = [vert_part.count(it) for it in range(n_part)]
     assert vert_count == pytest.approx(
         [float(n_vert)/float(n_part)] * n_part, rel=0.1)
+
 
 def test_3d_hex_mesh_part_nodal_with_weights(vis=False):
     n_cells_x = 70
@@ -280,7 +294,8 @@ def test_3d_hex_mesh_part_nodal_with_weights(vis=False):
 
     n_part = 5
     tpwgts = [(i + 1.0) / 15.0 for i in range(n_part)]
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, tpwgts, pymetis.metis.GType.NODAL)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+        None, tpwgts, pymetis.metis.GType.NODAL)
 
     if vis:
         import pyvtk
@@ -300,18 +315,19 @@ def test_3d_hex_mesh_part_nodal_with_weights(vis=False):
     assert len(elem_part) == n_cells_x*n_cells_y*n_cells_z
     assert len(vert_part) == (n_cells_x+1)*(n_cells_y+1)*(n_cells_z+1)
 
-    # Test that element/vertex ratio among the partitions agrees with the weights ratio (`tpwgts`)
+    # Test that element/vertex ratio among the partitions
+    # agrees with the weights ratio (`tpwgts`)
     n_elem = n_cells_x*n_cells_y*n_cells_z
     elem_count = [elem_part.count(it) for it in range(n_part)]
     assert elem_count == pytest.approx(
         [float(n_elem) * tpwgts[it] for it in range(n_part)], rel=0.1)
 
-    # Test that element/vertex ratio among the partitions agrees with the weights ratio (`tpwgts`)
+    # Test that element/vertex ratio among the partitions
+    # agrees with the weights ratio (`tpwgts`)
     n_vert = (n_cells_x+1)*(n_cells_y+1)*(n_cells_z+1)
     vert_count = [vert_part.count(it) for it in range(n_part)]
     assert vert_count == pytest.approx(
         [float(n_vert) * tpwgts[it] for it in range(n_part)], rel=0.1)
-
 
 
 def test_3d_hex_mesh_part_dual_with_weights(vis=False):
@@ -322,7 +338,8 @@ def test_3d_hex_mesh_part_dual_with_weights(vis=False):
 
     n_part = 5
     tpwgts = [(i + 1.0) / 15.0 for i in range(n_part)]
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity, None, tpwgts, pymetis.metis.GType.DUAL)
+    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+        None, tpwgts, pymetis.metis.GType.DUAL)
 
     if vis:
         import pyvtk
@@ -342,17 +359,20 @@ def test_3d_hex_mesh_part_dual_with_weights(vis=False):
     assert len(elem_part) == n_cells_x*n_cells_y*n_cells_z
     assert len(vert_part) == (n_cells_x+1)*(n_cells_y+1)*(n_cells_z+1)
 
-    # Test that element/vertex ratio among the partitions agrees with the weights ratio (`tpwgts`)
+    # Test that element/vertex ratio among the partitions
+    # agrees with the weights ratio (`tpwgts`)
     n_elem = n_cells_x*n_cells_y*n_cells_z
     elem_count = [elem_part.count(it) for it in range(n_part)]
     assert elem_count == pytest.approx(
         [float(n_elem) * tpwgts[it] for it in range(n_part)], rel=0.1)
 
-    # Test that element/vertex ratio among the partitions agrees with the weights ratio (`tpwgts`)
+    # Test that element/vertex ratio among the partitions
+    # agrees with the weights ratio (`tpwgts`)
     n_vert = (n_cells_x+1)*(n_cells_y+1)*(n_cells_z+1)
     vert_count = [vert_part.count(it) for it in range(n_part)]
     assert vert_count == pytest.approx(
         [float(n_vert) * tpwgts[it] for it in range(n_part)], rel=0.1)
+
 
 def test_part_mesh_named_tuple():
     n_cells_x = 7
@@ -365,17 +385,20 @@ def test_part_mesh_named_tuple():
     assert partition.element_part == [0] * (n_cells_x*n_cells_y)
     assert partition.vertex_part == [0] * ((n_cells_x+1)*(n_cells_y+1))
 
-    partition = pymetis.part_mesh(2, connectivity, None, None, pymetis.metis.GType.NODAL)
+    partition = pymetis.part_mesh(2, connectivity, None, None,
+        pymetis.metis.GType.NODAL)
     assert isinstance(partition, pymetis.MeshPartition)
     assert hasattr(partition, "edge_cuts")
     assert hasattr(partition, "element_part")
     assert hasattr(partition, "vertex_part")
 
-    partition = pymetis.part_mesh(2, connectivity, None, None, pymetis.metis.GType.DUAL)
+    partition = pymetis.part_mesh(2, connectivity, None, None,
+        pymetis.metis.GType.DUAL)
     assert isinstance(partition, pymetis.MeshPartition)
     assert hasattr(partition, "edge_cuts")
     assert hasattr(partition, "element_part")
     assert hasattr(partition, "vertex_part")
+
 
 def test_part_mesh_opts():
     # Check that invalid numbering throws error

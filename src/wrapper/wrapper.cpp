@@ -257,6 +257,16 @@ namespace
   }
 
   class options_indices { };
+  class Status { };
+  class OPType { };
+  class OptionKey { };
+  class PType { };
+  class GType { };
+  class CType { };
+  class IPType { };
+  class RType { };
+  class DebugLevel { };
+  class ObjType { };
 }
 
 PYBIND11_MODULE(_internal, m)
@@ -305,6 +315,104 @@ PYBIND11_MODULE(_internal, m)
 
 #undef ADD_OPT
   }
+#define DEF_CLASS(NAME) py::class_<NAME> cls(m, #NAME)
+#define ADD_ENUM(NAME, VALUE) cls.def_property_readonly_static(#NAME,\
+      [](py::object self) { return (int) METIS_##VALUE; })
+  {
+    {
+      DEF_CLASS(Status);
+      ADD_ENUM(OK, OK);
+      ADD_ENUM(ERROR_INPUT, ERROR_INPUT);
+      ADD_ENUM(ERROR_MEMORY, ERROR_MEMORY);
+      ADD_ENUM(ERROR, ERROR);
+    }
+    {
+      DEF_CLASS(OPType);
+      ADD_ENUM(PMETIS, OP_PMETIS);
+      ADD_ENUM(KMETIS, OP_KMETIS);
+      ADD_ENUM(OMETIS, OP_OMETIS);
+    }
+    { 
+      DEF_CLASS(OptionKey);
+      ADD_ENUM(PTYPE, OPTION_PTYPE);
+      ADD_ENUM(OBJTYPE, OPTION_OBJTYPE);
+      ADD_ENUM(CTYPE, OPTION_CTYPE);
+      ADD_ENUM(IPTYPE, OPTION_IPTYPE);
+      ADD_ENUM(RTYPE, OPTION_RTYPE);
+      ADD_ENUM(DBGLVL, OPTION_DBGLVL);
+      ADD_ENUM(NITER, OPTION_NITER);
+      ADD_ENUM(NCUTS, OPTION_NCUTS);
+      ADD_ENUM(SEED, OPTION_SEED);
+      ADD_ENUM(NO2HOP, OPTION_NO2HOP);
+      ADD_ENUM(MINCONN, OPTION_MINCONN);
+      ADD_ENUM(CONTIG, OPTION_CONTIG);
+      ADD_ENUM(COMPRESS, OPTION_COMPRESS);
+      ADD_ENUM(CCORDER, OPTION_CCORDER);
+      ADD_ENUM(PFACTOR, OPTION_PFACTOR);
+      ADD_ENUM(NSEPS, OPTION_NSEPS);
+      ADD_ENUM(UFACTOR, OPTION_UFACTOR);
+      ADD_ENUM(NUMBERING, OPTION_NUMBERING);
+      ADD_ENUM(HELP, OPTION_HELP);
+      ADD_ENUM(TPWGTS, OPTION_TPWGTS);
+      ADD_ENUM(NCOMMON, OPTION_NCOMMON);
+      ADD_ENUM(NOOUTPUT, OPTION_NOOUTPUT);
+      ADD_ENUM(BALANCE, OPTION_BALANCE);
+      ADD_ENUM(GTYPE, OPTION_GTYPE);
+      ADD_ENUM(UBVEC, OPTION_UBVEC);
+    }
+    {
+      DEF_CLASS(PType);
+      ADD_ENUM(RB, PTYPE_RB);
+      ADD_ENUM(KWAY, PTYPE_KWAY);
+    }
+    {
+
+      DEF_CLASS(GType);
+      ADD_ENUM(DUAL, GTYPE_DUAL);
+      ADD_ENUM(NODAL, GTYPE_NODAL);
+    }
+    {
+      DEF_CLASS(CType);
+      ADD_ENUM(RM, CTYPE_RM);
+      ADD_ENUM(SHEM, CTYPE_SHEM);
+    }
+    {
+      DEF_CLASS(IPType);
+      ADD_ENUM(GROW, IPTYPE_GROW);
+      ADD_ENUM(RANDOM, IPTYPE_RANDOM);
+      ADD_ENUM(EDGE, IPTYPE_EDGE);
+      ADD_ENUM(NODE, IPTYPE_NODE);
+      ADD_ENUM(METISRB, IPTYPE_METISRB);
+    }
+    {
+      DEF_CLASS(RType);
+      ADD_ENUM(FM, RTYPE_FM);
+      ADD_ENUM(GREEDY, RTYPE_GREEDY);
+      ADD_ENUM(SEP2SIDED, RTYPE_SEP2SIDED);
+      ADD_ENUM(SEP1SIDED, RTYPE_SEP1SIDED);
+    }
+    {
+      DEF_CLASS(DebugLevel);
+      ADD_ENUM(INFO, DBG_INFO);
+      ADD_ENUM(TIME, DBG_TIME);
+      ADD_ENUM(COARSEN, DBG_COARSEN);
+      ADD_ENUM(REFINE, DBG_REFINE);
+      ADD_ENUM(IPART, DBG_IPART);
+      ADD_ENUM(MOVEINFO, DBG_MOVEINFO);
+      ADD_ENUM(SEPINFO, DBG_SEPINFO);
+      ADD_ENUM(CONNINFO, DBG_CONNINFO);
+      ADD_ENUM(CONTIGINFO, DBG_CONTIGINFO);
+      ADD_ENUM(MEMORY, DBG_MEMORY);
+    }
+    {
+      DEF_CLASS(ObjType);
+      ADD_ENUM(CUT, OBJTYPE_CUT);
+      ADD_ENUM(VOL, OBJTYPE_VOL);
+      ADD_ENUM(NODE, OBJTYPE_NODE);
+    }
+  }
+#undef ADD_ENUM
+#undef DEF_CLASS
 
   m.def("verify_nd", wrap_verify_nd);
   m.def("node_nd", wrap_node_nd);

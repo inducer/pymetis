@@ -1,5 +1,0 @@
-FM = 0
-GREEDY = 1
-SEP2SIDED = 2
-SEP1SIDED = 3
-

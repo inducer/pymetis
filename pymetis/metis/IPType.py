@@ -1,5 +1,0 @@
-GROW = 0
-RANDOM = 1
-EDGE = 2
-NODE = 3
-METISRB = 4

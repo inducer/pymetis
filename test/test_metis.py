@@ -169,6 +169,22 @@ def test_options():
     )
 
 
+def test_defines():
+    from pymetis.metis import Status, OPType, OptionKey, PType, \
+        GType, CType, IPType, RType, DebugLevel, ObjType
+
+    assert isinstance(Status.OK, int)
+    assert isinstance(OPType.PMETIS, int)
+    assert isinstance(OptionKey.PTYPE, int)
+    assert isinstance(PType.KWAY, int)
+    assert isinstance(GType.DUAL, int)
+    assert isinstance(CType.RM, int)
+    assert isinstance(IPType.GROW, int)
+    assert isinstance(RType.FM, int)
+    assert isinstance(DebugLevel.INFO, int)
+    assert isinstance(ObjType.CUT, int)
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:

@@ -268,15 +268,6 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
     # Handle option validation
     if options is None:
         options = Options()
-        #set default values
-        options.ptype = metis.PType.KWAY
-        options.objtype = metis.ObjType.CUT
-        options.ctype = metis.CType.SHEM
-        options.dbglvl = 0
-        options.minconn = 0
-        options.contig = 0
-        options.niter = 10
-        options.ncuts = 1
 
     if options.numbering not in [-1, 0]:
         raise ValueError("METIS numbering option must be set to 0 or the default")
@@ -287,8 +278,7 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
         if len(tpwgts) != n_parts:
             raise RuntimeError("The length of tpwgts mismatches `n_part`")
 
-        import numpy as np
-        if any(np.array(tpwgts) < 0.0):
+        if any([w < 0.0 for w in tpwgts]):
             raise ValueError("The values of tpwgts should be non-negative")
 
         # rescale tpwgts to ensure sum(tpwgts) == 1

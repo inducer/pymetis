@@ -116,7 +116,8 @@ def test_tet_mesh_nodal(visualize=False):
 
     mesh = build(mesh_info)
 
-    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, None, pymetis.metis.GType.NODAL)
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements,
+        None, None, pymetis.metis.GType.NODAL)
 
     if visualize:
         import pyvtk
@@ -126,6 +127,7 @@ def test_tet_mesh_nodal(visualize=False):
             "Mesh",
             pyvtk.CellData(pyvtk.Scalars(epart, name="partition")))
         vtkelements.tofile("split_mesh.vtk")
+
 
 def test_tet_mesh_dual(visualize=False):
     pytest.importorskip("meshpy")
@@ -156,7 +158,8 @@ def test_tet_mesh_dual(visualize=False):
 
     mesh = build(mesh_info)
 
-    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, None, pymetis.metis.GType.DUAL)
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements,
+        None, None, pymetis.metis.GType.DUAL)
 
     if visualize:
         import pyvtk
@@ -166,6 +169,7 @@ def test_tet_mesh_dual(visualize=False):
             "Mesh",
             pyvtk.CellData(pyvtk.Scalars(epart, name="partition")))
         vtkelements.tofile("split_mesh.vtk")
+
 
 def test_tet_mesh_nodal_with_weights(visualize=False):
     pytest.importorskip("meshpy")
@@ -197,7 +201,8 @@ def test_tet_mesh_nodal_with_weights(visualize=False):
     mesh = build(mesh_info)
 
     tpwgts = [20 + 2 * it for it in range(17)]
-    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, tpwgts, pymetis.metis.GType.NODAL)
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements,
+        None, tpwgts, pymetis.metis.GType.NODAL)
 
     if visualize:
         import pyvtk
@@ -239,7 +244,8 @@ def test_tet_mesh_dual_with_weights(visualize=False):
     mesh = build(mesh_info)
 
     tpwgts = [20 + 2 * it for it in range(17)]
-    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None, tpwgts, pymetis.metis.GType.DUAL)
+    objval, epart, npart = pymetis.part_mesh(17, mesh.elements, None,
+        tpwgts, pymetis.metis.GType.DUAL)
 
     if visualize:
         import pyvtk
@@ -249,6 +255,7 @@ def test_tet_mesh_dual_with_weights(visualize=False):
             "Mesh",
             pyvtk.CellData(pyvtk.Scalars(epart, name="partition")))
         vtkelements.tofile("split_mesh.vtk")
+
 
 def test_cliques():
     adjacency_list = [
