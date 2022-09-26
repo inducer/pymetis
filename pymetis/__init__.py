@@ -248,8 +248,7 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
     ``tpwgts`` is a list of size ``n_parts`` that specifies the desired weight 
     for each partition.
 
-    ``gtype``, as either metis.GType.NODAL (0) or metis.GType.DUAL (1), 
-    specifies the partition is base on a nodal or dual graph of the mesh
+    ``gtype`` specifies the partition is base on a nodal or dual graph of the mesh
 
     Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where
     ``edge_cuts`` is the number of cuts to the connectivity graph, ``element_part``
