@@ -1,10 +1,10 @@
-from pymetis._internal import Status
-from pymetis._internal import OPType
-from pymetis._internal import OptionKey
-from pymetis._internal import PType
-from pymetis._internal import GType
-from pymetis._internal import CType
-from pymetis._internal import IPType
-from pymetis._internal import RType
-from pymetis._internal import DebugLevel
-from pymetis._internal import ObjType
+from pymetis._internal import Status        # noqa: F401
+from pymetis._internal import OPType        # noqa: F401
+from pymetis._internal import OptionKey     # noqa: F401
+from pymetis._internal import PType         # noqa: F401
+from pymetis._internal import GType         # noqa: F401
+from pymetis._internal import CType         # noqa: F401
+from pymetis._internal import IPType        # noqa: F401
+from pymetis._internal import RType         # noqa: F401
+from pymetis._internal import DebugLevel    # noqa: F401
+from pymetis._internal import ObjType       # noqa: F401

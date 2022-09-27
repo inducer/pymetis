@@ -35,7 +35,7 @@ from six.moves import map, range
 from pymetis.version import version, version_tuple  # noqa
 from pymetis._internal import Options as OptionsBase
 
-import pymetis.metis
+import pymetis.metis    # noqa: F401
 
 # Create Named Tuple for Mesh Partition
 from collections import namedtuple
@@ -245,7 +245,7 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
     METIS runtime options can be specified by supplying an :class:`Options`
     object in the input.
 
-    ``tpwgts`` is a list of size ``n_parts`` that specifies the desired weight 
+    ``tpwgts`` is a list of size ``n_parts`` that specifies the desired weight
     for each partition.
 
     ``gtype`` specifies the partitioning is based on a nodal/dual graph of the mesh
@@ -264,8 +264,7 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
 
     n_elements = len(connectivity)
     n_vertex = len(set(conn))
-    
-   
+
     # Handle option validation
     if options is None:
         options = Options()
@@ -284,10 +283,11 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
 
         # rescale tpwgts to ensure sum(tpwgts) == 1
         total_weights = sum(tpwgts)
-        tpwgts = [w / total_weights for w in tpwgts] 
+        tpwgts = [w / total_weights for w in tpwgts]
 
     if gtype is None:
-        gtype = metis.GType.DUAL
+        from pymetis._internal import GType
+        gtype = GType.NODAL
  
     # Trivial partitioning
     if n_parts < 2:
