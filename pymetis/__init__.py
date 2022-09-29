@@ -401,7 +401,7 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
     for each partition.
 
     ``gtype`` specifies the partitioning is based on a nodal/dual graph of the mesh.
-    It has to be one of `GType.NODAL` or `GType.DUAL`.
+    It has to be one of :attr:`GType.NODAL` or :attr:`GType.DUAL`.
 
     Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where
     ``edge_cuts`` is the number of cuts to the connectivity graph, ``element_part``
