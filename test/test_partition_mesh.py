@@ -10,7 +10,7 @@ def test_2d_quad_mesh_nodal(vis=False):
 
     n_part = 4
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, None, pymetis.metis.GType.NODAL)
+        None, None, pymetis.GType.NODAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -56,7 +56,7 @@ def test_2d_quad_mesh_dual(vis=False):
 
     n_part = 4
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, None, pymetis.metis.GType.DUAL)
+        None, None, pymetis.GType.DUAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -103,7 +103,7 @@ def test_2d_quad_mesh_nodal_with_weights(vis=False):
     n_part = 4
     tpwgts = [0.1, 0.2, 0.3, 0.4]
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, tpwgts, pymetis.metis.GType.NODAL)
+        None, tpwgts, pymetis.GType.NODAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -150,7 +150,7 @@ def test_2d_quad_mesh_dual_with_weights(vis=False):
     n_part = 4
     tpwgts = [0.1, 0.2, 0.3, 0.4]
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, tpwgts, pymetis.metis.GType.DUAL)
+        None, tpwgts, pymetis.GType.DUAL)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -208,7 +208,7 @@ def test_3d_hex_mesh_part_nodal(vis=False):
 
     n_part = 5
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, None, pymetis.metis.GType.NODAL)
+        None, None, pymetis.GType.NODAL)
 
     if vis:
         import pyvtk
@@ -251,7 +251,7 @@ def test_3d_hex_mesh_part_dual(vis=False):
 
     n_part = 5
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, None, pymetis.metis.GType.DUAL)
+        None, None, pymetis.GType.DUAL)
 
     if vis:
         import pyvtk
@@ -295,7 +295,7 @@ def test_3d_hex_mesh_part_nodal_with_weights(vis=False):
     n_part = 5
     tpwgts = [(i + 1.0) / 15.0 for i in range(n_part)]
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, tpwgts, pymetis.metis.GType.NODAL)
+        None, tpwgts, pymetis.GType.NODAL)
 
     if vis:
         import pyvtk
@@ -339,7 +339,7 @@ def test_3d_hex_mesh_part_dual_with_weights(vis=False):
     n_part = 5
     tpwgts = [(i + 1.0) / 15.0 for i in range(n_part)]
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, tpwgts, pymetis.metis.GType.DUAL)
+        None, tpwgts, pymetis.GType.DUAL)
 
     if vis:
         import pyvtk
@@ -386,14 +386,14 @@ def test_part_mesh_named_tuple():
     assert partition.vertex_part == [0] * ((n_cells_x+1)*(n_cells_y+1))
 
     partition = pymetis.part_mesh(2, connectivity, None, None,
-        pymetis.metis.GType.NODAL)
+        pymetis.GType.NODAL)
     assert isinstance(partition, pymetis.MeshPartition)
     assert hasattr(partition, "edge_cuts")
     assert hasattr(partition, "element_part")
     assert hasattr(partition, "vertex_part")
 
     partition = pymetis.part_mesh(2, connectivity, None, None,
-        pymetis.metis.GType.DUAL)
+        pymetis.GType.DUAL)
     assert isinstance(partition, pymetis.MeshPartition)
     assert hasattr(partition, "edge_cuts")
     assert hasattr(partition, "element_part")
@@ -408,11 +408,11 @@ def test_part_mesh_opts():
     assert "METIS numbering" in e.value.args[0]
 
     with pytest.raises(Exception) as e:
-        pymetis.part_mesh(4, [], None, [1], pymetis.metis.GType.DUAL)
+        pymetis.part_mesh(4, [], None, [1], pymetis.GType.DUAL)
     assert "mismatches" in e.value.args[0]
 
     with pytest.raises(Exception) as e:
-        pymetis.part_mesh(4, [], None, [-1, -2, 10, 2], pymetis.metis.GType.DUAL)
+        pymetis.part_mesh(4, [], None, [-1, -2, 10, 2], pymetis.GType.DUAL)
     assert "non-negative" in e.value.args[0]
 
 

@@ -240,7 +240,7 @@ namespace
           &edgeCuts, elemPart.get(), vertPart.get());
         assert_ok(info, "METIS_PartMeshNodal failed");
     }
-    else
+    else if(gtype == METIS_GTYPE_DUAL)
     {
         idx_t ncommon = 1;
         idx_t objval = 1;
@@ -249,6 +249,11 @@ namespace
           nullptr, nullptr, &ncommon, &nParts, pTpwgts, options.m_options,
           &objval, elemPart.get(), vertPart.get());
         assert_ok(info, "METIS_PartMeshNodal failed");
+    }
+    else {
+        assert_ok(METIS_ERROR_INPUT, "Invalid value. "\
+            "`gtype` is supposed to be either `METIS_GTYPE_NODAL`"\
+            " or `METIS_GTYPE_DUAL`.");
     }
     COPY_OUTPUT(elemPart, nElements);
     COPY_OUTPUT(vertPart, nVertex);

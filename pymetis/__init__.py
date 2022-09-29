@@ -35,7 +35,16 @@ from six.moves import map, range
 from pymetis.version import version, version_tuple  # noqa
 from pymetis._internal import Options as OptionsBase
 
-import pymetis.metis    # noqa: F401
+from pymetis._internal import Status        # noqa: F401
+from pymetis._internal import OPType        # noqa: F401
+from pymetis._internal import OptionKey     # noqa: F401
+from pymetis._internal import PType         # noqa: F401
+from pymetis._internal import GType         # noqa: F401
+from pymetis._internal import CType         # noqa: F401
+from pymetis._internal import IPType        # noqa: F401
+from pymetis._internal import RType         # noqa: F401
+from pymetis._internal import DebugLevel    # noqa: F401
+from pymetis._internal import ObjType       # noqa: F401
 
 # Create Named Tuple for Mesh Partition
 from collections import namedtuple
@@ -248,7 +257,8 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
     ``tpwgts`` is a list of size ``n_parts`` that specifies the desired weight
     for each partition.
 
-    ``gtype`` specifies the partitioning is based on a nodal/dual graph of the mesh
+    ``gtype`` specifies the partitioning is based on a nodal/dual graph of the mesh.
+    It has to be one of `GType.NODAL` or `GType.DUAL`.
 
     Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where
     ``edge_cuts`` is the number of cuts to the connectivity graph, ``element_part``
@@ -288,7 +298,7 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
     if gtype is None:
         from pymetis._internal import GType
         gtype = GType.NODAL
- 
+
     # Trivial partitioning
     if n_parts < 2:
         return MeshPartition(0, [0] * n_elements, [0] * n_vertex)

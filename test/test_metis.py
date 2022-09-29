@@ -169,8 +169,8 @@ def test_options():
     )
 
 
-def test_defines():
-    from pymetis.metis import Status, OPType, OptionKey, PType, \
+def test_enum():
+    from pymetis._internal import Status, OPType, OptionKey, PType, \
         GType, CType, IPType, RType, DebugLevel, ObjType
 
     assert isinstance(Status.OK, int)
