@@ -36,15 +36,139 @@ from pymetis.version import version, version_tuple  # noqa
 from pymetis._internal import Options as OptionsBase
 
 from pymetis._internal import Status        # noqa: F401
+Status.__doc__ = """A wrapper for METIS return codes.
+
+.. attribute:: OK
+
+   Returned normally
+.. attribute:: ERROR_INPUT
+
+   Returned due to erroneous inputs and/or options
+.. attribute:: ERROR_MEMORY
+
+   Returned due to insufficient memory
+.. attribute:: ERROR
+
+   Some other erros
+"""
 from pymetis._internal import OPType        # noqa: F401
+OPType.__doc__ = """A wrapper for METIS operation type
+codes.
+
+.. attribute:: PMETIS
+.. attribute:: KMETIS
+.. attribute:: OMETIS
+"""
 from pymetis._internal import OptionKey     # noqa: F401
+OptionKey.__doc__ = """A wrapper for METIS option codes.
+
+.. attribute:: PTYPE
+.. attribute:: OBJTYPE
+.. attribute:: CTYPE
+.. attribute:: IPTYPE
+.. attribute:: RTYPE
+.. attribute:: DBGLVL
+.. attribute:: NITER
+.. attribute:: NCUTS
+.. attribute:: SEED
+.. attribute:: NO2HOP
+.. attribute:: MINCONN
+.. attribute:: CONTIG
+.. attribute:: COMPRESS
+.. attribute:: CCORDER
+.. attribute:: PFACTOR
+.. attribute:: NSEPS
+.. attribute:: UFACTOR
+.. attribute:: NUMBERING
+.. attribute:: HELP
+.. attribute:: TPWGTS
+.. attribute:: NCOMMON
+.. attribute:: NOOUTPUT
+.. attribute:: BALANCE
+.. attribute:: GTYPE
+.. attribute:: UBVEC
+"""
 from pymetis._internal import PType         # noqa: F401
+PType.__doc__ = """A wrapper for METIS paritioning scheme
+codes.
+
+.. attribute:: RB
+.. attribute:: KWAY
+"""
 from pymetis._internal import GType         # noqa: F401
+GType.__doc__ = """A wrapper for METIS graph type codes.
+
+.. attribute:: NODAL
+.. attribute:: DUAL
+"""
 from pymetis._internal import CType         # noqa: F401
+CType.__doc__ = """A wrapper for METIS coarsening scheme
+codes.
+
+.. attribute:: RM
+.. attribute:: SHEM
+"""
 from pymetis._internal import IPType        # noqa: F401
+IPType.__doc__ = """A wrapper for METIS initial 
+partitioning scheme codes.
+
+.. attribute:: GROW
+.. attribute:: RANDOM
+.. attribute:: EDGE
+.. attribute:: NODE
+.. attribute:: METISRB
+"""
 from pymetis._internal import RType         # noqa: F401
+RType.__doc__ = """A wrapper for METIS refinement scheme
+codes.
+
+.. attribute:: FM
+.. attribute:: GREEDY
+.. attribute:: SEP2SIDED
+.. attribute:: SEP1SIDED
+"""
 from pymetis._internal import DebugLevel    # noqa: F401
+DebugLevel.__doc__ = """A wrapper for METIS debug level
+codes.
+
+.. attribute:: INFO
+
+   Shows various diagnostic message
+.. attribute:: TIME
+
+   Perform timing analysis
+.. attribute:: COARSEN
+
+   Show the coarsening progress
+.. attribute:: REFINE
+
+   Show the refinement progress
+.. attribute:: IPART
+
+   Show info on initial paritioning
+.. attribute:: MOVEINFO
+
+   Show info on vertex moves during refinement
+.. attribute:: SEPINFO
+
+   Show info in vertex moves during se refinement
+.. attribute:: CONNINFO
+
+   Show info on minimization of subdomain connectivity
+.. attribute:: CONTIGINFO
+
+   Show info on elimination of connected components
+.. attribute:: MEMORY
+
+   Show info related to wspace allocation
+"""
 from pymetis._internal import ObjType       # noqa: F401
+ObjType.__doc__ = """A wrapper for METIS objective codes.
+
+.. attribute:: CUT
+.. attribute:: VOL
+.. attribute:: NODE
+"""
 
 # Create Named Tuple for Mesh Partition
 from collections import namedtuple
