@@ -6,6 +6,16 @@
 
 .. autoclass:: Options
 .. autoclass:: MeshPartition
+.. autoclass:: Status
+.. autoclass:: OPType
+.. autoclass:: OptionKey
+.. autoclass:: PType
+.. autoclass:: GType
+.. autoclass:: CType
+.. autoclass:: IPType
+.. autoclass:: RType
+.. autoclass:: DebugLevel
+.. autoclass:: ObjType
 """
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
@@ -51,6 +61,7 @@ Status.__doc__ = """A wrapper for METIS return codes.
 
    Some other erros
 """
+
 from pymetis._internal import OPType        # noqa: F401
 OPType.__doc__ = """A wrapper for METIS operation type
 codes.
@@ -59,6 +70,7 @@ codes.
 .. attribute:: KMETIS
 .. attribute:: OMETIS
 """
+
 from pymetis._internal import OptionKey     # noqa: F401
 OptionKey.__doc__ = """A wrapper for METIS option codes.
 
@@ -88,6 +100,7 @@ OptionKey.__doc__ = """A wrapper for METIS option codes.
 .. attribute:: GTYPE
 .. attribute:: UBVEC
 """
+
 from pymetis._internal import PType         # noqa: F401
 PType.__doc__ = """A wrapper for METIS paritioning scheme
 codes.
@@ -95,12 +108,14 @@ codes.
 .. attribute:: RB
 .. attribute:: KWAY
 """
+
 from pymetis._internal import GType         # noqa: F401
 GType.__doc__ = """A wrapper for METIS graph type codes.
 
 .. attribute:: NODAL
 .. attribute:: DUAL
 """
+
 from pymetis._internal import CType         # noqa: F401
 CType.__doc__ = """A wrapper for METIS coarsening scheme
 codes.
@@ -108,6 +123,7 @@ codes.
 .. attribute:: RM
 .. attribute:: SHEM
 """
+
 from pymetis._internal import IPType        # noqa: F401
 IPType.__doc__ = """A wrapper for METIS initial 
 partitioning scheme codes.
@@ -118,6 +134,7 @@ partitioning scheme codes.
 .. attribute:: NODE
 .. attribute:: METISRB
 """
+
 from pymetis._internal import RType         # noqa: F401
 RType.__doc__ = """A wrapper for METIS refinement scheme
 codes.
@@ -127,6 +144,7 @@ codes.
 .. attribute:: SEP2SIDED
 .. attribute:: SEP1SIDED
 """
+
 from pymetis._internal import DebugLevel    # noqa: F401
 DebugLevel.__doc__ = """A wrapper for METIS debug level
 codes.
@@ -162,6 +180,7 @@ codes.
 
    Show info related to wspace allocation
 """
+
 from pymetis._internal import ObjType       # noqa: F401
 ObjType.__doc__ = """A wrapper for METIS objective codes.
 
