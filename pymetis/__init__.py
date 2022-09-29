@@ -6,6 +6,16 @@
 
 .. autoclass:: Options
 .. autoclass:: MeshPartition
+.. autoclass:: Status
+.. autoclass:: OPType
+.. autoclass:: OptionKey
+.. autoclass:: PType
+.. autoclass:: GType
+.. autoclass:: CType
+.. autoclass:: IPType
+.. autoclass:: RType
+.. autoclass:: DebugLevel
+.. autoclass:: ObjType
 """
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
@@ -34,6 +44,150 @@ from six.moves import map, range
 
 from pymetis.version import version, version_tuple  # noqa
 from pymetis._internal import Options as OptionsBase
+
+from pymetis._internal import Status        # noqa: F401
+Status.__doc__ = """A wrapper for METIS return codes.
+
+.. attribute:: OK
+
+   Returned normally
+.. attribute:: ERROR_INPUT
+
+   Returned due to erroneous inputs and/or options
+.. attribute:: ERROR_MEMORY
+
+   Returned due to insufficient memory
+.. attribute:: ERROR
+
+   Some other erros
+"""
+
+from pymetis._internal import OPType        # noqa: F401
+OPType.__doc__ = """A wrapper for METIS operation type
+codes.
+
+.. attribute:: PMETIS
+.. attribute:: KMETIS
+.. attribute:: OMETIS
+"""
+
+from pymetis._internal import OptionKey     # noqa: F401
+OptionKey.__doc__ = """A wrapper for METIS option codes.
+
+.. attribute:: PTYPE
+.. attribute:: OBJTYPE
+.. attribute:: CTYPE
+.. attribute:: IPTYPE
+.. attribute:: RTYPE
+.. attribute:: DBGLVL
+.. attribute:: NITER
+.. attribute:: NCUTS
+.. attribute:: SEED
+.. attribute:: NO2HOP
+.. attribute:: MINCONN
+.. attribute:: CONTIG
+.. attribute:: COMPRESS
+.. attribute:: CCORDER
+.. attribute:: PFACTOR
+.. attribute:: NSEPS
+.. attribute:: UFACTOR
+.. attribute:: NUMBERING
+.. attribute:: HELP
+.. attribute:: TPWGTS
+.. attribute:: NCOMMON
+.. attribute:: NOOUTPUT
+.. attribute:: BALANCE
+.. attribute:: GTYPE
+.. attribute:: UBVEC
+"""
+
+from pymetis._internal import PType         # noqa: F401
+PType.__doc__ = """A wrapper for METIS paritioning scheme
+codes.
+
+.. attribute:: RB
+.. attribute:: KWAY
+"""
+
+from pymetis._internal import GType         # noqa: F401
+GType.__doc__ = """A wrapper for METIS graph type codes.
+
+.. attribute:: NODAL
+.. attribute:: DUAL
+"""
+
+from pymetis._internal import CType         # noqa: F401
+CType.__doc__ = """A wrapper for METIS coarsening scheme
+codes.
+
+.. attribute:: RM
+.. attribute:: SHEM
+"""
+
+from pymetis._internal import IPType        # noqa: F401
+IPType.__doc__ = """A wrapper for METIS initial
+partitioning scheme codes.
+
+.. attribute:: GROW
+.. attribute:: RANDOM
+.. attribute:: EDGE
+.. attribute:: NODE
+.. attribute:: METISRB
+"""
+
+from pymetis._internal import RType         # noqa: F401
+RType.__doc__ = """A wrapper for METIS refinement scheme
+codes.
+
+.. attribute:: FM
+.. attribute:: GREEDY
+.. attribute:: SEP2SIDED
+.. attribute:: SEP1SIDED
+"""
+
+from pymetis._internal import DebugLevel    # noqa: F401
+DebugLevel.__doc__ = """A wrapper for METIS debug level
+codes.
+
+.. attribute:: INFO
+
+   Shows various diagnostic message
+.. attribute:: TIME
+
+   Perform timing analysis
+.. attribute:: COARSEN
+
+   Show the coarsening progress
+.. attribute:: REFINE
+
+   Show the refinement progress
+.. attribute:: IPART
+
+   Show info on initial paritioning
+.. attribute:: MOVEINFO
+
+   Show info on vertex moves during refinement
+.. attribute:: SEPINFO
+
+   Show info in vertex moves during se refinement
+.. attribute:: CONNINFO
+
+   Show info on minimization of subdomain connectivity
+.. attribute:: CONTIGINFO
+
+   Show info on elimination of connected components
+.. attribute:: MEMORY
+
+   Show info related to wspace allocation
+"""
+
+from pymetis._internal import ObjType       # noqa: F401
+ObjType.__doc__ = """A wrapper for METIS objective codes.
+
+.. attribute:: CUT
+.. attribute:: VOL
+.. attribute:: NODE
+"""
 
 # Create Named Tuple for Mesh Partition
 from collections import namedtuple
@@ -219,7 +373,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
                       eweights, options, recursive)
 
 
-def part_mesh(n_parts, connectivity, options=None):
+def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
     """This function is used to partition a mesh into *n_parts* parts based on a
     graph partitioning where each vertex is a node in the graph. A mesh is a
     collection of non-overlapping elements which are identified by their vertices.
@@ -243,6 +397,12 @@ def part_mesh(n_parts, connectivity, options=None):
     METIS runtime options can be specified by supplying an :class:`Options`
     object in the input.
 
+    ``tpwgts`` is a list of size ``n_parts`` that specifies the desired weight
+    for each partition.
+
+    ``gtype`` specifies the partitioning is based on a nodal/dual graph of the mesh.
+    It has to be one of :attr:`GType.NODAL` or :attr:`GType.DUAL`.
+
     Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where
     ``edge_cuts`` is the number of cuts to the connectivity graph, ``element_part``
     is an array of length n_elements, with entries identifying the element's
@@ -265,12 +425,29 @@ def part_mesh(n_parts, connectivity, options=None):
     if options.numbering not in [-1, 0]:
         raise ValueError("METIS numbering option must be set to 0 or the default")
 
+    if tpwgts is None:
+        tpwgts = []
+    if len(tpwgts) > 0:
+        if len(tpwgts) != n_parts:
+            raise RuntimeError("The length of tpwgts mismatches `n_part`")
+
+        if any([w < 0.0 for w in tpwgts]):
+            raise ValueError("The values of tpwgts should be non-negative")
+
+        # rescale tpwgts to ensure sum(tpwgts) == 1
+        total_weights = sum(tpwgts)
+        tpwgts = [w / total_weights for w in tpwgts]
+
+    if gtype is None:
+        from pymetis._internal import GType
+        gtype = GType.NODAL
+
     # Trivial partitioning
     if n_parts < 2:
         return MeshPartition(0, [0] * n_elements, [0] * n_vertex)
 
     from pymetis._internal import part_mesh
     return MeshPartition(*part_mesh(n_parts, conn_offset, conn,
-        n_elements, n_vertex, options))
+        tpwgts, gtype, n_elements, n_vertex, options))
 
 # vim: foldmethod=marker

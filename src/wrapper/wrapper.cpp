@@ -17,6 +17,11 @@ using namespace std;
     for (auto it: NAME##_py) \
       NAME.push_back(py::cast<idx_t>(*it)); \
   }
+#define COPY_REALTYPE_LIST(NAME) \
+  { \
+    for (auto it: NAME##_py) \
+      NAME.push_back(py::cast<real_t>(*it)); \
+  }
 
 #define COPY_OUTPUT(NAME, LEN) \
   py::list NAME##_py; \
@@ -206,25 +211,50 @@ namespace
   py::object
   wrap_part_mesh(idx_t &nParts,
     const py::object &connectivityOffsets_py,
-    const py::object & connectivity_py,
+    const py::object &connectivity_py,
+    const py::object &tpwgts_py,
+    idx_t &gtype,
     idx_t &nElements,
     idx_t &nVertex,
     metis_options &options)
   {
-    idx_t edgeCuts;
+    idx_t edgeCuts = 0;
     std::unique_ptr<idx_t []> elemPart(new idx_t[nElements]);
     std::unique_ptr<idx_t []> vertPart(new idx_t[nVertex]);
 
     std::vector<idx_t> connectivityOffsets, connectivity;
+    std::vector<real_t> tpwgts;
     COPY_IDXTYPE_LIST(connectivityOffsets);
     COPY_IDXTYPE_LIST(connectivity);
+    COPY_REALTYPE_LIST(tpwgts);
+    real_t* pTpwgts = nullptr;
+    if(tpwgts.size() != 0)
+        pTpwgts = tpwgts.data();
 
-    int info = METIS_PartMeshNodal(&nElements, &nVertex,
-      connectivityOffsets.data(), connectivity.data(),
-      nullptr, nullptr, &nParts, nullptr, options.m_options,
-      &edgeCuts, elemPart.get(), vertPart.get());
-    assert_ok(info, "METIS_PartMeshNodal failed");
 
+    if(gtype == METIS_GTYPE_NODAL) 
+    {
+        int info = METIS_PartMeshNodal(&nElements, &nVertex,
+          connectivityOffsets.data(), connectivity.data(),
+          nullptr, nullptr, &nParts, pTpwgts, options.m_options,
+          &edgeCuts, elemPart.get(), vertPart.get());
+        assert_ok(info, "METIS_PartMeshNodal failed");
+    }
+    else if(gtype == METIS_GTYPE_DUAL)
+    {
+        idx_t ncommon = 1;
+        idx_t objval = 1;
+        int info = METIS_PartMeshDual(&nElements, &nVertex,
+          connectivityOffsets.data(), connectivity.data(),
+          nullptr, nullptr, &ncommon, &nParts, pTpwgts, options.m_options,
+          &objval, elemPart.get(), vertPart.get());
+        assert_ok(info, "METIS_PartMeshNodal failed");
+    }
+    else {
+        assert_ok(METIS_ERROR_INPUT, "Invalid value. "\
+            "`gtype` is supposed to be either `METIS_GTYPE_NODAL`"\
+            " or `METIS_GTYPE_DUAL`.");
+    }
     COPY_OUTPUT(elemPart, nElements);
     COPY_OUTPUT(vertPart, nVertex);
 
@@ -232,6 +262,16 @@ namespace
   }
 
   class options_indices { };
+  class Status { };
+  class OPType { };
+  class OptionKey { };
+  class PType { };
+  class GType { };
+  class CType { };
+  class IPType { };
+  class RType { };
+  class DebugLevel { };
+  class ObjType { };
 }
 
 PYBIND11_MODULE(_internal, m)
@@ -251,21 +291,133 @@ PYBIND11_MODULE(_internal, m)
       [](py::object self) { return (int) METIS_OPTION_##NAME; })
     py::class_<options_indices> cls(m, "options_indices");
 
-    ADD_OPT(NCUTS);
-    ADD_OPT(NSEPS);
-    ADD_OPT(NUMBERING);
+    ADD_OPT(PTYPE);
+    ADD_OPT(OBJTYPE);
+    ADD_OPT(CTYPE);
+    ADD_OPT(IPTYPE);
+    ADD_OPT(RTYPE);
+    ADD_OPT(DBGLVL);
     ADD_OPT(NITER);
+    ADD_OPT(NCUTS);
     ADD_OPT(SEED);
-    ADD_OPT(MINCONN);
     ADD_OPT(NO2HOP);
+    ADD_OPT(MINCONN);
     ADD_OPT(CONTIG);
     ADD_OPT(COMPRESS);
     ADD_OPT(CCORDER);
     ADD_OPT(PFACTOR);
+    ADD_OPT(NSEPS);
     ADD_OPT(UFACTOR);
+    ADD_OPT(NUMBERING);
+
+    ADD_OPT(HELP);
+    ADD_OPT(TPWGTS);
+    ADD_OPT(NCOMMON);
+    ADD_OPT(NOOUTPUT);
+    ADD_OPT(BALANCE);
+    ADD_OPT(GTYPE);
+    ADD_OPT(UBVEC);
 
 #undef ADD_OPT
   }
+#define DEF_CLASS(NAME) py::class_<NAME> cls(m, #NAME)
+#define ADD_ENUM(NAME, VALUE) cls.def_property_readonly_static(#NAME,\
+      [](py::object self) { return (int) METIS_##VALUE; })
+  {
+    {
+      DEF_CLASS(Status);
+      ADD_ENUM(OK, OK);
+      ADD_ENUM(ERROR_INPUT, ERROR_INPUT);
+      ADD_ENUM(ERROR_MEMORY, ERROR_MEMORY);
+      ADD_ENUM(ERROR, ERROR);
+    }
+    {
+      DEF_CLASS(OPType);
+      ADD_ENUM(PMETIS, OP_PMETIS);
+      ADD_ENUM(KMETIS, OP_KMETIS);
+      ADD_ENUM(OMETIS, OP_OMETIS);
+    }
+    { 
+      DEF_CLASS(OptionKey);
+      ADD_ENUM(PTYPE, OPTION_PTYPE);
+      ADD_ENUM(OBJTYPE, OPTION_OBJTYPE);
+      ADD_ENUM(CTYPE, OPTION_CTYPE);
+      ADD_ENUM(IPTYPE, OPTION_IPTYPE);
+      ADD_ENUM(RTYPE, OPTION_RTYPE);
+      ADD_ENUM(DBGLVL, OPTION_DBGLVL);
+      ADD_ENUM(NITER, OPTION_NITER);
+      ADD_ENUM(NCUTS, OPTION_NCUTS);
+      ADD_ENUM(SEED, OPTION_SEED);
+      ADD_ENUM(NO2HOP, OPTION_NO2HOP);
+      ADD_ENUM(MINCONN, OPTION_MINCONN);
+      ADD_ENUM(CONTIG, OPTION_CONTIG);
+      ADD_ENUM(COMPRESS, OPTION_COMPRESS);
+      ADD_ENUM(CCORDER, OPTION_CCORDER);
+      ADD_ENUM(PFACTOR, OPTION_PFACTOR);
+      ADD_ENUM(NSEPS, OPTION_NSEPS);
+      ADD_ENUM(UFACTOR, OPTION_UFACTOR);
+      ADD_ENUM(NUMBERING, OPTION_NUMBERING);
+      ADD_ENUM(HELP, OPTION_HELP);
+      ADD_ENUM(TPWGTS, OPTION_TPWGTS);
+      ADD_ENUM(NCOMMON, OPTION_NCOMMON);
+      ADD_ENUM(NOOUTPUT, OPTION_NOOUTPUT);
+      ADD_ENUM(BALANCE, OPTION_BALANCE);
+      ADD_ENUM(GTYPE, OPTION_GTYPE);
+      ADD_ENUM(UBVEC, OPTION_UBVEC);
+    }
+    {
+      DEF_CLASS(PType);
+      ADD_ENUM(RB, PTYPE_RB);
+      ADD_ENUM(KWAY, PTYPE_KWAY);
+    }
+    {
+
+      DEF_CLASS(GType);
+      ADD_ENUM(DUAL, GTYPE_DUAL);
+      ADD_ENUM(NODAL, GTYPE_NODAL);
+    }
+    {
+      DEF_CLASS(CType);
+      ADD_ENUM(RM, CTYPE_RM);
+      ADD_ENUM(SHEM, CTYPE_SHEM);
+    }
+    {
+      DEF_CLASS(IPType);
+      ADD_ENUM(GROW, IPTYPE_GROW);
+      ADD_ENUM(RANDOM, IPTYPE_RANDOM);
+      ADD_ENUM(EDGE, IPTYPE_EDGE);
+      ADD_ENUM(NODE, IPTYPE_NODE);
+      ADD_ENUM(METISRB, IPTYPE_METISRB);
+    }
+    {
+      DEF_CLASS(RType);
+      ADD_ENUM(FM, RTYPE_FM);
+      ADD_ENUM(GREEDY, RTYPE_GREEDY);
+      ADD_ENUM(SEP2SIDED, RTYPE_SEP2SIDED);
+      ADD_ENUM(SEP1SIDED, RTYPE_SEP1SIDED);
+    }
+    {
+      DEF_CLASS(DebugLevel);
+      ADD_ENUM(INFO, DBG_INFO);
+      ADD_ENUM(TIME, DBG_TIME);
+      ADD_ENUM(COARSEN, DBG_COARSEN);
+      ADD_ENUM(REFINE, DBG_REFINE);
+      ADD_ENUM(IPART, DBG_IPART);
+      ADD_ENUM(MOVEINFO, DBG_MOVEINFO);
+      ADD_ENUM(SEPINFO, DBG_SEPINFO);
+      ADD_ENUM(CONNINFO, DBG_CONNINFO);
+      ADD_ENUM(CONTIGINFO, DBG_CONTIGINFO);
+      ADD_ENUM(MEMORY, DBG_MEMORY);
+    }
+    {
+      DEF_CLASS(ObjType);
+      ADD_ENUM(CUT, OBJTYPE_CUT);
+      ADD_ENUM(VOL, OBJTYPE_VOL);
+      ADD_ENUM(NODE, OBJTYPE_NODE);
+    }
+  }
+#undef ADD_ENUM
+#undef DEF_CLASS
 
   m.def("verify_nd", wrap_verify_nd);
   m.def("node_nd", wrap_node_nd);
