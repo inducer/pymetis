@@ -125,7 +125,7 @@ codes.
 """
 
 from pymetis._internal import IPType        # noqa: F401
-IPType.__doc__ = """A wrapper for METIS initial 
+IPType.__doc__ = """A wrapper for METIS initial
 partitioning scheme codes.
 
 .. attribute:: GROW
