@@ -20,7 +20,7 @@ jobs:
                 python-version: '3.8'
         -   name: "Main Script"
             run: |
-                curl -L -O -k https://gitlab.tiker.net/inducer/ci-support/raw/main/prepare-and-run-flake8.sh
+                curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/prepare-and-run-flake8.sh
                 . ./prepare-and-run-flake8.sh "$(basename $GITHUB_REPOSITORY)" ./test
 
     pytest-macos:
@@ -41,7 +41,7 @@ jobs:
                 export NPY_BLAS_ORDER=""
                 export NPY_LAPACK_ORDER=""
 
-                curl -L -O -k https://gitlab.tiker.net/inducer/ci-support/raw/main/build-and-test-py-project.sh
+                curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/build-and-test-py-project.sh
                 . ./build-and-test-py-project.sh
 
     pytest:
@@ -59,7 +59,7 @@ jobs:
         -   name: "Main Script"
             run: |
                 EXTRA_INSTALL="numpy pybind11"
-                curl -L -O -k https://gitlab.tiker.net/inducer/ci-support/raw/main/build-and-test-py-project.sh
+                curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/build-and-test-py-project.sh
                 . ./build-and-test-py-project.sh
 
 
@@ -75,7 +75,7 @@ jobs:
         -   name: "Main Script"
             run: |
                 EXTRA_INSTALL="numpy pybind11"
-                curl -L -O -k https://gitlab.tiker.net/inducer/ci-support/raw/main/ci-support.sh
+                curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/ci-support.sh
                 . ci-support.sh
                 build_py_project_in_venv
                 build_docs
