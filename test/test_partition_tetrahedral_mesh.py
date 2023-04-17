@@ -69,7 +69,7 @@ def test_tet_graph(visualize=False):
             face_map.setdefault(frozenset(face_vertices), []).append((el_id, fid))
 
     adjacency = {}
-    for face_vertices, els_faces in face_map.items():
+    for _face_vertices, els_faces in face_map.items():
         if len(els_faces) == 2:
             (e1, f1), (e2, f2) = els_faces
             adjacency.setdefault(e1, []).append(e2)

@@ -431,7 +431,7 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
         if len(tpwgts) != n_parts:
             raise RuntimeError("The length of tpwgts mismatches `n_part`")
 
-        if any([w < 0.0 for w in tpwgts]):
+        if any(w < 0.0 for w in tpwgts):
             raise ValueError("The values of tpwgts should be non-negative")
 
         # rescale tpwgts to ensure sum(tpwgts) == 1
