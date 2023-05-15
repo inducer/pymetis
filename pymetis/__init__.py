@@ -327,9 +327,9 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         called *eweights*. This array contains *2m* elements (where *m* is the
         number of edges, taking into account the undirected nature of the
         graph), and the weight of edge ``adjncy[j]`` is stored at location
-        ``adjwgt[j]``. The edge-weights must be integers greater than zero. If
+        ``eweights[j]``. The edge-weights must be integers greater than zero. If
         all the edges of the graph have the same weight (i.e., the graph is
-        unweighted), then the adjwgt can be set to ``None``.
+        unweighted), then the eweight can be set to ``None``.
 
     METIS runtime options can be specified by supplying an :class:`Options` object in
     the input.
