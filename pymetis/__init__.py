@@ -373,7 +373,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
                       eweights, options, recursive)
 
 
-def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
+def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None, ncommon=1):
     """This function is used to partition a mesh into *n_parts* parts based on a
     graph partitioning where each vertex is a node in the graph. A mesh is a
     collection of non-overlapping elements which are identified by their vertices.
@@ -448,6 +448,6 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None):
 
     from pymetis._internal import part_mesh
     return MeshPartition(*part_mesh(n_parts, conn_offset, conn,
-        tpwgts, gtype, n_elements, n_vertex, options))
+        tpwgts, gtype, n_elements, n_vertex, ncommon, options))
 
 # vim: foldmethod=marker
