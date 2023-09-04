@@ -94,6 +94,7 @@ def test_2d_quad_mesh_dual(vis=False):
     assert vert_count == pytest.approx(
         [float(n_vert)/float(n_part)] * n_part, rel=0.1)
 
+
 def test_2d_quad_mesh_dual_with_ncommon(vis=False):
     """
     Generate simple 2D `mesh` connectivity with rectangular elements, eg
@@ -105,10 +106,12 @@ def test_2d_quad_mesh_dual_with_ncommon(vis=False):
           0 --- 1 --- 2
     if use the default `ncommon = 1`
     `_, elem_idx_list, _ = pymetis.part_mesh(2, mesh, gtype=pymetis.GType.DUAL)`
-    Then the output of `elem_idx_list` is `[0, 0, 0, 0]`, and the number is not balanced.
+    Then the output of `elem_idx_list` is `[0, 0, 0, 0]`, and the number is not 
+    balanced.
 
     if set `ncommon = 2`
-    `_, elem_idx_list, _ = pymetis.part_mesh(2, mesh, gtype=pymetis.GType.DUAL,ncommon)`
+    `_, elem_idx_list, _ = pymetis.part_mesh(2, mesh, gtype=pymetis.GType.DUAL,
+                                             ncommon)`
     Then the output of `elem_idx_list` is `[0, 1, 0, 1]`, the number is balanced.
     """
     n_cells_x = 2
@@ -118,7 +121,7 @@ def test_2d_quad_mesh_dual_with_ncommon(vis=False):
     n_part = 2
     ncommon = 2
     n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
-        None, None, pymetis.GType.DUAL,ncommon)
+        None, None, pymetis.GType.DUAL, ncommon)
 
     print(n_cuts)
     print([elem_part.count(it) for it in range(n_part)])
@@ -148,7 +151,6 @@ def test_2d_quad_mesh_dual_with_ncommon(vis=False):
     elem_count = [elem_part.count(it) for it in range(n_part)]
     assert elem_count == pytest.approx(
         [float(n_elem)/float(n_part)] * n_part, rel=0.1)
-
 
 
 def test_2d_quad_mesh_nodal_with_weights(vis=False):
