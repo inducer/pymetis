@@ -373,7 +373,8 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
                       eweights, options, recursive)
 
 
-def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None, ncommon=1):
+def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None,
+              ncommon=1):
     """This function is used to partition a mesh into *n_parts* parts based on a
     graph partitioning where each vertex is a node in the graph. A mesh is a
     collection of non-overlapping elements which are identified by their vertices.
@@ -403,10 +404,11 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None, ncom
     ``gtype`` specifies the partitioning is based on a nodal/dual graph of the mesh.
     It has to be one of :attr:`GType.NODAL` or :attr:`GType.DUAL`.
 
-    ``ncommon`` is needed when ``gtype=GType.DUAL`. It Specifies the number of common
-    nodes that two elements must have in order to put an edge between them in the dual
-    graph. For example, for tetrahedron meshes, ncommon should be 3, which creates an 
-    edge between two tets when they share a triangular face (i.e., 3 nodes).
+    ``ncommon`` is needed when ``gtype = GType.DUAL`. It Specifies the number of
+    common nodes that two elements must have in order to put an edge between them
+    in the dual graph. For example, for tetrahedron meshes, ncommon should be 3, 
+    which creates an edge between two tets when they share a triangular face 
+    (i.e., 3 nodes).
 
     Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where
     ``edge_cuts`` is the number of cuts to the connectivity graph, ``element_part``
