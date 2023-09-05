@@ -406,8 +406,8 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None,
 
     ``ncommon`` is needed when ``gtype = GType.DUAL`. It Specifies the number of
     common nodes that two elements must have in order to put an edge between them
-    in the dual graph. For example, for tetrahedron meshes, ncommon should be 3, 
-    which creates an edge between two tets when they share a triangular face 
+    in the dual graph. For example, for tetrahedron meshes, ncommon should be 3,
+    which creates an edge between two tets when they share a triangular face
     (i.e., 3 nodes).
 
     Returns a namedtuple of ``(edge_cuts, element_part, vertex_part)``, where

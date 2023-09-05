@@ -106,7 +106,7 @@ def test_2d_quad_mesh_dual_with_ncommon(vis=False):
           0 --- 1 --- 2
     if use the default `ncommon = 1`
     `_, elem_idx_list, _ = pymetis.part_mesh(2, mesh, gtype=pymetis.GType.DUAL)`
-    Then the output of `elem_idx_list` is `[0, 0, 0, 0]`, and the number is not 
+    Then the output of `elem_idx_list` is `[0, 0, 0, 0]`, and the number is not
     balanced.
 
     if set `ncommon = 2`
