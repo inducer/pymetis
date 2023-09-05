@@ -216,6 +216,7 @@ namespace
     idx_t &gtype,
     idx_t &nElements,
     idx_t &nVertex,
+    idx_t &ncommon,
     metis_options &options)
   {
     idx_t edgeCuts = 0;
@@ -242,7 +243,6 @@ namespace
     }
     else if(gtype == METIS_GTYPE_DUAL)
     {
-        idx_t ncommon = 1;
         idx_t objval = 1;
         int info = METIS_PartMeshDual(&nElements, &nVertex,
           connectivityOffsets.data(), connectivity.data(),
