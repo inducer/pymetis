@@ -97,7 +97,6 @@ def main():
                ],
 
           python_requires="~=3.8",
-          install_requires=["six"],
 
           ext_modules=[
               Extension(
