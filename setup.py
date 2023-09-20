@@ -61,7 +61,7 @@ def main():
         version_file_contents = version_file.read()
     finally:
         version_file.close()
-    exec(compile(version_file_contents, ver_filename, 'exec'), ver_dic)
+    exec(compile(version_file_contents, ver_filename, "exec"), ver_dic)
 
     setup(name="PyMetis",
           version=ver_dic["version"],
@@ -72,22 +72,22 @@ def main():
           license="wrapper: MIT/METIS: Apache 2",
           url="http://mathema.tician.de/software/pymetis",
           classifiers=[
-              'Development Status :: 4 - Beta',
-              'Intended Audience :: Developers',
-              'Intended Audience :: Other Audience',
-              'Intended Audience :: Science/Research',
-              'License :: OSI Approved :: MIT License',
-              'License :: OSI Approved :: Apache Software License',
-              'Natural Language :: English',
-              'Programming Language :: C',
-              'Programming Language :: C++',
-              'Programming Language :: Python',
-              'Programming Language :: Python :: 3',
-              'Topic :: Multimedia :: Graphics :: 3D Modeling',
-              'Topic :: Scientific/Engineering',
-              'Topic :: Scientific/Engineering :: Mathematics',
-              'Topic :: Scientific/Engineering :: Visualization',
-              'Topic :: Software Development :: Libraries',
+              "Development Status :: 4 - Beta",
+              "Intended Audience :: Developers",
+              "Intended Audience :: Other Audience",
+              "Intended Audience :: Science/Research",
+              "License :: OSI Approved :: MIT License",
+              "License :: OSI Approved :: Apache Software License",
+              "Natural Language :: English",
+              "Programming Language :: C",
+              "Programming Language :: C++",
+              "Programming Language :: Python",
+              "Programming Language :: Python :: 3",
+              "Topic :: Multimedia :: Graphics :: 3D Modeling",
+              "Topic :: Scientific/Engineering",
+              "Topic :: Scientific/Engineering :: Mathematics",
+              "Topic :: Scientific/Engineering :: Visualization",
+              "Topic :: Software Development :: Libraries",
               ],
 
           packages=find_packages(),
@@ -114,14 +114,14 @@ def main():
               ],
 
            cmdclass={
-               'build_clib': build_clib,
-               'build_ext': PybindBuildExtCommand
+               "build_clib": build_clib,
+               "build_ext": PybindBuildExtCommand
                },
 
            zip_safe=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
 
 # vim: foldmethod=marker
