@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# for aksetup_helper
+import sys
+sys.path.append(".")
+
 
 def get_config_schema():
     from aksetup_helper import (ConfigSchema, StringListOption, Switch,
