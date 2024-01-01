@@ -96,10 +96,6 @@ def main():
 
           packages=find_packages(),
 
-          setup_requires=[
-              "pybind11",
-               ],
-
           python_requires="~=3.8",
 
           ext_modules=[
