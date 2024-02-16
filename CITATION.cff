@@ -22,3 +22,4 @@ version: "2022.1"
 date-released: 2022-07-23
 url: "https://github.com/inducer/pymetis"
 doi: 10.5281/zenodo.6892213
+license: MIT
