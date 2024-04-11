@@ -14,7 +14,7 @@ jobs:
         steps:
         -   uses: actions/checkout@v3
         -
-            uses: actions/setup-python@v4
+            uses: actions/setup-python@v5
             with:
                 # matches compat target in setup.py
                 python-version: '3.8'
@@ -29,7 +29,7 @@ jobs:
         steps:
         -   uses: actions/checkout@v3
         -
-            uses: actions/setup-python@v4
+            uses: actions/setup-python@v5
             with:
                 python-version: '3.x'
         -   name: "Main Script"
@@ -53,7 +53,7 @@ jobs:
         steps:
         -   uses: actions/checkout@v3
         -
-            uses: actions/setup-python@v4
+            uses: actions/setup-python@v5
             with:
                 python-version: ${{ matrix.python-version }}
         -   name: "Main Script"
@@ -69,7 +69,7 @@ jobs:
         steps:
         -   uses: actions/checkout@v3
         -
-            uses: actions/setup-python@v4
+            uses: actions/setup-python@v5
             with:
                 python-version: '3.x'
         -   name: "Main Script"
