@@ -47,9 +47,9 @@ def test_tet_mesh(visualize=False):
     little_r = 1.5
 
     points = 50
-    dphi = 2*pi/points
+    dphi = 2 * pi / points
 
-    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+    rz = np.array([[big_r + little_r * cos(i * dphi), little_r * sin(i * dphi)]
             for i in range(points)])
 
     geo = GeometryBuilder()

@@ -384,7 +384,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
 
     if nparts == 1:
         # metis has a bug in this case--it disregards the index base
-        return 0, [0] * (len(xadj)-1)
+        return 0, [0] * (len(xadj) - 1)
 
     from pymetis._internal import part_graph
     return part_graph(nparts, xadj, adjncy, vweights,
