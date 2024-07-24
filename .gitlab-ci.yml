@@ -1,18 +1,20 @@
-Flake8:
-  script:
-  - curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/prepare-and-run-flake8.sh
-  - . ./prepare-and-run-flake8.sh "$CI_PROJECT_NAME" test
+Ruff:
+  script: |
+    pipx install ruff
+    ruff check
   tags:
-  - python3
+  - docker-runner
   except:
   - tags
 
 Python 3:
-  script:
-  - py_version=3
-  - EXTRA_INSTALL="numpy pybind11"
-  - curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/build-and-test-py-project.sh
-  - ". ./build-and-test-py-project.sh"
+  script: |
+    py_version=3
+    PROJECT_INSTALL_FLAGS="--no-build-isolation"
+    EXTRA_INSTALL="numpy pybind11 meson-python ninja"
+
+    curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/build-and-test-py-project.sh
+    . ./build-and-test-py-project.sh
   tags:
   - python3
   - linux
@@ -23,9 +25,10 @@ Python 3:
       junit: test/pytest.xml
 
 Documentation:
-  script:
-  - EXTRA_INSTALL="numpy pybind11"
-  - curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/build-docs.sh
-  - ". ./build-docs.sh"
+  script: |
+    PROJECT_INSTALL_FLAGS="--no-build-isolation"
+    EXTRA_INSTALL="numpy pybind11 meson-python ninja"
+    curl -L -O https://gitlab.tiker.net/inducer/ci-support/raw/main/build-docs.sh
+    . ./build-docs.sh
   tags:
   - python3
