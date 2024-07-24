@@ -51,15 +51,18 @@ Status.__doc__ = """A wrapper for METIS return codes.
 .. attribute:: OK
 
    Returned normally
+
 .. attribute:: ERROR_INPUT
 
    Returned due to erroneous inputs and/or options
+
 .. attribute:: ERROR_MEMORY
 
    Returned due to insufficient memory
+
 .. attribute:: ERROR
 
-   Some other erros
+   Some other errors
 """
 
 from pymetis._internal import OPType
@@ -108,7 +111,7 @@ OptionKey.__doc__ = """A wrapper for METIS option codes.
 from pymetis._internal import PType
 
 
-PType.__doc__ = """A wrapper for METIS paritioning scheme
+PType.__doc__ = """A wrapper for METIS partitioning scheme
 codes.
 
 .. attribute:: RB
@@ -179,7 +182,7 @@ codes.
    Show the refinement progress
 .. attribute:: IPART
 
-   Show info on initial paritioning
+   Show info on initial partitioning
 .. attribute:: MOVEINFO
 
    Show info on vertex moves during refinement

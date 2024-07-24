@@ -508,7 +508,7 @@ def generate_mesh_2d(nx, ny):
           0 --- 1 --- 2 --- 3 --- 4
 
     Notice that the element connectivity is specified in a counter
-    clockwise fasion.
+    clockwise fashion.
     """
     points = [
         (x, y, 0.0)
