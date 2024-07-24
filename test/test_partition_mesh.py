@@ -1,5 +1,5 @@
+import numpy as np
 import pytest
-from numpy import linspace
 
 import pymetis
 
@@ -266,7 +266,7 @@ def test_3d_hex_mesh_part_nodal(vis=False):
     points, connectivity = generate_mesh_3d(n_cells_x, n_cells_y, n_cells_z)
 
     n_part = 5
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+    _n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
         None, None, pymetis.GType.NODAL)
 
     if vis:
@@ -309,7 +309,7 @@ def test_3d_hex_mesh_part_dual(vis=False):
     points, connectivity = generate_mesh_3d(n_cells_x, n_cells_y, n_cells_z)
 
     n_part = 5
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+    _n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
         None, None, pymetis.GType.DUAL)
 
     if vis:
@@ -353,7 +353,7 @@ def test_3d_hex_mesh_part_nodal_with_weights(vis=False):
 
     n_part = 5
     tpwgts = [(i + 1.0) / 15.0 for i in range(n_part)]
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+    _n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
         None, tpwgts, pymetis.GType.NODAL)
 
     if vis:
@@ -397,7 +397,7 @@ def test_3d_hex_mesh_part_dual_with_weights(vis=False):
 
     n_part = 5
     tpwgts = [(i + 1.0) / 15.0 for i in range(n_part)]
-    n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
+    _n_cuts, elem_part, vert_part = pymetis.part_mesh(n_part, connectivity,
         None, tpwgts, pymetis.GType.DUAL)
 
     if vis:
@@ -487,7 +487,7 @@ def generate_mesh_1d(nx):
     """
     points = [
         (x, 0.0, 0.0)
-        for x in linspace(0, nx, nx + 1)
+        for x in np.linspace(0, nx, nx + 1)
     ]
     connectivity = [
         [it, it + 1]
@@ -512,11 +512,14 @@ def generate_mesh_2d(nx, ny):
     """
     points = [
         (x, y, 0.0)
-        for y in linspace(0, ny, ny + 1)
-        for x in linspace(0, nx, nx + 1)
+        for y in np.linspace(0, ny, ny + 1)
+        for x in np.linspace(0, nx, nx + 1)
     ]
     connectivity = [
-        [it + jt * (nx + 1), it + jt * (nx + 1) + 1, it + (jt + 1) * (nx + 1) + 1, it + (jt + 1) * (nx + 1)]
+        [it + jt * (nx + 1),
+         it + jt * (nx + 1) + 1,
+         it + (jt + 1) * (nx + 1) + 1,
+         it + (jt + 1) * (nx + 1)]
         for jt in range(ny)
         for it in range(nx)
     ]
@@ -531,9 +534,9 @@ def generate_mesh_3d(nx, ny, nz):
     """
     points = [
         (x, y, z)
-        for z in linspace(0, nz, nz + 1)
-        for y in linspace(0, ny, ny + 1)
-        for x in linspace(0, nx, nx + 1)
+        for z in np.linspace(0, nz, nz + 1)
+        for y in np.linspace(0, ny, ny + 1)
+        for x in np.linspace(0, nx, nx + 1)
     ]
     connectivity = [
         [it + jt * (nx + 1) + kt * ((nx + 1) * (ny + 1)),

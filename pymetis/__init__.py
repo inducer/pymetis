@@ -43,7 +43,9 @@ THE SOFTWARE.
 from pymetis.version import version, version_tuple  # noqa
 from pymetis._internal import Options as OptionsBase
 
-from pymetis._internal import Status        # noqa: F401
+from pymetis._internal import Status
+
+
 Status.__doc__ = """A wrapper for METIS return codes.
 
 .. attribute:: OK
@@ -60,7 +62,7 @@ Status.__doc__ = """A wrapper for METIS return codes.
    Some other erros
 """
 
-from pymetis._internal import OPType  # noqa: F401
+from pymetis._internal import OPType
 
 
 OPType.__doc__ = """A wrapper for METIS operation type
@@ -71,7 +73,7 @@ codes.
 .. attribute:: OMETIS
 """
 
-from pymetis._internal import OptionKey  # noqa: F401
+from pymetis._internal import OptionKey
 
 
 OptionKey.__doc__ = """A wrapper for METIS option codes.
@@ -103,7 +105,7 @@ OptionKey.__doc__ = """A wrapper for METIS option codes.
 .. attribute:: UBVEC
 """
 
-from pymetis._internal import PType  # noqa: F401
+from pymetis._internal import PType
 
 
 PType.__doc__ = """A wrapper for METIS paritioning scheme
@@ -113,7 +115,7 @@ codes.
 .. attribute:: KWAY
 """
 
-from pymetis._internal import GType  # noqa: F401
+from pymetis._internal import GType
 
 
 GType.__doc__ = """A wrapper for METIS graph type codes.
@@ -122,7 +124,7 @@ GType.__doc__ = """A wrapper for METIS graph type codes.
 .. attribute:: DUAL
 """
 
-from pymetis._internal import CType  # noqa: F401
+from pymetis._internal import CType
 
 
 CType.__doc__ = """A wrapper for METIS coarsening scheme
@@ -132,7 +134,7 @@ codes.
 .. attribute:: SHEM
 """
 
-from pymetis._internal import IPType  # noqa: F401
+from pymetis._internal import IPType
 
 
 IPType.__doc__ = """A wrapper for METIS initial
@@ -145,7 +147,7 @@ partitioning scheme codes.
 .. attribute:: METISRB
 """
 
-from pymetis._internal import RType  # noqa: F401
+from pymetis._internal import RType
 
 
 RType.__doc__ = """A wrapper for METIS refinement scheme
@@ -157,7 +159,7 @@ codes.
 .. attribute:: SEP1SIDED
 """
 
-from pymetis._internal import DebugLevel  # noqa: F401
+from pymetis._internal import DebugLevel
 
 
 DebugLevel.__doc__ = """A wrapper for METIS debug level
@@ -195,7 +197,7 @@ codes.
    Show info related to wspace allocation
 """
 
-from pymetis._internal import ObjType  # noqa: F401
+from pymetis._internal import ObjType
 
 
 ObjType.__doc__ = """A wrapper for METIS objective codes.
@@ -357,10 +359,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)
 
     if recursive is None:
-        if nparts > 8:
-            recursive = False
-        else:
-            recursive = True
+        recursive = nparts <= 8
 
     if options is None:
         options = Options()
@@ -438,7 +437,7 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None,
     # Generate flattened connectivity with offsets array, suitable for Metis
     from itertools import accumulate
     conn = [it for cell in connectivity for it in cell]
-    conn_offset = [0] + list(accumulate([len(cell) for cell in connectivity]))
+    conn_offset = [0, *accumulate([len(cell) for cell in connectivity])]
 
     n_elements = len(connectivity)
     n_vertex = len(set(conn))
