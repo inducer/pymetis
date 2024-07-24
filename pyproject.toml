@@ -1,12 +1,93 @@
 [build-system]
-# Minimum requirements for the build system to execute.
+build-backend = "mesonpy"
 requires = [
-        "setuptools>=42.0.0",
-        "wheel>=0.34.2",
-        "pybind11>=2.5.0"
-        ]
-build-backend = "setuptools.build_meta"
+    "meson-python",
+    "pybind11",
+]
+
+[project]
+name = "pymetis"
+version = "2023.1.1"
+description = "A graph partitioning package"
+readme = "README.rst"
+license = { file = "LICENSE" }
+maintainers = [ { name = "Andreas Kloeckner", email = "inform@tiker.net" } ]
+authors = [ { name = "Andreas Kloeckner", email = "inform@tiker.net" } ]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Other Audience",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache License 2.0",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: C",
+    "Programming Language :: C++",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "numpy",
+]
+
+[project.optional-dependencies]
+doc = [
+    "furo",
+    "sphinx>=4",
+    "sphinx-copybutton",
+]
+test = [
+    # NOTE: used for mesh generation in tests
+    "meshpy",
+    "pytest",
+    "ruff",
+]
+
+[project.urls]
+Documentation = "https://documen.tician.de/pymetis"
+Repository = "https://github.com/inducer/pymetis"
+
+[tool.ruff]
+preview = true
+
+[tool.ruff.lint]
+extend-select = [
+    "B",    # flake8-bugbear
+    "C",    # flake8-comprehensions
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "G",    # flake8-logging-format
+    "I",    # flake8-isort
+    "N",    # pep8-naming
+    "NPY",  # numpy
+    "Q",    # flake8-quotes
+    "RUF",  # ruff
+    "SIM",  # flake8-simplify
+    "UP",   # pyupgrade
+    "W",    # pycodestyle
+]
+extend-ignore = [
+    "C90",  # McCabe complexity
+    "E241", # multiple spaces after comma
+    "E242", # tab after comma
+    "E402", # module level import not at the top of file
+]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "double"
+docstring-quotes = "double"
+multiline-quotes = "double"
+
+[tool.ruff.lint.isort]
+known-local-folder = ["pymetis"]
+lines-after-imports = 2
+combine-as-imports = true
 
 [tool.cibuildwheel]
-
 skip = "*-win-* [cp]p3[67]-*"
