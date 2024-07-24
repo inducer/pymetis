@@ -45,9 +45,9 @@ def test_tet_graph(visualize=False):
     little_r = 1.5
 
     points = 50
-    dphi = 2*pi/points
+    dphi = 2 * pi / points
 
-    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+    rz = np.array([[big_r + little_r * cos(i * dphi), little_r * sin(i * dphi)]
             for i in range(points)])
 
     geo = GeometryBuilder()
@@ -109,9 +109,9 @@ def test_tet_mesh_nodal(visualize=False):
     little_r = 1.5
 
     points = 50
-    dphi = 2*pi/points
+    dphi = 2 * pi / points
 
-    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+    rz = np.array([[big_r + little_r * cos(i * dphi), little_r * sin(i * dphi)]
             for i in range(points)])
 
     geo = GeometryBuilder()
@@ -155,9 +155,9 @@ def test_tet_mesh_dual(visualize=False):
     little_r = 1.5
 
     points = 50
-    dphi = 2*pi/points
+    dphi = 2 * pi / points
 
-    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+    rz = np.array([[big_r + little_r * cos(i * dphi), little_r * sin(i * dphi)]
             for i in range(points)])
 
     geo = GeometryBuilder()
@@ -201,9 +201,9 @@ def test_tet_mesh_nodal_with_weights(visualize=False):
     little_r = 1.5
 
     points = 50
-    dphi = 2*pi/points
+    dphi = 2 * pi / points
 
-    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+    rz = np.array([[big_r + little_r * cos(i * dphi), little_r * sin(i * dphi)]
             for i in range(points)])
 
     geo = GeometryBuilder()
@@ -248,9 +248,9 @@ def test_tet_mesh_dual_with_weights(visualize=False):
     little_r = 1.5
 
     points = 50
-    dphi = 2*pi/points
+    dphi = 2 * pi / points
 
-    rz = np.array([[big_r+little_r*cos(i*dphi), little_r*sin(i*dphi)]
+    rz = np.array([[big_r + little_r * cos(i * dphi), little_r * sin(i * dphi)]
             for i in range(points)])
 
     geo = GeometryBuilder()
