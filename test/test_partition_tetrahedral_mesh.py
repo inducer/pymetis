@@ -1,4 +1,5 @@
-from __future__ import division, absolute_import
+from __future__ import absolute_import, division
+
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
 
@@ -21,17 +22,22 @@ THE SOFTWARE.
 """
 
 import numpy as np
-import pymetis
 import pytest
+
+import pymetis
 
 
 def test_tet_graph(visualize=False):
     pytest.importorskip("meshpy")
 
-    from math import pi, cos, sin
+    from math import cos, pi, sin
+
+    from meshpy.geometry import (
+        EXT_CLOSED_IN_RZ,
+        GeometryBuilder,
+        generate_surface_of_revolution,
+    )
     from meshpy.tet import MeshInfo, build
-    from meshpy.geometry import \
-            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
 
     pytest.importorskip("meshpy")
 
@@ -88,10 +94,14 @@ def test_tet_graph(visualize=False):
 def test_tet_mesh_nodal(visualize=False):
     pytest.importorskip("meshpy")
 
-    from math import pi, cos, sin
+    from math import cos, pi, sin
+
+    from meshpy.geometry import (
+        EXT_CLOSED_IN_RZ,
+        GeometryBuilder,
+        generate_surface_of_revolution,
+    )
     from meshpy.tet import MeshInfo, build
-    from meshpy.geometry import \
-            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
 
     pytest.importorskip("meshpy")
 
@@ -130,10 +140,14 @@ def test_tet_mesh_nodal(visualize=False):
 def test_tet_mesh_dual(visualize=False):
     pytest.importorskip("meshpy")
 
-    from math import pi, cos, sin
+    from math import cos, pi, sin
+
+    from meshpy.geometry import (
+        EXT_CLOSED_IN_RZ,
+        GeometryBuilder,
+        generate_surface_of_revolution,
+    )
     from meshpy.tet import MeshInfo, build
-    from meshpy.geometry import \
-            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
 
     pytest.importorskip("meshpy")
 
@@ -172,10 +186,14 @@ def test_tet_mesh_dual(visualize=False):
 def test_tet_mesh_nodal_with_weights(visualize=False):
     pytest.importorskip("meshpy")
 
-    from math import pi, cos, sin
+    from math import cos, pi, sin
+
+    from meshpy.geometry import (
+        EXT_CLOSED_IN_RZ,
+        GeometryBuilder,
+        generate_surface_of_revolution,
+    )
     from meshpy.tet import MeshInfo, build
-    from meshpy.geometry import \
-            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
 
     pytest.importorskip("meshpy")
 
@@ -215,10 +233,14 @@ def test_tet_mesh_nodal_with_weights(visualize=False):
 def test_tet_mesh_dual_with_weights(visualize=False):
     pytest.importorskip("meshpy")
 
-    from math import pi, cos, sin
+    from math import cos, pi, sin
+
+    from meshpy.geometry import (
+        EXT_CLOSED_IN_RZ,
+        GeometryBuilder,
+        generate_surface_of_revolution,
+    )
     from meshpy.tet import MeshInfo, build
-    from meshpy.geometry import \
-            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
 
     pytest.importorskip("meshpy")
 

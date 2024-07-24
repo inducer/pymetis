@@ -1,6 +1,7 @@
-from numpy import linspace
-import pymetis
 import pytest
+from numpy import linspace
+
+import pymetis
 
 
 def test_2d_quad_mesh_nodal(vis=False):

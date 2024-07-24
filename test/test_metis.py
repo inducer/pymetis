@@ -1,4 +1,5 @@
-from __future__ import division, absolute_import
+from __future__ import absolute_import, division
+
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
 
@@ -23,17 +24,22 @@ THE SOFTWARE.
 """
 
 import numpy as np
-import pymetis
 import pytest
+
+import pymetis
 
 
 def test_tet_mesh(visualize=False):
     pytest.importorskip("meshpy")
 
-    from math import pi, cos, sin
+    from math import cos, pi, sin
+
+    from meshpy.geometry import (
+        EXT_CLOSED_IN_RZ,
+        GeometryBuilder,
+        generate_surface_of_revolution,
+    )
     from meshpy.tet import MeshInfo, build
-    from meshpy.geometry import \
-            GeometryBuilder, generate_surface_of_revolution, EXT_CLOSED_IN_RZ
 
     pytest.importorskip("meshpy")
 
@@ -168,8 +174,18 @@ def test_options():
 
 
 def test_enum():
-    from pymetis._internal import Status, OPType, OptionKey, PType, \
-        GType, CType, IPType, RType, DebugLevel, ObjType
+    from pymetis._internal import (
+        CType,
+        DebugLevel,
+        GType,
+        IPType,
+        ObjType,
+        OptionKey,
+        OPType,
+        PType,
+        RType,
+        Status,
+    )
 
     assert isinstance(Status.OK, int)
     assert isinstance(OPType.PMETIS, int)
