@@ -90,5 +90,19 @@ known-local-folder = ["pymetis"]
 lines-after-imports = 2
 combine-as-imports = true
 
+[tool.typos.default]
+extend-ignore-re = [
+  "(?Rm)^.*(#|//)\\s*spellchecker:\\s*disable-line$"
+]
+
+[tool.typos.default.extend-words]
+nd = "nd"
+
+[tool.typos.files]
+extend-exclude = [
+    "src/metis"
+]
+
 [tool.cibuildwheel]
 skip = "*-win-* [cp]p3[67]-*"
+
