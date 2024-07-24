@@ -1,6 +1,3 @@
-from __future__ import absolute_import, division
-
-
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
 
 __license__ = """
@@ -77,11 +74,11 @@ def test_tet_mesh(visualize=False):
     adjacency = {}
     for _face_vertices, els_faces in face_map.items():
         if len(els_faces) == 2:
-            (e1, f1), (e2, f2) = els_faces
+            (e1, _f1), (e2, _f2) = els_faces
             adjacency.setdefault(e1, []).append(e2)
             adjacency.setdefault(e2, []).append(e1)
 
-    cuts, part_vert = pymetis.part_graph(17, adjacency)
+    _cuts, part_vert = pymetis.part_graph(17, adjacency)
 
     if visualize:
         import pyvtk
@@ -117,7 +114,8 @@ def test_unconnected():
 
 
 def test_nested_dissection():
-    scipy = pytest.importorskip("scipy")
+    pytest.importorskip("scipy")
+
     import scipy.sparse
 
     fmat = scipy.sparse.rand(100, 100, density=0.005)
@@ -156,7 +154,7 @@ def test_options():
     with pytest.raises(AttributeError):
         opt.yoink = 100
     with pytest.raises(AttributeError):
-        opt.yoink
+        opt.yoink  # noqa: B018
 
     # Test a small example case with the options set
     adjacency_list = [
@@ -166,7 +164,7 @@ def test_options():
     ]
 
     num_clusters = 2
-    n_cuts, parts = pymetis.part_graph(
+    _n_cuts, _parts = pymetis.part_graph(
         num_clusters,
         adjacency=adjacency_list,
         options=opt
