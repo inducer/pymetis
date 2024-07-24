@@ -1,3 +1,4 @@
+from importlib import metadata
 from urllib.request import urlopen
 
 
@@ -6,19 +7,7 @@ _conf_url = \
 with urlopen(_conf_url) as _inf:
     exec(compile(_inf.read(), _conf_url, "exec"), globals())
 
-copyright = "2013-2021, Andreas Kloeckner"
+copyright = "2013-2024, Andreas Kloeckner"
 author = "Andreas Kloeckner"
-
-
-def get_version():
-    conf = {}
-    exec(
-        compile(
-            open("../pymetis/__init__.py").read(), "../pymetis/__init__.py", "exec"
-        ),
-        conf,
-    )
-    return conf["version"]
-
-
-version = get_version()
+release = metadata.version("pymetis")
+version = ".".join(release.split(".")[:2])
