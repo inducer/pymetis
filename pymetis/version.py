@@ -5,7 +5,7 @@ from typing import Tuple
 def _parse_version(version: str) -> Tuple[Tuple[int, ...], str]:
     import re
 
-    m = re.match("^([0-9.]+)([a-z0-9]*?)$", VERSION_TEXT)
+    m = re.match(r"^([0-9.]+)([a-z0-9]*?)$", VERSION_TEXT)
     assert m is not None
 
     return tuple(int(nr) for nr in m.group(1).split(".")), m.group(2)
