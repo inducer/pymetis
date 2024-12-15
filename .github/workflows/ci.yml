@@ -7,6 +7,10 @@ on:
     schedule:
         - cron:  '17 3 * * 0'
 
+concurrency:
+    group: ${{ github.head_ref || github.ref_name }}
+    cancel-in-progress: true
+
 jobs:
     ruff:
         name: Ruff
@@ -48,7 +52,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                python-version: ['3.8', '3.10', '3.x']
+                python-version: ['3.10', '3.12', '3.x']
         steps:
         -   uses: actions/checkout@v4
         -
@@ -82,5 +86,3 @@ jobs:
                 . ci-support.sh
                 build_py_project_in_venv
                 build_docs
-
-# vim: sw=4
