@@ -7,7 +7,7 @@ requires = [
 
 [project]
 name = "pymetis"
-version = "2023.1.1"
+version = "2024.1"
 description = "A graph partitioning package"
 readme = "README.rst"
 license = { file = "LICENSE" }
