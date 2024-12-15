@@ -13,7 +13,7 @@ readme = "README.rst"
 license = { file = "LICENSE" }
 maintainers = [ { name = "Andreas Kloeckner", email = "inform@tiker.net" } ]
 authors = [ { name = "Andreas Kloeckner", email = "inform@tiker.net" } ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
