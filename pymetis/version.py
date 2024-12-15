@@ -1,8 +1,7 @@
 from importlib import metadata
-from typing import Tuple
 
 
-def _parse_version(version: str) -> Tuple[Tuple[int, ...], str]:
+def _parse_version(version: str) -> tuple[tuple[int, ...], str]:
     import re
 
     m = re.match(r"^([0-9.]+)([a-z0-9]*?)$", VERSION_TEXT)
