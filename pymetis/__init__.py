@@ -322,7 +322,7 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None, options=None):
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
-            vweights=None, eweights=None, tpwgts=None, recursive=None,
+            vweights=None, eweights=None, *, tpwgts=None, recursive=None,
             contiguous=None, options=None):
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
