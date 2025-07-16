@@ -322,7 +322,8 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None, options=None):
 
 
 def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
-        vweights=None, eweights=None, recursive=None, contiguous=None, options=None):
+            vweights=None, eweights=None, *, tpwgts=None, recursive=None,
+            contiguous=None, options=None):
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
     The input graph is given in either a Pythonic way as the *adjacency* parameter
@@ -357,6 +358,9 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     METIS runtime options can be specified by supplying an :class:`Options` object in
     the input.
 
+    ``tpwgts`` is a list of size ``nparts`` that specifies the desired weight for
+    each partition.
+
     (quoted with slight adaptations from the Metis docs)
     """
     xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)
@@ -384,13 +388,25 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     if options.numbering not in [-1, 0]:
         raise ValueError("METIS numbering option must be set to 0 or the default")
 
+    if tpwgts is None:
+        tpwgts = []
+    if tpwgts:
+        if len(tpwgts) != nparts:
+            raise RuntimeError("The length of tpwgts mismatches `nparts`")
+
+        if __debug__ and any(w < 0.0 for w in tpwgts):
+            raise ValueError("The values of tpwgts should be non-negative")
+
+        total_weights = sum(tpwgts)
+        tpwgts = [w / total_weights for w in tpwgts]
+
     if nparts == 1:
         # metis has a bug in this case--it disregards the index base
         return 0, [0] * (len(xadj) - 1)
 
     from pymetis._internal import part_graph
     return part_graph(nparts, xadj, adjncy, vweights,
-                      eweights, options, recursive)
+                      eweights, tpwgts, options, recursive)
 
 
 def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None,
