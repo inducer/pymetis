@@ -394,7 +394,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
         if len(tpwgts) != nparts:
             raise RuntimeError("The length of tpwgts mismatches `nparts`")
 
-        if any(w < 0.0 for w in tpwgts):
+        if __debug__ and any(w < 0.0 for w in tpwgts):
             raise ValueError("The values of tpwgts should be non-negative")
 
         total_weights = sum(tpwgts)
