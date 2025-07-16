@@ -112,7 +112,33 @@ def test_unconnected():
     pymetis.part_graph(num_clusters, adjacency=adjacency_list,
             options=pymetis.Options(contig=False))
 
+def test_part_graph_with_weights():
+    def grid_adjacency(nx, ny):
+        def idx(i, j):
+            return i + j * (nx + 1)
 
+        adj = []
+        for j in range(ny + 1):
+            for i in range(nx + 1):
+                nbr = []
+                if i > 0:
+                    nbr.append(idx(i - 1, j))
+                if i < nx:
+                    nbr.append(idx(i + 1, j))
+                if j > 0:
+                    nbr.append(idx(i, j - 1))
+                if j < ny:
+                    nbr.append(idx(i, j + 1))
+                adj.append(np.array(nbr))
+        return adj
+
+    adj = grid_adjacency(9, 9)
+    tpwgts = [0.8, 0.2]
+    _cuts, parts = pymetis.part_graph(2, adjacency=adj, tpwgts=tpwgts)
+    counts = [parts.count(it) for it in range(2)]
+    nvert = len(adj)
+    assert counts == [int(nvert * tpwgts[0]), int(nvert * tpwgts[1])]
+    
 def test_nested_dissection():
     pytest.importorskip("scipy")
 

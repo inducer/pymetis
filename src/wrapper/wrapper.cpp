@@ -156,6 +156,7 @@ namespace
       const py::object &adjncy_py,
       const py::object &vwgt_py,
       const py::object &adjwgt_py,
+      const py::object &tpwgts_py,
       metis_options &options,
       bool recursive)
   {
@@ -164,9 +165,11 @@ namespace
     COPY_IDXTYPE_LIST(xadj);
     COPY_IDXTYPE_LIST(adjncy);
 
-    // pymetis does not currently support partition weights and constraints.
+    // partition weights
     idx_t ncon = 1;
-    real_t * tpwgts = NULL;
+    std::vector<real_t> tpwgts;
+    COPY_REALTYPE_LIST(tpwgts);
+    real_t *p_tpwgts = tpwgts.empty() ? nullptr : tpwgts.data();
     real_t * pubvec = NULL;
 
     // pymetis defaults to the minimizing-edge-cut objective
@@ -188,7 +191,7 @@ namespace
     {
       int info = METIS_PartGraphRecursive(
         &nvtxs, &ncon, &xadj.front(), &adjncy.front(),
-        maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
+        maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, p_tpwgts,
         pubvec, options.m_options, &edgecut, part.get());
 
       assert_ok(info, "METIS_PartGraphRecursive failed");
@@ -197,7 +200,7 @@ namespace
     {
       int info = METIS_PartGraphKway(
         &nvtxs, &ncon, &xadj.front(), &adjncy.front(),
-        maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, tpwgts,
+        maybe_data(vwgt), pvsize, maybe_data(adjwgt), &nparts, p_tpwgts,
         pubvec, options.m_options, &edgecut, part.get());
 
       assert_ok(info, "METIS_PartGraphKway failed");
