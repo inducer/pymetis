@@ -390,7 +390,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
 
     if tpwgts is None:
         tpwgts = []
-    if len(tpwgts) > 0:
+    if tpwgts:
         if len(tpwgts) != nparts:
             raise RuntimeError("The length of tpwgts mismatches `nparts`")
 
