@@ -7,7 +7,7 @@ requires = [
 
 [project]
 name = "pymetis"
-version = "2025.1.1"
+version = "2025.2"
 description = "A graph partitioning package"
 readme = "README.rst"
 license = "MIT AND Apache-2.0"
