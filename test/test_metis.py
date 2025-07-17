@@ -144,25 +144,27 @@ def test_part_graph_with_weights():
 
 
 def test_zero_copy():
+    tp = pymetis.zero_copy_dtype()
+
     # make sure it does warn about copies
     with pytest.warns(BytesWarning):
         pymetis.part_graph(2, pymetis.CSRAdjacency(
                     adj_starts=[0, 2, 4, 6, 6],
-                    adjacent=np.array([1, 2, 0, 2, 1, 3], np.int64)),
+                    adjacent=np.array([1, 2, 0, 2, 1, 3], tp)),
                     warn_on_copies=True)
 
     # make sure it does warn about copies
     with pytest.warns(BytesWarning):
         pymetis.part_graph(2, pymetis.CSRAdjacency(
-                    adj_starts=np.array([0, 2, 4, 6, 6], np.int32),
-                    adjacent=np.array([1, 2, 0, 2, 1, 3], np.int64)),
+                    adj_starts=np.array([0, 2, 4, 6, 6], np.int16),
+                    adjacent=np.array([1, 2, 0, 2, 1, 3], tp)),
                     warn_on_copies=True)
 
     # make sure array code does not copy
     with catch_warnings(record=True) as wlist:
         pymetis.part_graph(2, pymetis.CSRAdjacency(
-                    adj_starts=np.array([0, 2, 4, 6, 6], np.int64),
-                    adjacent=np.array([1, 2, 0, 2, 1, 3], np.int64)),
+                    adj_starts=np.array([0, 2, 4, 6, 6], tp),
+                    adjacent=np.array([1, 2, 0, 2, 1, 3], tp)),
                     warn_on_copies=True)
 
         assert not wlist

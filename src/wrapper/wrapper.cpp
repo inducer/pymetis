@@ -88,7 +88,10 @@ namespace
   template<>
   char typecode_for_type<idx_t>()
   {
-    return 'q';
+    if (IDXTYPEWIDTH == 64)
+      return 'q';
+    else
+      return 'i';
   }
 
   template<class T>
@@ -615,4 +618,5 @@ PYBIND11_MODULE(_internal, m)
         py::arg("warn_on_copies")=false
         );
   m.def("part_mesh", wrap_part_mesh);
+  m.def("_idx_type_width", []() { return IDXTYPEWIDTH; });
 }
