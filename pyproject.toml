@@ -10,7 +10,7 @@ name = "pymetis"
 version = "2025.1.1"
 description = "A graph partitioning package"
 readme = "README.rst"
-license = { file = "LICENSE" }
+license = "MIT AND Apache-2.0"
 maintainers = [ { name = "Andreas Kloeckner", email = "inform@tiker.net" } ]
 authors = [ { name = "Andreas Kloeckner", email = "inform@tiker.net" } ]
 requires-python = ">=3.10"
@@ -19,8 +19,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Other Audience",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
-    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Programming Language :: C",
     "Programming Language :: C++",
