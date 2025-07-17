@@ -31,6 +31,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
+    "typing-extensions>=4.5",
 ]
 
 [project.optional-dependencies]
@@ -70,6 +71,7 @@ extend-select = [
     "SIM",  # flake8-simplify
     "UP",   # pyupgrade
     "W",    # pycodestyle
+    "TC",
 ]
 extend-ignore = [
     "C90",  # McCabe complexity

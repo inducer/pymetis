@@ -1,11 +1,28 @@
+# pyright: reportAttributeAccessIssue=none
+# FIXME: Remove when stubs for wrapper code are complete
+
 """
+.. class:: IntSequence
+
+    A :class:`~collections.abc.Sequence` of integers,
+    or a one-dimensional :class:`numpy.ndarray` of integer dtype.
+    To avoid unnecessary copies, make sure to use :attr:`numpy.int64`.
+
+.. autodata:: PythonicGraph
+    :noindex:
+
+.. class:: PythonicGraph
+
+    See above.
+
+.. autoclass:: CSRAdjacency
 .. autofunction:: nested_dissection
 .. autofunction:: part_graph
 .. autofunction:: part_mesh
-.. autofunction:: verify_nd
 
 .. autoclass:: Options
 .. autoclass:: MeshPartition
+.. autoclass:: GraphPartition
 .. autoclass:: Status
 .. autoclass:: OPType
 .. autoclass:: OptionKey
@@ -16,7 +33,11 @@
 .. autoclass:: RType
 .. autoclass:: DebugLevel
 .. autoclass:: ObjType
+
 """
+
+from __future__ import annotations
+
 
 __copyright__ = "Copyright (C) 2009-2013 Andreas Kloeckner"
 
@@ -40,10 +61,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-from pymetis.version import version, version_tuple  # noqa
-from pymetis._internal import Options as OptionsBase
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Literal, NamedTuple, TypeAlias, overload
+from warnings import warn
 
-from pymetis._internal import Status
+from typing_extensions import deprecated, override
+
+from pymetis._internal import Options as OptionsBase, Status
+from pymetis.version import version, version_tuple
+
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+
+    import numpy as np
 
 
 Status.__doc__ = """A wrapper for METIS return codes.
@@ -210,30 +241,42 @@ ObjType.__doc__ = """A wrapper for METIS objective codes.
 .. attribute:: NODE
 """
 
-# Create Named Tuple for Mesh Partition
-from collections import namedtuple
+
+class GraphPartition(NamedTuple):
+    """A named tuple for describing the partitioning of a mesh.
+
+    .. autoattribute:: edge_cuts
+    .. autoattribute:: vertex_part
+
+    """
+    edge_cuts: int
+    "Number of edges which needed cutting to form partitions"
+
+    vertex_part: Sequence[int]
+    "List with vertex partition indices"
 
 
-MeshPartition = namedtuple("MeshPartition",
-    ["edge_cuts", "element_part", "vertex_part"])
-MeshPartition.__doc__ = """A named tuple for describing the partitioning of a
-mesh.
+class MeshPartition(NamedTuple):
+    """A named tuple for describing the partitioning of a mesh.
 
-.. attribute:: edge_cuts
+    .. autoattribute:: edge_cuts
+    .. autoattribute:: element_part
+    .. autoattribute:: vertex_part
 
-   Number of edges which needed cutting to form partitions
-.. attribute:: element_part
+    """
+    edge_cuts: int
+    "Number of edges which needed cutting to form partitions"
 
-   List with element partition indices
-.. attribute:: vertex_part
+    element_part: Sequence[int]
+    "List with element partition indices"
 
-   List with vertex partition indices
-"""
+    vertex_part: Sequence[int]
+    "List with vertex partition indices"
 
 
 # {{{ Options handling
 
-def _options_get_index(name):
+def _options_get_index(name: str) -> int:
     if not name.islower():
         raise AttributeError(name)
     from pymetis._internal import options_indices
@@ -242,7 +285,7 @@ def _options_get_index(name):
 
 class Options(OptionsBase):
     """See the `METIS manual
-    <http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf>`__
+    <https://github.com/KarypisLab/METIS/blob/master/manual/manual.pdf>`__
     for context.
 
     .. attribute:: ncuts
@@ -259,15 +302,16 @@ class Options(OptionsBase):
     .. attribute:: ufactor
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: int):
         super().__init__()
         for name, val in kwargs.items():
             setattr(self, name, val)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> int:
         return self._get(_options_get_index(name))
 
-    def __setattr__(self, name, value):
+    @override
+    def __setattr__(self, name: str, value: int):
         if not isinstance(value, int):
             raise TypeError("METIS options accept only integer values.")
         self._set(_options_get_index(name), value)
@@ -275,33 +319,90 @@ class Options(OptionsBase):
 # }}}
 
 
+IntSequence: TypeAlias = "Sequence[int] | np.ndarray[tuple[int]]"
+PythonicGraph: TypeAlias = "Sequence[IntSequence] | Mapping[int, IntSequence]"
+
+
+@dataclass(frozen=True)
+class CSRAdjacency:
+    """
+    .. autoattribute:: adj_starts
+
+        Length must be number of vertices + 1.
+
+    .. autoattribute:: adjacent
+
+    Vertex `i` has adjacent vertices ``adjacent[adj_starts[i]:adj_starts[i+1]]``.
+
+    If the attributes are arrays (:class:`numpy.ndarray` or anything else satisfying
+    the Python buffer interface of
+
+    .. versionadded:: 2025.2
+    """
+    adj_starts: IntSequence
+    adjacent: IntSequence
+
+
 def verify_nd(perm, iperm):
     from pymetis._internal import verify_nd
     return verify_nd(perm, iperm)
 
 
-def _prepare_graph(adjacency, xadj, adjncy):
+def _prepare_graph(
+            adjacency: CSRAdjacency | PythonicGraph | None,
+            xadj: IntSequence | None,
+            adjncy: IntSequence | None,
+        ) -> tuple[IntSequence, IntSequence]:
     if adjacency is not None:
-        assert xadj is None
-        assert adjncy is None
+        if xadj is not None or adjncy is not None:
+            raise TypeError("may not pass xadj/adjacency if adjacency is passed")
+
+        if isinstance(adjacency, CSRAdjacency):
+            return adjacency.adj_starts, adjacency.adjacent
 
         xadj = [0]
         adjncy = []
 
         for i in range(len(adjacency)):
             adj = adjacency[i]
-            if adj is not None and len(adj):
+            if __debug__ and len(adj):
                 assert max(adj) < len(adjacency)
             adjncy += list(map(int, adj))
             xadj.append(len(adjncy))
     else:
-        assert xadj is not None
-        assert adjncy is not None
+        warn("Passing xadj/adjncy is deprecated and will be removed in 2027. "
+             "Pass a CSRAdjacency object instead.", DeprecationWarning, stacklevel=3)
+
+        if xadj is None or adjncy is None:
+            raise TypeError("must pass xadj/adjacency if adjacency is not passed")
 
     return xadj, adjncy
 
 
-def nested_dissection(adjacency=None, xadj=None, adjncy=None, options=None):
+@overload
+def nested_dissection(
+            adjacency: CSRAdjacency | PythonicGraph | None = None,
+            xadj: None = None,
+            adjncy: None | None = None,
+            options: Options | None = None,
+        ) -> Sequence[int]: ...
+
+@overload
+@deprecated("pass a CSRAdjacency object instead")
+def nested_dissection(
+            adjacency: None | None = None,
+            xadj: IntSequence | None = None,
+            adjncy: IntSequence | None = None,
+            options: Options | None = None,
+        ) -> Sequence[int]: ...
+
+
+def nested_dissection(
+            adjacency: CSRAdjacency | PythonicGraph | None = None,
+            xadj: IntSequence | None = None,
+            adjncy: IntSequence | None = None,
+            options: Options | None = None,
+        ) -> Sequence[int]:
     """This function computes fill reducing orderings of sparse matrices using
     the multilevel nested dissection algorithm.
 
@@ -321,13 +422,58 @@ def nested_dissection(adjacency=None, xadj=None, adjncy=None, options=None):
     return edge_nd(xadj, adjncy, options)
 
 
-def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
-            vweights=None, eweights=None, *, tpwgts=None, recursive=None,
-            contiguous=None, options=None):
+@overload
+def part_graph(
+            nparts: int,
+            adjacency: PythonicGraph | CSRAdjacency | None = None,
+            xadj: None = None,
+            adjncy: None = None,
+            *,
+            vweights: IntSequence | None = None,
+            eweights: IntSequence | None = None,
+            tpwgts: Sequence[float] | None = None,
+            recursive: bool | None = None,
+            contiguous: bool | None = None,
+            options: Options | None = None,
+            warn_on_copies: bool = False,
+        ) -> GraphPartition: ...
+
+@overload
+@deprecated("pass a CSRAdjacency object instead")
+def part_graph(
+            nparts: int,
+            adjacency: None = None,
+            xadj: IntSequence | None = None,
+            adjncy: IntSequence | None = None,
+            *,
+            vweights: IntSequence | None = None,
+            eweights: IntSequence | None = None,
+            tpwgts: Sequence[float] | None = None,
+            recursive: bool | None = None,
+            contiguous: bool | None = None,
+            options: Options | None = None,
+            warn_on_copies: bool = False,
+        ) -> GraphPartition: ...
+
+
+def part_graph(
+            nparts: int,
+            adjacency: PythonicGraph | CSRAdjacency | None = None,
+            xadj: IntSequence | None = None,
+            adjncy: IntSequence | None = None,
+            *,
+            vweights: IntSequence | None = None,
+            eweights: IntSequence | None = None,
+            tpwgts: Sequence[float] | None = None,
+            recursive: bool | None = None,
+            contiguous: bool | None = None,
+            options: Options | None = None,
+            warn_on_copies: bool = False,
+        ) -> GraphPartition:
     """Return a partition (cutcount, part_vert) into nparts for an input graph.
 
     The input graph is given in either a Pythonic way as the *adjacency* parameter
-    or in the direct C-like way that Metis likes as *xadj* and *adjncy*. It
+    or in the direct CSR-like way that Metis uses internally as *xadj* and *adjncy*. It
     is an error to specify both graph inputs.
 
     The Pythonic graph specifier *adjacency* is required to have the following
@@ -359,7 +505,7 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     the input.
 
     ``tpwgts`` is a list of size ``nparts`` that specifies the desired weight for
-    each partition.
+    each partition. Its entries must sum to a value less than or equal to 1.
 
     (quoted with slight adaptations from the Metis docs)
     """
@@ -378,7 +524,6 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
                 "Contiguous setting should be specified either through "
                 "`options` OR through the `contiguous` flag.")
 
-        from warnings import warn
         warn("Passing the 'contiguous' flag is deprecated. Pass the equivalent "
                 "flag in Options instead. This will go stop working in 2022.",
                 DeprecationWarning, stacklevel=2)
@@ -388,8 +533,6 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
     if options.numbering not in [-1, 0]:
         raise ValueError("METIS numbering option must be set to 0 or the default")
 
-    if tpwgts is None:
-        tpwgts = []
     if tpwgts:
         if len(tpwgts) != nparts:
             raise RuntimeError("The length of tpwgts mismatches `nparts`")
@@ -398,19 +541,32 @@ def part_graph(nparts, adjacency=None, xadj=None, adjncy=None,
             raise ValueError("The values of tpwgts should be non-negative")
 
         total_weights = sum(tpwgts)
-        tpwgts = [w / total_weights for w in tpwgts]
+        if abs(total_weights - 1) > 1e-12:
+            warn("tpwghts does not sum to one. PyMetis used to automatically "
+                 "fix this, but this behavior is deprecated and will stop "
+                 "working in 2027.", DeprecationWarning, stacklevel=2,
+             )
+            tpwgts = [w / total_weights for w in tpwgts]
 
     if nparts == 1:
         # metis has a bug in this case--it disregards the index base
-        return 0, [0] * (len(xadj) - 1)
+        return GraphPartition(0, [0] * (len(xadj) - 1))
 
     from pymetis._internal import part_graph
-    return part_graph(nparts, xadj, adjncy, vweights,
-                      eweights, tpwgts, options, recursive)
+    return GraphPartition(*part_graph(nparts, xadj, adjncy, vweights,
+                      eweights, tpwgts, options, recursive,
+                      warn_on_copies=warn_on_copies,
+                  ))
 
 
-def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None,
-              ncommon=1):
+def part_mesh(
+            n_parts: int,
+            connectivity: Sequence[IntSequence],
+            options: Options | None = None,
+            tpwgts: Sequence[float] | None = None,
+            gtype: Literal[GType.NODAL, GType.DUAL] | None = None,
+            ncommon: int = 1
+        ) -> MeshPartition:
     """This function is used to partition a mesh into *n_parts* parts based on a
     graph partitioning where each vertex is a node in the graph. A mesh is a
     collection of non-overlapping elements which are identified by their vertices.
@@ -492,5 +648,29 @@ def part_mesh(n_parts, connectivity, options=None, tpwgts=None, gtype=None,
     from pymetis._internal import part_mesh
     return MeshPartition(*part_mesh(n_parts, conn_offset, conn,
         tpwgts, gtype, n_elements, n_vertex, ncommon, options))
+
+
+__all__ = [
+    "CType",
+    "DebugLevel",
+    "GType",
+    "GraphPartition",
+    "IPType",
+    "MeshPartition",
+    "OPType",
+    "ObjType",
+    "OptionKey",
+    "Options",
+    "PType",
+    "RType",
+    "Status",
+    "nested_dissection",
+    "part_graph",
+    "part_mesh",
+    "verify_nd",
+    "version",
+    "version_tuple",
+]
+
 
 # vim: foldmethod=marker
