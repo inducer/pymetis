@@ -5,8 +5,9 @@
 .. class:: IntSequence
 
     A :class:`~collections.abc.Sequence` of integers,
-    or a one-dimensional :class:`numpy.ndarray` of integer dtype.
-    To avoid unnecessary copies, make sure to use :attr:`numpy.int64`.
+    or anything satisfying the Python buffer interface as a one-dimensional
+    array of integers.
+    To avoid unnecessary copying of data, make sure to use :func:`zero_copy_dtype`.
 
 .. autodata:: PythonicGraph
     :noindex:
@@ -19,6 +20,7 @@
 .. autofunction:: nested_dissection
 .. autofunction:: part_graph
 .. autofunction:: part_mesh
+.. autofunction:: zero_copy_dtype
 
 .. autoclass:: Options
 .. autoclass:: MeshPartition
@@ -34,6 +36,18 @@
 .. autoclass:: DebugLevel
 .. autoclass:: ObjType
 
+References
+^^^^^^^^^^
+
+.. currentmodule:: np
+
+.. class:: integer
+
+    See :class:`numpy.integer`.
+
+.. class:: dtype
+
+    See :class:`numpy.dtype`.
 """
 
 from __future__ import annotations
@@ -333,9 +347,6 @@ class CSRAdjacency:
     .. autoattribute:: adjacent
 
     Vertex `i` has adjacent vertices ``adjacent[adj_starts[i]:adj_starts[i+1]]``.
-
-    If the attributes are arrays (:class:`numpy.ndarray` or anything else satisfying
-    the Python buffer interface of
 
     .. versionadded:: 2025.2
     """
@@ -650,6 +661,23 @@ def part_mesh(
         tpwgts, gtype, n_elements, n_vertex, ncommon, options))
 
 
+def zero_copy_dtype() -> np.dtype[np.integer]:
+    """
+    Return the :class:`np.dtype` needed for zero-copy operation in METIS.
+
+    Requires :mod:`numpy` (unlike the rest of PyMETIS).
+    """
+    import numpy as np
+
+    from pymetis._internal import _idx_type_width  # pyright: ignore[reportPrivateUsage]
+    if _idx_type_width() == 32:
+        return np.dtype(np.int32)
+    elif _idx_type_width() == 64:
+        return np.dtype(np.int64)
+    else:
+        raise ValueError("unexpected value of IDXTYPEWIDTH in METIS")
+
+
 __all__ = [
     "CType",
     "DebugLevel",
@@ -670,6 +698,7 @@ __all__ = [
     "verify_nd",
     "version",
     "version_tuple",
+    "zero_copy_dtype",
 ]
 
 
