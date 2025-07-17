@@ -31,7 +31,6 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
-    "numpy",
 ]
 
 [project.optional-dependencies]
@@ -41,6 +40,7 @@ doc = [
     "sphinx-copybutton",
 ]
 test = [
+    "numpy",
     # NOTE: used for mesh generation in tests
     "meshpy",
     "pytest",
