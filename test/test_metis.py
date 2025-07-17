@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+from warnings import catch_warnings
+
 import numpy as np
 import pytest
 
@@ -71,7 +73,7 @@ def test_tet_mesh(visualize=False):
         for fid, face_vertices in enumerate(tet_face_vertices(el)):
             face_map.setdefault(frozenset(face_vertices), []).append((el_id, fid))
 
-    adjacency = {}
+    adjacency: dict[int, list[int]] = {}
     for _face_vertices, els_faces in face_map.items():
         if len(els_faces) == 2:
             (e1, _f1), (e2, _f2) = els_faces
@@ -139,6 +141,31 @@ def test_part_graph_with_weights():
     counts = [parts.count(it) for it in range(2)]
     nvert = len(adj)
     assert counts == [int(nvert * tpwgts[0]), int(nvert * tpwgts[1])]
+
+
+def test_zero_copy():
+    # make sure it does warn about copies
+    with pytest.warns(BytesWarning):
+        pymetis.part_graph(2, pymetis.CSRAdjacency(
+                    adj_starts=[0, 2, 4, 6, 6],
+                    adjacent=np.array([1, 2, 0, 2, 1, 3], np.int64)),
+                    warn_on_copies=True)
+
+    # make sure it does warn about copies
+    with pytest.warns(BytesWarning):
+        pymetis.part_graph(2, pymetis.CSRAdjacency(
+                    adj_starts=np.array([0, 2, 4, 6, 6], np.int32),
+                    adjacent=np.array([1, 2, 0, 2, 1, 3], np.int64)),
+                    warn_on_copies=True)
+
+    # make sure array code does not copy
+    with catch_warnings(record=True) as wlist:
+        pymetis.part_graph(2, pymetis.CSRAdjacency(
+                    adj_starts=np.array([0, 2, 4, 6, 6], np.int64),
+                    adjacent=np.array([1, 2, 0, 2, 1, 3], np.int64)),
+                    warn_on_copies=True)
+
+        assert not wlist
 
 
 def test_nested_dissection():

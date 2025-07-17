@@ -132,7 +132,12 @@ py.extension_module(
 )
 
 py.install_sources(
-    ['pymetis/__init__.py', 'pymetis/version.py'],
+    [
+        'pymetis/__init__.py',
+        'pymetis/version.py',
+        'pymetis/_internal.pyi',
+        'pymetis/py.typed',
+    ],
     subdir: 'pymetis',
 )
 
