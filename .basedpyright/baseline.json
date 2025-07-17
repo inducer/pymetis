@@ -1,0 +1,190 @@
+{
+    "files": {
+        "./pymetis/__init__.py": [
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 54,
+                    "endColumn": 60,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 30,
+                    "endColumn": 36,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 30,
+                    "endColumn": 39,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 30,
+                    "endColumn": 35,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 30,
+                    "endColumn": 35,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 30,
+                    "endColumn": 36,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 30,
+                    "endColumn": 35,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 30,
+                    "endColumn": 40,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 30,
+                    "endColumn": 37,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 34,
+                    "endColumn": 49,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportAny",
+                "range": {
+                    "startColumn": 11,
+                    "endColumn": 49,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownArgumentType",
+                "range": {
+                    "startColumn": 19,
+                    "endColumn": 34,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownParameterType",
+                "range": {
+                    "startColumn": 4,
+                    "endColumn": 13,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownParameterType",
+                "range": {
+                    "startColumn": 14,
+                    "endColumn": 18,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportMissingParameterType",
+                "range": {
+                    "startColumn": 14,
+                    "endColumn": 18,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownParameterType",
+                "range": {
+                    "startColumn": 20,
+                    "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportMissingParameterType",
+                "range": {
+                    "startColumn": 20,
+                    "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 34,
+                    "endColumn": 43,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 11,
+                    "endColumn": 33,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 34,
+                    "endColumn": 41,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 11,
+                    "endColumn": 41,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 34,
+                    "endColumn": 44,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 34,
+                    "endColumn": 43,
+                    "lineCount": 1
+                }
+            }
+        ]
+    }
+}
