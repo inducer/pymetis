@@ -177,6 +177,7 @@ namespace
 
     if (!vwgt_py.is_none())
     {
+      ncon = py::len(vwgt_py) / py::len(xadj_py);
       COPY_IDXTYPE_LIST(vwgt);
     }
     if (!adjwgt_py.is_none())
