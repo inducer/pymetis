@@ -25,7 +25,6 @@
 .. autoclass:: Options
 .. autoclass:: MeshPartition
 .. autoclass:: GraphPartition
-.. autoclass:: Status
 .. autoclass:: OPType
 .. autoclass:: OptionKey
 .. autoclass:: PType
@@ -81,7 +80,7 @@ from warnings import warn
 
 from typing_extensions import deprecated, override
 
-from pymetis._internal import Options as OptionsBase, Status
+from pymetis._internal import Options as OptionsBase
 from pymetis.version import version, version_tuple
 
 
@@ -90,25 +89,6 @@ if TYPE_CHECKING:
 
     import numpy as np
 
-
-Status.__doc__ = """A wrapper for METIS return codes.
-
-.. attribute:: OK
-
-   Returned normally
-
-.. attribute:: ERROR_INPUT
-
-   Returned due to erroneous inputs and/or options
-
-.. attribute:: ERROR_MEMORY
-
-   Returned due to insufficient memory
-
-.. attribute:: ERROR
-
-   Some other errors
-"""
 
 from pymetis._internal import OPType
 
@@ -691,7 +671,6 @@ __all__ = [
     "Options",
     "PType",
     "RType",
-    "Status",
     "nested_dissection",
     "part_graph",
     "part_mesh",
