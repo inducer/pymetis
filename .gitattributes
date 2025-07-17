@@ -2,3 +2,6 @@
 .gitignore export-ignore
 .gitattributes export-ignore
 .gitlab-ci.yml export-ignore
+src/metis/manual/** export-ignore
+src/metis/graphs/** export-ignore
+.basedpyright/** export-ignore
