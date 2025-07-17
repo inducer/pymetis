@@ -53,6 +53,9 @@ test = [
 Documentation = "https://documen.tician.de/pymetis"
 Repository = "https://github.com/inducer/pymetis"
 
+[tool.inducer-ci-support]
+disable-editable-pip-install = true
+
 [tool.ruff]
 preview = true
 
@@ -105,4 +108,44 @@ extend-exclude = [
 
 [tool.cibuildwheel]
 skip = "*-win-* [cp]p3[67]-*"
+
+[tool.basedpyright]
+reportImplicitStringConcatenation = "none"
+reportUnnecessaryIsInstance = "none"
+reportUnusedCallResult = "none"
+reportExplicitAny = "none"
+reportUnreachable = "hint"
+
+exclude = [
+    "doc",
+    ".conda-root",
+    "build",
+    ".env",
+]
+
+# This reports even cycles that are qualified by 'if TYPE_CHECKING'. Not what
+# we care about at this moment.
+# https://github.com/microsoft/pyright/issues/746
+reportImportCycles = "none"
+pythonVersion = "3.10"
+pythonPlatform = "All"
+
+[[tool.basedpyright.executionEnvironments]]
+root = "test"
+reportArgumentType = "hint"
+reportAttributeAccessIssue = "hint"
+reportMissingImports = "none"
+reportMissingParameterType = "none"
+reportMissingTypeStubs = "none"
+reportUnknownArgumentType = "none"
+reportUnknownMemberType = "hint"
+reportUnknownParameterType = "none"
+reportUnknownVariableType = "none"
+reportUnknownLambdaType = "hint"
+reportOperatorIssue = "hint"
+reportPossiblyUnboundVariable = "hint"
+reportPrivateUsage = "none"
+reportUnusedImport = "hint"
+reportIndexIssue = "hint"
+reportAny = "hint"
 
