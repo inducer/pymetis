@@ -16,7 +16,7 @@ jobs:
         name: Ruff
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v4
+        -   uses: actions/checkout@v5
         -   name: "Main Script"
             run: |
                 pipx install ruff
@@ -26,13 +26,13 @@ jobs:
         name: Typos
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v4
+        -   uses: actions/checkout@v5
         -   uses: crate-ci/typos@master
 
     basedpyright:
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v4
+        -   uses: actions/checkout@v5
         -   uses: actions/setup-python@v5
             with:
                 python-version: '3.x'
@@ -49,7 +49,7 @@ jobs:
         name: Pytest on macOS
         runs-on: macos-latest
         steps:
-        -   uses: actions/checkout@v4
+        -   uses: actions/checkout@v5
         -
             uses: actions/setup-python@v5
             with:
@@ -70,7 +70,7 @@ jobs:
             matrix:
                 python-version: ['3.10', '3.12', '3.x']
         steps:
-        -   uses: actions/checkout@v4
+        -   uses: actions/checkout@v5
         -
             uses: actions/setup-python@v5
             with:
@@ -88,7 +88,7 @@ jobs:
         name: Documentation
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v4
+        -   uses: actions/checkout@v5
         -
             uses: actions/setup-python@v5
             with:
