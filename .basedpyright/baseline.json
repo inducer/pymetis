@@ -4,14 +4,6 @@
             {
                 "code": "reportUnknownVariableType",
                 "range": {
-                    "startColumn": 54,
-                    "endColumn": 60,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnknownVariableType",
-                "range": {
                     "startColumn": 30,
                     "endColumn": 36,
                     "lineCount": 1
@@ -165,7 +157,7 @@
                 "code": "reportUnknownVariableType",
                 "range": {
                     "startColumn": 11,
-                    "endColumn": 41,
+                    "endColumn": 51,
                     "lineCount": 1
                 }
             },
