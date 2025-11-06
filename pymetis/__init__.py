@@ -375,6 +375,7 @@ def nested_dissection(
             adjacency: CSRAdjacency | PythonicGraph | None = None,
             xadj: None = None,
             adjncy: None | None = None,
+            vweights: IntSequence | None = None,
             options: Options | None = None,
         ) -> Sequence[int]: ...
 
@@ -384,6 +385,7 @@ def nested_dissection(
             adjacency: None | None = None,
             xadj: IntSequence | None = None,
             adjncy: IntSequence | None = None,
+            vweights: IntSequence | None = None,
             options: Options | None = None,
         ) -> Sequence[int]: ...
 
@@ -392,6 +394,7 @@ def nested_dissection(
             adjacency: CSRAdjacency | PythonicGraph | None = None,
             xadj: IntSequence | None = None,
             adjncy: IntSequence | None = None,
+            vweights: IntSequence | None = None,
             options: Options | None = None,
         ) -> Sequence[int]:
     """This function computes fill reducing orderings of sparse matrices using
@@ -400,6 +403,10 @@ def nested_dissection(
     The input graph is given as either a Pythonic way as the *adjacency* parameter
     or in the direct C-like way that Metis likes as *xadj* and *adjncy*. It
     is an error to specify both graph inputs.
+
+    .. versionchanged:: 2025.2.2
+
+        Added *vweights*.
     """
     xadj, adjncy = _prepare_graph(adjacency, xadj, adjncy)
 
@@ -410,7 +417,7 @@ def nested_dissection(
         raise ValueError("METIS numbering option must be set to 0 or the default")
 
     from pymetis._internal import edge_nd
-    return edge_nd(xadj, adjncy, options)
+    return edge_nd(xadj, adjncy, vweights, options)
 
 
 @overload

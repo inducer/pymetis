@@ -170,7 +170,8 @@ def test_zero_copy():
         assert not wlist
 
 
-def test_nested_dissection():
+@pytest.mark.parametrize("weighted", [True, False])
+def test_nested_dissection(weighted):
     pytest.importorskip("scipy")
 
     import scipy.sparse
@@ -178,7 +179,14 @@ def test_nested_dissection():
     fmat = scipy.sparse.rand(100, 100, density=0.005)
     mmat = fmat.transpose() * fmat
     adjacency_list = [mmat.getrow(i).indices for i in range(mmat.shape[0])]
-    node_nd = pymetis.nested_dissection(adjacency=adjacency_list)
+
+    if weighted:
+        vweights = np.ones((100,), dtype=np.int32)
+        node_nd = pymetis.nested_dissection(adjacency=adjacency_list,
+                                            vweights=vweights)
+    else:
+        node_nd = pymetis.nested_dissection(adjacency=adjacency_list)
+
     perm, iperm = np.array(node_nd[0]), np.array(node_nd[1])
 
     assert np.all(perm[iperm] == np.array(range(perm.size)))

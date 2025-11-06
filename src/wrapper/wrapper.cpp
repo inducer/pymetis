@@ -315,6 +315,7 @@ namespace
 
   py::object
   wrap_node_nd(const py::object &xadj_py, const py::object &adjncy_py,
+      const py::object &vwgt_py,
       metis_options &options)
   {
     array_from_py<idx_t> xadj("xadj", xadj_py, false);
@@ -324,12 +325,16 @@ namespace
     idx_t nvtxs = xadj.size() - 1;
 
     array_from_py<idx_t> adjncy("adjncy", adjncy_py, false);
-    idx_t * vwgt = NULL;
+
+    array_from_py<idx_t> vwgt("vwgt", vwgt_py, false, false);
+
+    if (vwgt.size() != 0 && vwgt.size() != nvtxs)
+      throw py::value_error("vwgt must be empty or have length nvtxs");
 
     array_for_py<idx_t> perm(nvtxs), iperm(nvtxs);
 
     int info = METIS_NodeND(
-      &nvtxs, xadj.get(), adjncy.get(), vwgt, options.m_options,
+      &nvtxs, xadj.get(), adjncy.get(), vwgt.get(), options.m_options,
       perm.get(), iperm.get());
 
     assert_ok(info, "METIS_NodeND failed");
