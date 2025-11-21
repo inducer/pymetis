@@ -1,3 +1,12 @@
+metis-5.2.1
+------------------------------------------------------------------------
+f5ae915 | karypis | 2022-12-05 07:27:57 -0600 (Mon, 05 Dec 2022)
+
+- Added RCM-based reordering auxialiary routine
+  METIS_CacheFriendlyReordering.
+- Improved multi-way BFS and further refined LP-based refinement.
+- GKlib became an external dependency.
+
 
 metis-5.1.0
 ------------------------------------------------------------------------
@@ -16,7 +25,7 @@ r13937 | karypis | 2013-03-29 23:08:21 -0500 (Fri, 29 Mar 2013)
   line option and the associated options[] parameter (as described 
   in the manual).
 - Fixed 0/1 numbering issue with mesh partitioning routines (flyspray 
-   issue #109)
+  issue #109)
 
 
 metis-5.0.3
@@ -117,7 +126,7 @@ r1437 | karypis | 2007-04-07 23:16:16 -0500 (Sat, 07 Apr 2007)
 - Fixed some bad memory allocation calls (i.e., sizeof(x)/sizeof(idxtype). 
   However, there are tons of those and need to be corrected once and for
   all by eliminating workspace and the associated mallocs.
-- Added mprint/mscanf family of functions for portable formated I/O
+- Added mprint/mscanf family of functions for portable formatted I/O
   of the idxtype datatype. The specifier for this datatype is %D.
   All library routines use this function for printing. 
   The implementation of these routines is not very efficient, but

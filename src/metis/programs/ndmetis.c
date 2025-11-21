@@ -3,12 +3,12 @@
  *
  * ndmetis.c
  *
- * Driver programs for nested disection ordering
+ * Driver programs for nested dissection ordering
  *
  * Started 8/28/94
  * George
  *
- * $Id: ndmetis.c 13900 2013-03-24 15:27:07Z karypis $
+ * $Id: ndmetis.c 14362 2013-05-21 21:35:23Z karypis $
  *
  */
 
@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
   options[METIS_OPTION_DBGLVL]   = params->dbglvl;
   options[METIS_OPTION_UFACTOR]  = params->ufactor;
   options[METIS_OPTION_NO2HOP]   = params->no2hop;
+  options[METIS_OPTION_ONDISK]   = params->ondisk;
   options[METIS_OPTION_COMPRESS] = params->compress;
   options[METIS_OPTION_CCORDER]  = params->ccorder;
   options[METIS_OPTION_SEED]     = params->seed;
@@ -83,6 +84,8 @@ int main(int argc, char *argv[])
   params->maxmemory = gk_GetMaxMemoryUsed();
   gk_malloc_cleanup(0);
 
+  if (graph->adjwgt == NULL)
+    graph->adjwgt = ismalloc(graph->nedges, 1, "adjwgt");
 
   if (status != METIS_OK) {
     printf("\n***Metis returned with an error.\n");
@@ -127,12 +130,16 @@ void NDPrintInfo(params_t *params, graph_t *graph)
       ctypenames[params->ctype], rtypenames[params->rtype], 
       iptypenames[params->iptype], params->seed, params->dbglvl);
 
-  printf(" ufactor=%.3f, pfactor=%.2f, no2hop=%s, ccorder=%s, compress=%s, , nooutput=%s\n",
+  printf(" ufactor=%.3f, pfactor=%.2f, no2hop=%s, ccorder=%s, compress=%s\n",
       I2RUBFACTOR(params->ufactor), 
       0.1*params->pfactor,
       (params->no2hop   ? "YES" : "NO"), 
       (params->ccorder  ? "YES" : "NO"), 
-      (params->compress ? "YES" : "NO"), 
+      (params->compress ? "YES" : "NO") 
+      );
+
+  printf(" ondisk=%s, nooutput=%s\n",
+      (params->ondisk   ? "YES" : "NO"), 
       (params->nooutput ? "YES" : "NO")
       );
 
@@ -164,6 +171,16 @@ void NDReportResults(params_t *params, graph_t *graph, idx_t *perm,
   printf("  Reporting:    \t\t %7.3"PRREAL" sec\n", gk_getcputimer(params->reporttimer));
   printf("\nMemory Information ----------------------------------------------------------\n");
   printf("  Max memory used:\t\t %7.3"PRREAL" MB\n", (real_t)(params->maxmemory/(1024.0*1024.0)));
+
+#ifndef MACOS
+  {
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    printf("  rusage.ru_maxrss:\t\t %7.3"PRREAL" MB\n", (real_t)(usage.ru_maxrss/(1024.0)));
+  }
+  printf("  proc/self/stat/VmPeak:\t %7.3"PRREAL" MB\n", (real_t)gk_GetProcVmPeak()/(1024.0*1024.0));
+#endif
+
   printf("******************************************************************************\n");
 
 }

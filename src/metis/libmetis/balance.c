@@ -20,7 +20,7 @@ void Balance2Way(ctrl_t *ctrl, graph_t *graph, real_t *ntpwgts)
 
   if (graph->ncon == 1) {
     /* return right away if the balance is OK */
-    if (iabs(ntpwgts[0]*graph->tvwgt[0]-graph->pwgts[0]) < 3*graph->tvwgt[0]/graph->nvtxs)
+    if (rabs(ntpwgts[0]*graph->tvwgt[0]-graph->pwgts[0]) < 3*graph->tvwgt[0]/graph->nvtxs)
       return;
 
     if (graph->nbnd > 0)
@@ -161,7 +161,7 @@ void Bnd2WayBalance(ctrl_t *ctrl, graph_t *graph, real_t *ntpwgts)
 /*************************************************************************
 * This function balances two partitions by moving the highest gain 
 * (including negative gain) vertices to the other domain.
-* It is used only when tha unbalance is due to non contigous
+* It is used only when the unbalance is due to non contiguous
 * subdomains. That is, the are no boundary vertices.
 * It moves vertices from the domain that is overweight to the one that 
 * is underweight.

@@ -4,13 +4,17 @@ project(
     'cpp',
     license: 'MIT',
     meson_version: '>=1.0.0',
-    default_options: ['warning_level=2', 'cpp_std=c++14'],
+    default_options: ['warning_level=2', 'cpp_std=c++17'],
 )
+
+metis_defs = [
+    '-DIDXTYPEWIDTH=64',
+    '-DREALTYPEWIDTH=64',
+]
 
 # {{{ gather includes
 
-py_mod = import('python')
-py = py_mod.find_installation(pure: false)
+py = import('python').find_installation(pure: false)
 pybind11_dep = dependency('pybind11')
 
 # }}}
@@ -18,34 +22,34 @@ pybind11_dep = dependency('pybind11')
 # {{{
 if get_option('use-shipped-metis')
     gklib_srcs = [
-        'src/metis/GKlib/b64.c',
-        'src/metis/GKlib/blas.c',
-        'src/metis/GKlib/csr.c',
-        'src/metis/GKlib/error.c',
-        'src/metis/GKlib/evaluate.c',
-        'src/metis/GKlib/fkvkselect.c',
-        'src/metis/GKlib/fs.c',
-        'src/metis/GKlib/getopt.c',
-        'src/metis/GKlib/gkregex.c',
-        'src/metis/GKlib/graph.c',
-        'src/metis/GKlib/htable.c',
-        'src/metis/GKlib/io.c',
-        'src/metis/GKlib/itemsets.c',
-        'src/metis/GKlib/mcore.c',
-        'src/metis/GKlib/memory.c',
-        'src/metis/GKlib/omp.c',
-        'src/metis/GKlib/pdb.c',
-        'src/metis/GKlib/pqueue.c',
-        'src/metis/GKlib/random.c',
-        'src/metis/GKlib/rw.c',
-        'src/metis/GKlib/seq.c',
-        'src/metis/GKlib/sort.c',
-        'src/metis/GKlib/string.c',
-        'src/metis/GKlib/timers.c',
-        'src/metis/GKlib/tokenizer.c',
-        'src/metis/GKlib/util.c',
+        'src/metis/GKlib/src/b64.c',
+        'src/metis/GKlib/src/blas.c',
+        'src/metis/GKlib/src/csr.c',
+        'src/metis/GKlib/src/error.c',
+        'src/metis/GKlib/src/evaluate.c',
+        'src/metis/GKlib/src/fkvkselect.c',
+        'src/metis/GKlib/src/fs.c',
+        'src/metis/GKlib/src/getopt.c',
+        'src/metis/GKlib/src/gkregex.c',
+        'src/metis/GKlib/src/graph.c',
+        'src/metis/GKlib/src/htable.c',
+        'src/metis/GKlib/src/io.c',
+        'src/metis/GKlib/src/itemsets.c',
+        'src/metis/GKlib/src/mcore.c',
+        'src/metis/GKlib/src/memory.c',
+        #'src/metis/GKlib/src/omp.c',
+        #'src/metis/GKlib/src/pdb.c',
+        'src/metis/GKlib/src/pqueue.c',
+        'src/metis/GKlib/src/random.c',
+        'src/metis/GKlib/src/rw.c',
+        'src/metis/GKlib/src/seq.c',
+        'src/metis/GKlib/src/sort.c',
+        'src/metis/GKlib/src/string.c',
+        'src/metis/GKlib/src/timers.c',
+        'src/metis/GKlib/src/tokenizer.c',
+        'src/metis/GKlib/src/gk_util.c',
     ]
-    gklib_inc = include_directories('src/metis/GKlib')
+    gklib_inc = include_directories('src/metis/GKlib/include')
 
     metis_srcs = [
         'src/metis/libmetis/auxapi.c',
@@ -91,7 +95,8 @@ if get_option('use-shipped-metis')
         'metis_internal_static',
         gklib_srcs + metis_srcs,
         include_directories: [gklib_inc, metis_inc],
-        c_args: ['-D_GNU_SOURCE'],
+        c_args: [metis_defs],
+        cpp_args: [metis_defs],
         dependencies: [openmp_dep],
         pic: true,
     )
@@ -127,6 +132,8 @@ py.extension_module(
     '_internal',
     ['src/wrapper/wrapper.cpp'],
     dependencies: [pybind11_dep, metis_dep],
+    c_args: [metis_defs],
+    cpp_args: [metis_defs],
     subdir: 'pymetis',
     install: true,
 )

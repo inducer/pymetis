@@ -34,7 +34,7 @@
 
     \param[in] adjncy is an array of size to the sum of the degrees of the
            graph that stores for each vertex the set of vertices that
-           is adjancent to.
+           is adjacent to.
 
     \param[in] vwgt is an array of size nvtxs*ncon that stores the weights
            of the vertices for each constraint. The ncon weights for the
@@ -106,7 +106,6 @@ int METIS_PartGraphRecursive(idx_t *nvtxs, idx_t *ncon, idx_t *xadj,
   if ((sigrval = gk_sigcatch()) != 0) 
     goto SIGTHROW;
 
-
   /* set up the run parameters */
   ctrl = SetupCtrl(METIS_OP_PMETIS, options, *ncon, *nparts, tpwgts, ubvec);
   if (!ctrl) {
@@ -130,7 +129,8 @@ int METIS_PartGraphRecursive(idx_t *nvtxs, idx_t *ncon, idx_t *xadj,
   IFSET(ctrl->dbglvl, METIS_DBG_TIME, InitTimers(ctrl));
   IFSET(ctrl->dbglvl, METIS_DBG_TIME, gk_startcputimer(ctrl->TotalTmr));
 
-  *objval = MlevelRecursiveBisection(ctrl, graph, *nparts, part, ctrl->tpwgts, 0);
+  iset(*nvtxs, 0, part);
+  *objval = (*nparts == 1 ? 0 : MlevelRecursiveBisection(ctrl, graph, *nparts, part, ctrl->tpwgts, 0));
 
   IFSET(ctrl->dbglvl, METIS_DBG_TIME, gk_stopcputimer(ctrl->TotalTmr));
   IFSET(ctrl->dbglvl, METIS_DBG_TIME, PrintTimers(ctrl));
