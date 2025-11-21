@@ -8,7 +8,7 @@
  * Started 8/28/94
  * George
  *
- * $Id: mpmetis.c 10567 2011-07-13 16:17:07Z karypis $
+ * $Id: mpmetis.c 14362 2013-05-21 21:35:23Z karypis $
  *
  */
 
@@ -51,6 +51,8 @@ int main(int argc, char *argv[])
   options[METIS_OPTION_OBJTYPE] = params->objtype;
   options[METIS_OPTION_CTYPE]   = params->ctype;
   options[METIS_OPTION_IPTYPE]  = params->iptype;
+  options[METIS_OPTION_NO2HOP]  = params->no2hop;
+  options[METIS_OPTION_ONDISK]  = params->ondisk;
   options[METIS_OPTION_RTYPE]   = params->rtype;
   options[METIS_OPTION_DBGLVL]  = params->dbglvl;
   options[METIS_OPTION_UFACTOR] = params->ufactor;
@@ -185,6 +187,16 @@ void MPReportResults(params_t *params, mesh_t *mesh, idx_t *epart, idx_t *npart,
   printf("  Reporting:    \t\t %7.3"PRREAL" sec\n", gk_getcputimer(params->reporttimer));
   printf("\nMemory Information ----------------------------------------------------------\n");
   printf("  Max memory used:\t\t %7.3"PRREAL" MB\n", (real_t)(params->maxmemory/(1024.0*1024.0)));
+
+#ifndef MACOS
+  {
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    printf("  rusage.ru_maxrss:\t\t %7.3"PRREAL" MB\n", (real_t)(usage.ru_maxrss/(1024.0)));
+  }
+  printf("  proc/self/stat/VmPeak:\t %7.3"PRREAL" MB\n", (real_t)gk_GetProcVmPeak()/(1024.0*1024.0));
+#endif
+
   printf("******************************************************************************\n");
 
 }

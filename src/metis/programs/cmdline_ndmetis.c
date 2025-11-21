@@ -4,7 +4,7 @@
 
 \date 12/24/2008
 \author George
-\version\verbatim $Id: cmdline_ndmetis.c 13900 2013-03-24 15:27:07Z karypis $\endverbatim
+\version\verbatim $Id: cmdline_ndmetis.c 14362 2013-05-21 21:35:23Z karypis $\endverbatim
 */
 
 #include "metisbin.h"
@@ -22,6 +22,7 @@ static struct gk_option long_options[] = {
   {"nocompress",     0,      0,      METIS_OPTION_COMPRESS},
   {"ccorder",        0,      0,      METIS_OPTION_CCORDER},
   {"no2hop",         0,      0,      METIS_OPTION_NO2HOP},
+  {"ondisk",         0,      0,      METIS_OPTION_ONDISK},
   {"nooutput",       0,      0,      METIS_OPTION_NOOUTPUT},
   {"niter",          1,      0,      METIS_OPTION_NITER},
   {"nseps",          1,      0,      METIS_OPTION_NSEPS},
@@ -122,6 +123,10 @@ static char helpstr[][100] =
 "     each level of the nested dissection. The final separator that is used",
 "     is the smallest one. Default is 1.",
 " ",
+"  -ondisk",
+"     Specifies if graphs will be stored to disk during coarsening in order",
+"     to reduce memory requirements.",
+" ",
 "  -nooutput",
 "     Specifies that no ordering file should be generated.",
 " ",
@@ -158,27 +163,28 @@ params_t *parse_cmdline(int argc, char *argv[])
   memset((void *)params, 0, sizeof(params_t));
 
   /* initialize the params data structure */
-  params->ctype         = METIS_CTYPE_SHEM;
-  params->iptype        = METIS_IPTYPE_NODE;
-  params->rtype         = METIS_RTYPE_SEP1SIDED;
+  params->ctype    = METIS_CTYPE_SHEM;
+  params->iptype   = METIS_IPTYPE_NODE;
+  params->rtype    = METIS_RTYPE_SEP1SIDED;
 
-  params->ufactor       = OMETIS_DEFAULT_UFACTOR;
-  params->pfactor       = 0;
-  params->compress      = 1;
-  params->ccorder       = 0;
-  params->no2hop        = 0;
+  params->ufactor  = OMETIS_DEFAULT_UFACTOR;
+  params->pfactor  = 0;
+  params->compress = 1;
+  params->ccorder  = 0;
+  params->no2hop   = 0;
 
-  params->nooutput      = 0;
-  params->wgtflag       = 1;
+  params->ondisk   = 0;
+  params->nooutput = 0;
+  params->wgtflag  = 1;
 
-  params->nseps         = 1;
-  params->niter         = 10;
+  params->nseps    = 1;
+  params->niter    = 10;
 
-  params->seed          = -1;
-  params->dbglvl        = 0;
+  params->seed     = -1;
+  params->dbglvl   = 0;
 
-  params->filename      = NULL;
-  params->nparts        = 1;
+  params->filename = NULL;
+  params->nparts   = 1;
 
 
   gk_clearcputimer(params->iotimer);
@@ -224,6 +230,10 @@ params_t *parse_cmdline(int argc, char *argv[])
 
       case METIS_OPTION_NO2HOP:
         params->no2hop = 1;
+        break;
+
+      case METIS_OPTION_ONDISK:
+        params->ondisk = 1;
         break;
 
       case METIS_OPTION_NOOUTPUT:

@@ -8,7 +8,7 @@
  * Started 8/28/94
  * George
  *
- * $Id: gpmetis.c 13900 2013-03-24 15:27:07Z karypis $
+ * $Id: gpmetis.c 14362 2013-05-21 21:35:23Z karypis $
  *
  */
 
@@ -73,18 +73,21 @@ int main(int argc, char *argv[])
   part = imalloc(graph->nvtxs, "main: part");
 
   METIS_SetDefaultOptions(options);
-  options[METIS_OPTION_OBJTYPE] = params->objtype;
-  options[METIS_OPTION_CTYPE]   = params->ctype;
-  options[METIS_OPTION_IPTYPE]  = params->iptype;
-  options[METIS_OPTION_RTYPE]   = params->rtype;
-  options[METIS_OPTION_NO2HOP]  = params->no2hop;
-  options[METIS_OPTION_MINCONN] = params->minconn;
-  options[METIS_OPTION_CONTIG]  = params->contig;
-  options[METIS_OPTION_SEED]    = params->seed;
-  options[METIS_OPTION_NITER]   = params->niter;
-  options[METIS_OPTION_NCUTS]   = params->ncuts;
-  options[METIS_OPTION_UFACTOR] = params->ufactor;
-  options[METIS_OPTION_DBGLVL]  = params->dbglvl;
+  options[METIS_OPTION_OBJTYPE]   = params->objtype;
+  options[METIS_OPTION_CTYPE]     = params->ctype;
+  options[METIS_OPTION_IPTYPE]    = params->iptype;
+  options[METIS_OPTION_RTYPE]     = params->rtype;
+  options[METIS_OPTION_NO2HOP]    = params->no2hop;
+  options[METIS_OPTION_ONDISK]    = params->ondisk;
+  options[METIS_OPTION_DROPEDGES] = params->dropedges;
+  options[METIS_OPTION_MINCONN]   = params->minconn;
+  options[METIS_OPTION_CONTIG]    = params->contig;
+  options[METIS_OPTION_SEED]      = params->seed;
+  options[METIS_OPTION_NIPARTS]   = params->niparts;
+  options[METIS_OPTION_NITER]     = params->niter;
+  options[METIS_OPTION_NCUTS]     = params->ncuts;
+  options[METIS_OPTION_UFACTOR]   = params->ufactor;
+  options[METIS_OPTION_DBGLVL]    = params->dbglvl;
 
   gk_malloc_init();
   gk_startcputimer(params->parttimer);
@@ -113,6 +116,8 @@ int main(int argc, char *argv[])
   params->maxmemory = gk_GetMaxMemoryUsed();
   gk_malloc_cleanup(0);
 
+  if (graph->adjwgt == NULL)
+    graph->adjwgt = ismalloc(graph->nedges, 1, "adjwgt");
 
   if (status != METIS_OK) {
     printf("\n***Metis returned with an error.\n");
@@ -127,6 +132,18 @@ int main(int argc, char *argv[])
 
     GPReportResults(params, graph, part, objval);
   }
+
+#ifdef XXX
+  {
+    idx_t *old2new = imalloc(graph->nvtxs, "old2new");
+
+    METIS_CacheFriendlyReordering(graph->nvtxs, graph->xadj, graph->adjncy, part, old2new);
+    WritePartition("ciperm", old2new, graph->nvtxs, params->nparts); 
+
+    gk_free((void **)&old2new, LTERM);
+  }
+#endif
+
 
   FreeGraph(&graph);
   gk_free((void **)&part, LTERM);
@@ -170,17 +187,21 @@ void GPPrintInfo(params_t *params, graph_t *graph)
       ptypenames[params->ptype], objtypenames[params->objtype], ctypenames[params->ctype], 
       rtypenames[params->rtype], iptypenames[params->iptype]);
 
-  printf(" dbglvl=%"PRIDX", ufactor=%.3f, no2hop=%s, minconn=%s, contig=%s, nooutput=%s\n",
+  printf(" dbglvl=%"PRIDX", ufactor=%.3f, no2hop=%s, minconn=%s, contig=%s\n",
       params->dbglvl,
       I2RUBFACTOR(params->ufactor),
       (params->no2hop   ? "YES" : "NO"), 
       (params->minconn  ? "YES" : "NO"), 
-      (params->contig   ? "YES" : "NO"),
+      (params->contig   ? "YES" : "NO")
+      );
+
+  printf(" ondisk=%s, nooutput=%s\n",
+      (params->ondisk   ? "YES" : "NO"),
       (params->nooutput ? "YES" : "NO")
       );
 
-  printf(" seed=%"PRIDX", niter=%"PRIDX", ncuts=%"PRIDX"\n", 
-      params->seed, params->niter, params->ncuts);
+  printf(" seed=%"PRIDX", niparts=%"PRIDX", niter=%"PRIDX", ncuts=%"PRIDX"\n", 
+      params->seed, params->niparts, params->niter, params->ncuts);
 
   if (params->ubvec) {
     printf(" ubvec=(");
@@ -217,6 +238,15 @@ void GPReportResults(params_t *params, graph_t *graph, idx_t *part, idx_t objval
   printf("  Reporting:    \t\t %7.3"PRREAL" sec\n", gk_getcputimer(params->reporttimer));
   printf("\nMemory Information ----------------------------------------------------------\n");
   printf("  Max memory used:\t\t %7.3"PRREAL" MB\n", (real_t)(params->maxmemory/(1024.0*1024.0)));
-  printf("******************************************************************************\n");
 
+#ifndef MACOS
+  {
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    printf("  rusage.ru_maxrss:\t\t %7.3"PRREAL" MB\n", (real_t)(usage.ru_maxrss/(1024.0)));
+  }
+  printf("  proc/self/stat/VmPeak:\t %7.3"PRREAL" MB\n", (real_t)gk_GetProcVmPeak()/(1024.0*1024.0));
+#endif
+
+  printf("******************************************************************************\n");
 }

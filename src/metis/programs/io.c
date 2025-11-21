@@ -8,7 +8,7 @@
  * Started 8/28/94
  * George
  *
- * $Id: io.c 11932 2012-05-10 18:18:23Z dominique $
+ * $Id: io.c 17513 2014-08-05 16:20:50Z dominique $
  *
  */
 
@@ -78,7 +78,7 @@ graph_t *ReadGraph(params_t *params)
   xadj   = graph->xadj   = ismalloc(graph->nvtxs+1, 0, "ReadGraph: xadj");
   adjncy = graph->adjncy = imalloc(graph->nedges, "ReadGraph: adjncy");
   vwgt   = graph->vwgt   = ismalloc(ncon*graph->nvtxs, 1, "ReadGraph: vwgt");
-  adjwgt = graph->adjwgt = ismalloc(graph->nedges, 1, "ReadGraph: adjwgt");
+  adjwgt = graph->adjwgt = (readew ? imalloc(graph->nedges, "ReadGraph: adjwgt") : NULL);
   vsize  = graph->vsize  = ismalloc(graph->nvtxs, 1, "ReadGraph: vsize");
 
 
@@ -143,7 +143,7 @@ graph_t *ReadGraph(params_t *params)
             graph->nedges/2);
 
       adjncy[k] = edge-1;
-      adjwgt[k] = ewgt;
+      if (readew) adjwgt[k] = ewgt;
       k++;
     } 
     xadj[i+1] = k;
@@ -260,7 +260,7 @@ mesh_t *ReadMesh(params_t *params)
   gk_fclose(fpin);
 
   mesh->ncon = (ncon == 0 ? 1 : ncon);
-  mesh->nn   = imax(eptr[mesh->ne], eind)+1;
+  mesh->nn   = imax(eptr[mesh->ne], eind, 1)+1;
 
   gk_free((void *)&line, LTERM);
 

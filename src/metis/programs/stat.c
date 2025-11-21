@@ -6,7 +6,7 @@
 \date   Started 7/25/1997
 \author George  
 \author Copyright 1997-2009, Regents of the University of Minnesota 
-\version\verbatim $Id: stat.c 10046 2011-06-01 14:13:40Z karypis $ \endverbatim
+\version\verbatim $Id: stat.c 17513 2014-08-05 16:20:50Z dominique $ \endverbatim
 */
 
 
@@ -35,7 +35,7 @@ void ComputePartitionInfo(params_t *params, graph_t *graph, idx_t *where)
   nparts = params->nparts;
   tpwgts = params->tpwgts;
 
-  /* Compute objective-related infomration */
+  /* Compute objective-related information */
   printf(" - Edgecut: %"PRIDX", communication volume: %"PRIDX".\n\n", 
       ComputeCut(graph, where), ComputeVolume(graph, where));
 
@@ -132,7 +132,7 @@ void ComputePartitionInfo(params_t *params, graph_t *graph, idx_t *where)
       printf(" - There are %"PRIDX" non-contiguous partitions.\n"
              "   Total components after removing the cut edges: %"PRIDX",\n"
              "   max components: %"PRIDX" for pid: %"PRIDX".\n",
-          nover, ncmps, imax(nparts, cpwgts), (idx_t)iargmax(nparts, cpwgts));
+          nover, ncmps, imax(nparts, cpwgts,1), (idx_t)iargmax(nparts, cpwgts,1));
     }
     else {
       printf(" - The original graph had %"PRIDX" connected components and the resulting\n"
@@ -142,7 +142,7 @@ void ComputePartitionInfo(params_t *params, graph_t *graph, idx_t *where)
   }
 
   gk_free((void **)&cptr, &cind, &cpwgts, LTERM);
-             
+
 }
 
 
