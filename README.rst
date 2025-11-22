@@ -47,7 +47,11 @@ This graph, adapted from Figure 2 of the METIS
 `manual <https://raw.githubusercontent.com/KarypisLab/METIS/master/manual/manual.pdf>`__ to
 use zero-based indexing,
 
-.. image:: doc/_static/tiny_01.png
+.. raw:: html
+
+    <div align="center">
+    <img src="https://raw.githubusercontent.com/inducer/pymetis/refs/heads/main/doc/_static/tiny_01.png" width=300><br>
+    </div>
 
 can be defined and partitioned into two graphs with
 
@@ -69,5 +73,8 @@ can be defined and partitioned into two graphs with
     nodes_part_0 = np.argwhere(np.array(membership) == 0).ravel() # [3, 5, 6]
     nodes_part_1 = np.argwhere(np.array(membership) == 1).ravel() # [0, 1, 2, 4]
 
-.. image:: doc/_static/tiny_01_partitioned.png
+.. raw:: html
 
+    <div align="center">
+    <img src="https://raw.githubusercontent.com/inducer/pymetis/refs/heads/main/doc/_static/tiny_01_partitioned.png" width=300><br>
+    </div>
