@@ -4,10 +4,10 @@ PyMetis: A Python Wrapper for METIS
 .. image:: https://gitlab.tiker.net/inducer/pymetis/badges/main/pipeline.svg
     :alt: Gitlab Build Status
     :target: https://gitlab.tiker.net/inducer/pymetis/commits/main
-.. image:: https://github.com/inducer/pymetis/workflows/CI/badge.svg?branch=main
+.. image:: https://github.com/inducer/pymetis/actions/workflows/ci.yml/badge.svg
     :alt: Github Build Status
-    :target: https://github.com/inducer/pymetis/actions?query=branch%3Amain+workflow%3ACI
-.. image:: https://badge.fury.io/py/PyMetis.png
+    :target: https://github.com/inducer/pymetis/actions/workflows/ci.yml
+.. image:: https://badge.fury.io/py/PyMetis.svg
     :alt: Python Package Index Release Page
     :target: https://pypi.org/project/pymetis/
 .. image:: https://zenodo.org/badge/2199177.svg
