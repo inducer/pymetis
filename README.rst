@@ -14,15 +14,11 @@ PyMetis: A Python Wrapper for METIS
     :alt: Zenodo DOI for latest release
     :target: https://zenodo.org/badge/latestdoi/2199177
 
-PyMetis is a Python wrapper for the `METIS
-<https://github.com/KarypisLab/METIS>`__ graph partitioning software by George
-Karypis, Vipin Kumar and others. It includes version 5.2.1 of METIS and wraps
-it using the `pybind11 <https://pybind11.readthedocs.io/en/stable/>`__ wrapper
-generator library. So far, it only wraps the most basic graph partitioning
-functionality (which is enough for my current use), but extending it in case
-you need more should be quite straightforward. Using PyMetis to partition your
-meshes is really easy -- essentially all you need to pass into PyMetis is an
-adjacency list for the graph and the number of parts you would like.
+PyMetis is a `pybind11 <https://pybind11.readthedocs.io/en/stable/>`__-based
+Python wrapper for the `METIS <https://github.com/KarypisLab/METIS>`__ graph
+partitioning software by George Karypis, Vipin Kumar, and others.
+
+It currently wraps version **5.2.1** of the METIS library.
 
 Links
 -----
