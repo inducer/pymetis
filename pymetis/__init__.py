@@ -428,6 +428,7 @@ def part_graph(
             adjncy: None = None,
             *,
             vweights: IntSequence | None = None,
+            vsize: IntSequence | None = None,
             eweights: IntSequence | None = None,
             tpwgts: Sequence[float] | None = None,
             recursive: bool | None = None,
@@ -445,6 +446,7 @@ def part_graph(
             adjncy: IntSequence | None = None,
             *,
             vweights: IntSequence | None = None,
+            vsize: IntSequence | None = None,
             eweights: IntSequence | None = None,
             tpwgts: Sequence[float] | None = None,
             recursive: bool | None = None,
@@ -461,6 +463,7 @@ def part_graph(
             adjncy: IntSequence | None = None,
             *,
             vweights: IntSequence | None = None,
+            vsize: IntSequence | None = None,
             eweights: IntSequence | None = None,
             tpwgts: Sequence[float] | None = None,
             recursive: bool | None = None,
@@ -552,7 +555,7 @@ def part_graph(
 
     from pymetis._internal import part_graph
     return GraphPartition(*part_graph(nparts, xadj, adjncy, vweights,
-                      eweights, tpwgts, options, recursive,
+                      vsize, eweights, tpwgts, options, recursive,
                       warn_on_copies=warn_on_copies,
                   ))
 

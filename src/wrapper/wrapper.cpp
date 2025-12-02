@@ -348,6 +348,7 @@ namespace
       const py::object &xadj_py,
       const py::object &adjncy_py,
       const py::object &vwgt_py,
+      const py::object &vsize_py,
       const py::object &adjwgt_py,
       const py::object &tpwgts_py,
       metis_options &options,
@@ -363,14 +364,12 @@ namespace
 
     array_from_py<idx_t> adjncy("adjncy", adjncy_py, warn_on_copies);
     array_from_py<idx_t> vwgt("vwgt", vwgt_py, warn_on_copies, false);
+    array_from_py<idx_t> vsize("vsize", vsize_py, warn_on_copies, false);
     array_from_py<idx_t> adjwgt("adjwgt", adjwgt_py, warn_on_copies, false);
     array_from_py<real_t> tpwgts("tpwgts", tpwgts_py, warn_on_copies, false);
 
     // partition weights
     idx_t ncon = 1;
-
-    // pymetis defaults to the minimizing-edge-cut objective
-    idx_t * pvsize = nullptr;
 
     real_t *pubvec = nullptr;
 
@@ -381,7 +380,7 @@ namespace
     {
       int info = METIS_PartGraphRecursive(
         &nvtxs, &ncon, xadj.get(), adjncy.get(),
-        vwgt.get(), pvsize, adjwgt.get(), &nparts, tpwgts.get(),
+        vwgt.get(), vsize.get(), adjwgt.get(), &nparts, tpwgts.get(),
         pubvec, options.m_options, &edgecut, part.get());
 
       assert_ok(info, "METIS_PartGraphRecursive failed");
@@ -390,7 +389,7 @@ namespace
     {
       int info = METIS_PartGraphKway(
         &nvtxs, &ncon, xadj.get(), adjncy.get(),
-        vwgt.get(), pvsize, adjwgt.get(), &nparts, tpwgts.get(),
+        vwgt.get(), vsize.get(), adjwgt.get(), &nparts, tpwgts.get(),
         pubvec, options.m_options, &edgecut, part.get());
 
       assert_ok(info, "METIS_PartGraphKway failed");
@@ -616,6 +615,7 @@ PYBIND11_MODULE(_internal, m)
         py::arg("xadj"),
         py::arg("adjncy"),
         py::arg("vwgt"),
+        py::arg("vsize"),
         py::arg("adjwgt"),
         py::arg("tpwgts"),
         py::arg("options"),
