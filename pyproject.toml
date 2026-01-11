@@ -81,6 +81,7 @@ extend-ignore = [
     "E241", # multiple spaces after comma
     "E242", # tab after comma
     "E402", # module level import not at the top of file
+    "RUF067", # no code in __init__ *shrug*
 ]
 
 [tool.ruff.lint.flake8-quotes]
