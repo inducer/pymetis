@@ -374,7 +374,7 @@ def _prepare_graph(
 def nested_dissection(
             adjacency: CSRAdjacency | PythonicGraph | None = None,
             xadj: None = None,
-            adjncy: None | None = None,
+            adjncy: None = None,
             vweights: IntSequence | None = None,
             options: Options | None = None,
         ) -> Sequence[int]: ...
@@ -382,7 +382,7 @@ def nested_dissection(
 @overload
 @deprecated("pass a CSRAdjacency object instead")
 def nested_dissection(
-            adjacency: None | None = None,
+            adjacency: None = None,
             xadj: IntSequence | None = None,
             adjncy: IntSequence | None = None,
             vweights: IntSequence | None = None,
