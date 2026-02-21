@@ -74,7 +74,7 @@ def test_tet_mesh(visualize=False):
             face_map.setdefault(frozenset(face_vertices), []).append((el_id, fid))
 
     adjacency: dict[int, list[int]] = {}
-    for _face_vertices, els_faces in face_map.items():
+    for els_faces in face_map.values():
         if len(els_faces) == 2:
             (e1, _f1), (e2, _f2) = els_faces
             adjacency.setdefault(e1, []).append(e2)
