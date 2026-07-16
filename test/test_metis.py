@@ -219,7 +219,7 @@ def test_options():
     with pytest.raises(AttributeError):
         opt.yoink = 100
     with pytest.raises(AttributeError):
-        opt.yoink  # noqa: B018
+        opt.yoink  # ruff:ignore[useless-expression]
 
     # Test a small example case with the options set
     adjacency_list = [
