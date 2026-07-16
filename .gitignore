@@ -19,6 +19,7 @@ dist
 setuptools*egg
 setuptools.pth
 PKG-INFO
+.venv
 
 .cache
 tmp
