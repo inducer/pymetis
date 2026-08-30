@@ -82,6 +82,7 @@ extend-ignore = [
     "tab-after-comma",
     "module-import-not-at-top-of-file",
     "non-empty-init-module",
+    "pytest-parameter-with-default-argument",
 ]
 
 [tool.ruff.lint.per-file-ignores]
